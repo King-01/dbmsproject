@@ -10,7 +10,6 @@ CREATE TABLE users (
   enabled tinyint(1) NOT NULL,
   PRIMARY KEY (username)
 );
-
 INSERT INTO `users` 
 VALUES 
 ('john','{bcrypt}$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K',1),
@@ -80,6 +79,8 @@ create table group_s(
 groupname varchar(50) not null,
 schedulename varchar(50) not null,
 primary key(groupname),
+username varchar(50) not null,
+foreign key(username) references users(username) on delete cascade,
 foreign key(schedulename) references schedules(name) on delete cascade
 );
 drop table if exists accounts;
@@ -94,6 +95,8 @@ addressline2 varchar(100) default null,
 city varchar(100) default null,
 pincode int default null,
 primary key(accountname),
+username varchar(50) not null,
+foreign key(username) references users(username) on delete cascade,
 foreign key(groupname) references group_s(groupname) on delete cascade
 );
 drop table if exists accountmobilenumber;
@@ -118,6 +121,8 @@ credittotal double not null default 0,
 debittotal double not null default 0,
 name varchar(50) not null,
 primary key(jvoucherid),
+username varchar(50) not null,
+foreign key(username) references users(username) on delete cascade,
 foreign key(name) references accounts(accountname) on delete cascade
 );
 drop table if exists bankvoucher;
@@ -128,6 +133,8 @@ credittotal double not null default 0,
 debittotal double not null default 0,
 name varchar(50) not null,
 primary key(bvoucherid),
+username varchar(50) not null,
+foreign key(username) references users(username) on delete cascade,
 foreign key(name) references accounts(accountname) on delete cascade
 );
 drop table if exists cashvoucher;
@@ -140,6 +147,8 @@ name varchar(50) not null,
 description varchar(100) not null default '-',
 amount double not null default 0,
 primary key(cvoucherid),
+username varchar(50) not null,
+foreign key(username) references users(username) on delete cascade,
 foreign key(name) references accounts(accountname) on delete cascade
 );
 drop table if exists banktransactions;
@@ -175,6 +184,8 @@ packing double not null,
 openingstock double not null,
 groupname varchar(50) not null,
 primary key(itemname),
+username varchar(50) not null,
+foreign key(username) references users(username) on delete cascade,
 foreign key(groupname) references group_s(groupname) on delete cascade
 );
 drop table if exists purchasebill;
@@ -186,12 +197,16 @@ currdate date not null,
 iscredit bool not null default false,
 suppliername varchar(50) not null,
 primary key(pvoucherid),
+username varchar(50) not null,
+foreign key(username) references users(username) on delete cascade,
 foreign key(suppliername) references group_s(groupname) on delete cascade
 );
 drop table if exists tax;
 create table tax(
 taxtype varchar(50) not null,
 itemname varchar(50) not null,
+username varchar(50) not null,
+foreign key(username) references users(username) on delete cascade,
 taxrate double not null default 0,
 foreign key(itemname) references stockitem(itemname) on delete cascade,
 unique(taxtype, itemname)
@@ -201,6 +216,8 @@ create table salebill(
 svoucherid bigint not null auto_increment,
 iscredit bool not null default false,
 currdate date not null,
+username varchar(50) not null,
+foreign key(username) references users(username) on delete cascade,
 trucknumber varchar(50) not null default '-',
 primary key(svoucherid)
 );
@@ -219,6 +236,6 @@ quantity bigint not null default 0,
 rate double not null default 0,
 pvoucherid bigint not null,
 itemname varchar(50) not null,
-foreign key(pvoucherid) references purchasebill(pvoucherid on delete cascade,
+foreign key(pvoucherid) references purchasebill(pvoucherid) on delete cascade,
 unique(quantity, rate, pvoucherid, itemname)
 );
