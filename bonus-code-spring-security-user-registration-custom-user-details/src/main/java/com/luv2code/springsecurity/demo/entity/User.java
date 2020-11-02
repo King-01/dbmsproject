@@ -38,6 +38,16 @@ public class User {
 
 	@Column(name = "pincode")
 	private String pincode;
+	@Column(name = "email")
+	private String email;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "users_roles", 
@@ -158,8 +168,8 @@ public class User {
 	public String toString() {
 		return "User [id=" + id + ", userName=" + userName + ", password=" + password + ", pan=" + pan + ", gstin="
 				+ gstin + ", addressLine1=" + addressLine1 + ", tdsAccountNumber=" + tdsAccountNumber
-				+ ", addressLine2=" + addressLine2 + ", city=" + city + ", pincode=" + pincode + ", roles=" + roles
-				+ "]";
+				+ ", addressLine2=" + addressLine2 + ", city=" + city + ", pincode=" + pincode + ", email=" + email
+				+ ", roles=" + roles + "]";
 	}
 	
 }

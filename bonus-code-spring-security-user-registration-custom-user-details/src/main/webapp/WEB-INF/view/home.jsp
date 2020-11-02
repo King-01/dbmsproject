@@ -4,18 +4,11 @@
 <html>
 
 <head>
-	<title>luv2code Company Home Page</title>
+	<title>Home Page</title>
 </head>
 
 <body>
-	<h2>luv2code Company Home Page</h2>
-	<hr>
-	
-	<p>
-	Welcome to the luv2code company home page!
-	</p>
-	
-	<hr>
+	<h2>Welcome <security:authentication property="principal.username"/></h2>
 	
 	<!-- display user name and role -->
 	

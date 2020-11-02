@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
 		user.setGstin(crmUser.getGstin());
 		user.setPan(crmUser.getPan());
 		user.setPincode(crmUser.getPincode());
+		user.setEmail(crmUser.getEmail());
 
 		// give user default role of "employee"
 		user.setRoles(Arrays.asList(roleDao.findRoleByName("ROLE_EMPLOYEE")));

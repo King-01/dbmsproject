@@ -6,7 +6,7 @@
 
 <head>
 	
-	<title>Register Company</title>
+	<title>Create Financial Year</title>
 	
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -25,19 +25,19 @@
 
 	<div>
 		
-		<div id="loginbox" style="margin-top: 30px;"
+		<div id="loginbox" style="margin-top: 50px;"
 			class="mainbox col-md-3 col-md-offset-2 col-sm-6 col-sm-offset-2">
 			
 			<div class="panel panel-primary">
 
 				<div class="panel-heading">
-					<div class="panel-title">Register New Company</div>
+					<div class="panel-title">Create Financial Year</div>
 				</div>
 
 				<div style="padding-top: 30px" class="panel-body">
 
 					<!-- Registration Form -->
-					<form:form action="${pageContext.request.contextPath}/register/processRegistrationForm" 
+					<form:form action="${pageContext.request.contextPath}/" 
 						  	   modelAttribute="crmUser"
 						  	   class="form-horizontal">
 
@@ -62,7 +62,6 @@
 						<!-- User name -->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="userName" cssClass="error alert alert-danger" />
 							
 							<form:input path="userName" placeholder="username" class="form-control" />
 						</div>
@@ -70,65 +69,58 @@
 						<!-- Password -->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
-							<form:errors path="password" cssClass="error alert alert-danger" />
 							
-							<form:password path="password" placeholder="password (*)" class="form-control" />
+							<form:password path="password" placeholder="password" class="form-control" />
 						</div>
 						
 						<!-- Confirm Password -->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
-							<form:errors path="matchingPassword" cssClass="error alert alert-danger" />
+							<form:errors path="matchingPassword" cssClass="error" />
 							<form:password path="matchingPassword" placeholder="confirm password (*)" class="form-control" />
 						</div>
-						
-						<!-- Email-->
-						<div style="margin-bottom: 25px" class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="email" cssClass="error alert alert-danger" />
-							<form:input path="email" placeholder="Email (*)" class="form-control" />
-						</div>
+					
 						<!-- PAN -->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="pan" cssClass="error alert alert-danger" />
+							<form:errors path="pan" cssClass="error" />
 							<form:input path="pan" placeholder="PAN (*)" class="form-control" />
 						</div>
 						<!-- GSTIN-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="gstin" cssClass="error alert alert-danger" />
+							<form:errors path="gstin" cssClass="error" />
 							<form:input path="gstin" placeholder="GSTIN (*)" class="form-control" />
 						</div>
 						
 						<!-- TDSAccountNumber-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="tdsAccountNumber" cssClass="error alert alert-danger" />
+							<form:errors path="tdsAccountNumber" cssClass="error" />
 							<form:input path="tdsAccountNumber" placeholder="TDS Account Number" class="form-control" />
 						</div>
 						<!-- Address Line 1-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="addressLine1" cssClass="error alert alert-danger" />
+							<form:errors path="addressLine1" cssClass="error" />
 							<form:input path="addressLine1" placeholder="Address Line 1 (*)" class="form-control" />
 						</div>
 						<!-- Address Line 2-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="addressLine2" cssClass="error alert alert-danger" />
+							<form:errors path="addressLine2" cssClass="error" />
 							<form:input path="addressLine2" placeholder="Address Line 2" class="form-control" />
 						</div>
 						<!-- City-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="city" cssClass="error alert alert-danger" />
+							<form:errors path="city" cssClass="error" />
 							<form:input path="city" placeholder="City (*)" class="form-control" />
 						</div>
 						<!-- PINCODE-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="pincode" cssClass="error alert alert-danger" />
+							<form:errors path="pincode" cssClass="error" />
 							<form:input path="pincode" placeholder="PIN CODE (*)" class="form-control" />
 						</div>
 						

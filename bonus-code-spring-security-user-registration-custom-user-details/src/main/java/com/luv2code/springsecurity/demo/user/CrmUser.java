@@ -4,6 +4,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.luv2code.springsecurity.demo.validation.FieldMatch;
+import com.luv2code.springsecurity.demo.validation.IsGstin;
+import com.luv2code.springsecurity.demo.validation.IsPan;
+import com.luv2code.springsecurity.demo.validation.IsPincode;
+import com.luv2code.springsecurity.demo.validation.ValidEmail;
 
 
 @FieldMatch.List({
@@ -12,43 +16,41 @@ import com.luv2code.springsecurity.demo.validation.FieldMatch;
 public class CrmUser {
 
 	@NotNull(message="is required")
-	@Size(min=1, message="is required")	
+//	@Size(min=5, max = 45, message="Should be atleast 5 characters long")	
 	private String userName;
-	
-	@NotNull(message="is required")
-	@Size(min=1, message="is required")
+
 	private String password;
 	
-
-	@NotNull(message = "is required")
-	@Size(min = 1, message = "is required")
 	private String matchingPassword;
-	
-	@NotNull(message="is required")
-	@Size(min = 1, message = "is required")
+	@IsPan
 	private String pan;
-	
-	@NotNull(message="is required")
-	@Size(min = 1, message = "is required")
+	@IsGstin
 	private String gstin;
 	
 	
 	private String tdsAccountNumber;
 	
-	@NotNull(message="is required")
 	@Size(min = 1, message = "is required")
 	private String addressLine1;
 	
 	private String addressLine2;
-	
-	@NotNull(message="is required")
-	@Size(min = 1, message = "is required")
+	@NotNull(message = "is required")
+	@Size(min = 1, message = "Should not be empty.")
 	private String city;
-	
-	@NotNull(message="is required")
-	@Size(min = 1, message = "is required")
+	@IsPincode
 	private String pincode;
+	@ValidEmail
+	private String email;
 	
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public CrmUser() {
 		
 	}
@@ -131,6 +133,7 @@ public class CrmUser {
 	public void setPincode(String pincode) {
 		this.pincode = pincode;
 	}
+
 	
 	
 }
