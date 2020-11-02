@@ -16,6 +16,8 @@ CREATE TABLE user (
   addressline2 varchar(100) default null,
   city varchar(100) not null default "-",
   pincode varchar(50) not null default "-",
+  mobilenumber1 bigint not null,
+  mobilenumber2 bigint not null,
   PRIMARY KEY (id),
   unique(username)
 );

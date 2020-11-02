@@ -40,6 +40,25 @@ public class User {
 	private String pincode;
 	@Column(name = "email")
 	private String email;
+	@Column(name = "mobilenumber1")
+	private String MobileNumber1;
+	@Column(name = "mobilenumber2")
+	private String MobileNumber2;
+	public String getMobileNumber1() {
+		return MobileNumber1;
+	}
+
+	public void setMobileNumber1(String mobileNumber1) {
+		MobileNumber1 = mobileNumber1;
+	}
+
+	public String getMobileNumber2() {
+		return MobileNumber2;
+	}
+
+	public void setMobileNumber2(String mobileNumber2) {
+		MobileNumber2 = mobileNumber2;
+	}
 
 	public String getEmail() {
 		return email;
@@ -169,7 +188,7 @@ public class User {
 		return "User [id=" + id + ", userName=" + userName + ", password=" + password + ", pan=" + pan + ", gstin="
 				+ gstin + ", addressLine1=" + addressLine1 + ", tdsAccountNumber=" + tdsAccountNumber
 				+ ", addressLine2=" + addressLine2 + ", city=" + city + ", pincode=" + pincode + ", email=" + email
-				+ ", roles=" + roles + "]";
+				+ ", MobileNumber1=" + MobileNumber1 + ", MobileNumber2=" + MobileNumber2 + ", roles=" + roles + "]";
 	}
 	
 }

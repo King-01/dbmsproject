@@ -7,11 +7,12 @@ import com.luv2code.springsecurity.demo.validation.FieldMatch;
 import com.luv2code.springsecurity.demo.validation.IsGstin;
 import com.luv2code.springsecurity.demo.validation.IsPan;
 import com.luv2code.springsecurity.demo.validation.IsPincode;
+import com.luv2code.springsecurity.demo.validation.IsValidPassword;
 import com.luv2code.springsecurity.demo.validation.ValidEmail;
-
+import com.luv2code.springsecurity.demo.validation.ValidMobileNumber;
 
 @FieldMatch.List({
-    @FieldMatch(first = "password", second = "matchingPassoword", message = "The password fields must match")
+    @FieldMatch(first = "password", second = "matchingPassword", message = "The password fields must match")
 })
 public class CrmUser {
 
@@ -19,8 +20,10 @@ public class CrmUser {
 //	@Size(min=5, max = 45, message="Should be atleast 5 characters long")	
 	private String userName;
 
+	@NotNull(message = "is required")
 	private String password;
-	
+	@IsValidPassword
+	@NotNull(message = "is required")
 	private String matchingPassword;
 	@IsPan
 	private String pan;
@@ -29,7 +32,7 @@ public class CrmUser {
 	
 	
 	private String tdsAccountNumber;
-	
+	@NotNull(message = "is required")
 	@Size(min = 1, message = "is required")
 	private String addressLine1;
 	
@@ -42,6 +45,28 @@ public class CrmUser {
 	@ValidEmail
 	private String email;
 	
+	@NotNull(message = "is required")
+	@ValidMobileNumber
+	private String mobilenumber1;
+	
+	@ValidMobileNumber
+	private String mobilenumber2;
+
+	public String getMobilenumber1() {
+		return mobilenumber1;
+	}
+
+	public void setMobilenumber1(String mobilenumber1) {
+		this.mobilenumber1 = mobilenumber1;
+	}
+
+	public String getMobilenumber2() {
+		return mobilenumber2;
+	}
+
+	public void setMobilenumber2(String mobilenumber2) {
+		this.mobilenumber2 = mobilenumber2;
+	}
 
 	public String getEmail() {
 		return email;

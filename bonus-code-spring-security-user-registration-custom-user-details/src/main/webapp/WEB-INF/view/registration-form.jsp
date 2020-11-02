@@ -85,6 +85,19 @@
 						<!-- Email-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
+							<form:errors path="mobilenumber1" cssClass="error alert alert-danger" />
+							<form:input path="mobilenumber1" placeholder="Mobile Number 1(*)" class="form-control" />
+						</div>
+						
+						<!-- Email-->
+						<div style="margin-bottom: 25px" class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
+							<form:errors path="mobilenumber2" cssClass="error alert alert-danger" />
+							<form:input path="mobilenumber2" placeholder="Mobile Number 2" class="form-control" />
+						</div>
+						<!-- Email-->
+						<div style="margin-bottom: 25px" class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="email" cssClass="error alert alert-danger" />
 							<form:input path="email" placeholder="Email (*)" class="form-control" />
 						</div>
