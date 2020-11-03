@@ -26,12 +26,6 @@ public class LoginController {
 	
 	@GetMapping("/access-denied")
 	public String showAccessDenied() {
-		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if(authentication instanceof UserDetails)
-		{
-			return "redirect:/";
-		}
-		
 		return "access-denied";
 		
 	}

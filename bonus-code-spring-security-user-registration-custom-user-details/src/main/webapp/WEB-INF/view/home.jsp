@@ -37,7 +37,10 @@
 	
 	<hr>
 	
-	
+	<p>
+			<a href="${pageContext.request.contextPath}/update">Update Company Details</a>
+			
+	</p>
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 
 			   method="POST">

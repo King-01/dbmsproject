@@ -17,7 +17,7 @@ public class GstinValidator implements ConstraintValidator<IsGstin, String> {
 	public boolean isValid(final String value,final ConstraintValidatorContext context) {
 		pattern = Pattern.compile(GSTIN_REGEX);
 		if (value == null) {
-			return false;
+			return true;
 		}
 		matcher = pattern.matcher(value);
 		return matcher.matches();

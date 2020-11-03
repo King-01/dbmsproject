@@ -11,6 +11,15 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
+	@Column(name = "displayname")
+	private String displayName;
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
 
 	@Column(name = "username")
 	private String userName;
@@ -103,6 +112,27 @@ public class User {
 		this.roles = roles;
 	}
 
+	public User(Long id, String displayName, String userName, String password, String pan, String gstin,
+			String addressLine1, String tdsAccountNumber, String addressLine2, String city, String pincode,
+			String email, String mobileNumber1, String mobileNumber2, Collection<Role> roles) {
+		super();
+		this.id = id;
+		this.displayName = displayName;
+		this.userName = userName;
+		this.password = password;
+		this.pan = pan;
+		this.gstin = gstin;
+		this.addressLine1 = addressLine1;
+		this.tdsAccountNumber = tdsAccountNumber;
+		this.addressLine2 = addressLine2;
+		this.city = city;
+		this.pincode = pincode;
+		this.email = email;
+		MobileNumber1 = mobileNumber1;
+		MobileNumber2 = mobileNumber2;
+		this.roles = roles;
+	}
+
 	public String getUserName() {
 		return userName;
 	}
@@ -185,10 +215,11 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", userName=" + userName + ", password=" + password + ", pan=" + pan + ", gstin="
-				+ gstin + ", addressLine1=" + addressLine1 + ", tdsAccountNumber=" + tdsAccountNumber
-				+ ", addressLine2=" + addressLine2 + ", city=" + city + ", pincode=" + pincode + ", email=" + email
-				+ ", MobileNumber1=" + MobileNumber1 + ", MobileNumber2=" + MobileNumber2 + ", roles=" + roles + "]";
+		return "User [id=" + id + ", displayName=" + displayName + ", userName=" + userName + ", password=" + password
+				+ ", pan=" + pan + ", gstin=" + gstin + ", addressLine1=" + addressLine1 + ", tdsAccountNumber="
+				+ tdsAccountNumber + ", addressLine2=" + addressLine2 + ", city=" + city + ", pincode=" + pincode
+				+ ", email=" + email + ", MobileNumber1=" + MobileNumber1 + ", MobileNumber2=" + MobileNumber2
+				+ ", roles=" + roles + "]";
 	}
 	
 }

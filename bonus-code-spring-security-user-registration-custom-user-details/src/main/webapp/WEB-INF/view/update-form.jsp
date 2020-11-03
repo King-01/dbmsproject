@@ -6,7 +6,7 @@
 
 <head>
 	
-	<title>Register Company</title>
+	<title>Update Details</title>
 	
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=15, shrink-to-fit=no">
@@ -30,13 +30,13 @@
 			<div class="panel panel-primary">
 
 				<div class="panel-heading">
-					<div class="panel-title">Register New Company</div>
+					<div class="panel-title">Update Company Details</div>
 				</div>
 
 				<div style="padding-top: 30px" class="panel-body">
 
 					<!-- Registration Form -->
-					<form:form action="${pageContext.request.contextPath}/register/processRegistrationForm" 
+					<form:form action="${pageContext.request.contextPath}/updateCompanyForm"
 						  	   modelAttribute="crmUser"
 						  	   class="form-horizontal">
 
@@ -57,30 +57,42 @@
 					            </div>
 					        </div>
 					    </div>
-
+						<div class="form-group">
+					        <div class="col-xs-15">
+					            <div>
+								
+									<!-- Check for registration error -->
+									<c:if test="${successMessage != null}">
+								
+										<div class="alert alert-success">
+											${successMessage}
+										</div>
+		
+									</c:if>
+																			
+					            </div>
+					        </div>
+					    </div>
 						<!-- User name -->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="userName" cssClass="error alert alert-danger" />
 							
-							<form:input path="userName" placeholder="username" class="form-control" />
+							<form:input path="userName" placeholder="username" class="form-control" readonly="true" />
 						</div>
-
-						<!-- Password -->
+						
+						<!-- Display Name-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="password" cssClass="error alert alert-danger" />
-							
-							<form:password path="password" placeholder="password (*)" class="form-control" />
+							<form:password path="password" placeholder="Reenter current Password (*)" class="form-control" />
 						</div>
-						
-						<!-- Confirm Password -->
+						<!-- Display Name-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="matchingPassword" cssClass="error alert alert-danger" />
-							<form:password path="matchingPassword" placeholder="confirm password (*)" class="form-control" />
+							<form:password path="matchingPassword" placeholder="Confirm Current Password (*)" class="form-control" />
 						</div>
-						
 						<!-- Display Name-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
@@ -88,14 +100,14 @@
 							<form:input path="displayName" placeholder="Display Name (*)" class="form-control" />
 						</div>
 						
-						<!-- Email-->
+						<!-- Mobile Number 1-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="mobilenumber1" cssClass="error alert alert-danger" />
 							<form:input path="mobilenumber1" placeholder="Mobile Number 1(*)" class="form-control" />
 						</div>
 						
-						<!-- Email-->
+						<!-- Mobile Number 2-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="mobilenumber2" cssClass="error alert alert-danger" />
@@ -154,7 +166,7 @@
 						<!-- Register Button -->
 						<div style="margin-top: 10px" class="form-group">						
 							<div class="col-sm-6 controls">
-								<button type="submit" class="btn btn-primary">Register</button>
+								<button type="submit" class="btn btn-primary">Update Details</button>
 							</div>
 						</div>
 						
@@ -164,7 +176,7 @@
 						  	   >
 					<div style="margin-top: 10px" class="form-group">						
 							<div class="col-sm-6 controls">
-								<button type="submit" class="btn btn-primary">Back to Login</button>
+								<button type="submit" class="btn btn-primary">Back to Home</button>
 							</div>
 						</div>
 					</form:form>

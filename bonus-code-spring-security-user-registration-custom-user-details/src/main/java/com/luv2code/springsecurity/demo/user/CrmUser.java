@@ -3,6 +3,7 @@ package com.luv2code.springsecurity.demo.user;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.luv2code.springsecurity.demo.entity.User;
 import com.luv2code.springsecurity.demo.validation.FieldMatch;
 import com.luv2code.springsecurity.demo.validation.IsGstin;
 import com.luv2code.springsecurity.demo.validation.IsPan;
@@ -26,11 +27,32 @@ public class CrmUser {
 	@NotNull(message = "is required")
 	private String matchingPassword;
 	@IsPan
+	@NotNull(message = "is required")
 	private String pan;
 	@IsGstin
+	@NotNull(message = "is required")
 	private String gstin;
+	@NotNull(message = "is required")
+	@Size(min = 1, message="is required")
+	private String displayName;
 	
-	
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	@Override
+	public String toString() {
+		return "CrmUser [userName=" + userName + ", password=" + password + ", matchingPassword=" + matchingPassword
+				+ ", pan=" + pan + ", gstin=" + gstin + ", displayName=" + displayName + ", tdsAccountNumber="
+				+ tdsAccountNumber + ", addressLine1=" + addressLine1 + ", addressLine2=" + addressLine2 + ", city="
+				+ city + ", pincode=" + pincode + ", email=" + email + ", mobilenumber1=" + mobilenumber1
+				+ ", mobilenumber2=" + mobilenumber2 + "]";
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
 	private String tdsAccountNumber;
 	@NotNull(message = "is required")
 	@Size(min = 1, message = "is required")
@@ -41,8 +63,10 @@ public class CrmUser {
 	@Size(min = 1, message = "Should not be empty.")
 	private String city;
 	@IsPincode
+	@NotNull(message = "is required")
 	private String pincode;
 	@ValidEmail
+	@NotNull(message = "is required")
 	private String email;
 	
 	@NotNull(message = "is required")
@@ -159,6 +183,22 @@ public class CrmUser {
 		this.pincode = pincode;
 	}
 
-	
+	public CrmUser getCrmUser(User theUser)
+	{
+		CrmUser toReturn = new CrmUser();
+		toReturn.setAddressLine1(theUser.getAddressLine1());
+		toReturn.setAddressLine2(theUser.getAddressLine2());
+		toReturn.setCity(theUser.getCity());
+		toReturn.setDisplayName(theUser.getDisplayName());
+		toReturn.setEmail(theUser.getEmail());
+		toReturn.setGstin(theUser.getGstin());
+		toReturn.setMobilenumber1(theUser.getMobileNumber1());
+		toReturn.setMobilenumber2(theUser.getMobileNumber2());
+		toReturn.setPan(theUser.getPan());
+		toReturn.setPincode(theUser.getPincode());
+		toReturn.setTdsAccountNumber(theUser.getTdsAccountNumber());
+		toReturn.setUserName(theUser.getUserName());
+		return toReturn;
+	}
 	
 }

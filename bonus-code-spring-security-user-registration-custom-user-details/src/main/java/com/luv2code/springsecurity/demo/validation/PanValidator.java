@@ -15,7 +15,7 @@ public class PanValidator implements ConstraintValidator<IsPan, String> {
 	public boolean isValid(final String value,final ConstraintValidatorContext context) {
 		pattern = Pattern.compile(PAN_REGEX);
 		if (value == null) {
-			return false;
+			return true;
 		}
 		matcher = pattern.matcher(value);
 		return matcher.matches();

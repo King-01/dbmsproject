@@ -54,6 +54,7 @@ public class UserServiceImpl implements UserService {
 		user.setPan(crmUser.getPan());
 		user.setPincode(crmUser.getPincode());
 		user.setEmail(crmUser.getEmail());
+		user.setDisplayName(crmUser.getDisplayName());
 		user.setMobileNumber1(crmUser.getMobilenumber1());
 		user.setMobileNumber2(crmUser.getMobilenumber2());
 		// give user default role of "employee"
@@ -77,4 +78,26 @@ public class UserServiceImpl implements UserService {
 	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
 		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 	}
+
+	@Override
+	@Transactional
+	public void saveExceptPassword(CrmUser crmUser) {
+		// TODO Auto-generated method stub
+		User user = userDao.findByUserName(crmUser.getUserName());
+		if (user == null) {
+			throw new UsernameNotFoundException("Invalid username or password.");
+		}
+		user.setAddressLine2(crmUser.getAddressLine2());
+		user.setTdsAccountNumber(crmUser.getTdsAccountNumber());
+		user.setAddressLine1(crmUser.getAddressLine1());
+		user.setGstin(crmUser.getGstin());
+		user.setPan(crmUser.getPan());
+		user.setDisplayName(crmUser.getDisplayName());
+		user.setPincode(crmUser.getPincode());
+		user.setEmail(crmUser.getEmail());
+		user.setMobileNumber1(crmUser.getMobilenumber1());
+		user.setMobileNumber2(crmUser.getMobilenumber2());
+		userDao.save(user);
+	}
+	
 }
