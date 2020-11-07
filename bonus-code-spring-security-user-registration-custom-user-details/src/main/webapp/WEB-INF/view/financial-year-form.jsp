@@ -22,7 +22,31 @@
 </head>
 
 <body>
+		<c:if test="${registrationError != null}">
 
+		<div class="alert alert-danger col-xs-offset-1 col-xs-10">
+			${registrationError}
+		</div>
+	</c:if>
+	<!-- Check for registration error -->
+	<c:if test="${successMessage != null}">
+
+		<div class="alert alert-success">
+			${successMessage}
+		</div>
+
+	</c:if>
+
+
+	<!-- Check for registration error -->
+	<c:if test="${someerror != null}">
+
+		<div class="alert alert-danger col-xs-offset-1 col-xs-10r">
+			${someerror}
+		</div>
+
+	</c:if>
+	
 	<div>
 		
 		<div id="loginbox" style="margin-top: 50px;"

@@ -6,6 +6,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import com.luv2code.springsecurity.demo.validation.IsPan;
+import com.luv2code.springsecurity.demo.validation.IsPincode;
+import com.luv2code.springsecurity.demo.validation.ValidEmail;
+import com.luv2code.springsecurity.demo.validation.ValidMobileNumber;
 
 @Entity
 @Table(name="accounts")
@@ -13,46 +20,61 @@ public class Account {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
-	private String id;
+	private Long id;
 	
 	@Column(name="accountname")
+	@NotNull(message="is required")
+	@Size(min = 1 ,message = "is required")
 	private String accountName;
 	
 	@Column(name="guarantorname")
+	@NotNull(message="is required")
+	@Size(min = 1 ,message = "is required")
 	private String guarantorName;
 	
 	@Column(name="HSNnumber")
 	private String HsnNumber;
 
 	@Column(name="email")
+	@ValidEmail
 	private String email;
-	
+
+	@NotNull(message = "is required")
+	@ValidMobileNumber
 	@Column(name="mobilenumber1")
 	private String mobileNumber1;
 	
 	@Column(name="mobilenumber2")
+	@ValidMobileNumber
 	private String mobileNumber2;	
 	
 	@Column(name="PAN")
+	@IsPan
 	private String pan;
 	
 	@Column(name="addressline1")
+	@NotNull(message="is required")
+	@Size(min = 1 ,message = "is required")
 	private String addressLine1;
 	
 	@Column(name="addressline2")
 	private String addressLine2;
 	
 	@Column(name="city")
+	@NotNull(message="is required")
+	@Size(min = 1 ,message = "is required")
 	private String city;
 	
 	@Column(name="pincode")
+	@NotNull(message="is required")
+	@Size(min = 1 ,message = "is required")
+	@IsPincode
 	private String pincode;
 	
-	@Column(name="username_id")
-	private String userName;
 	
 	@Column(name="groupname")
-	private String groupName;
+	@NotNull(message="is required")
+	private Long groupId;
 
 	public String getAccountName() {
 		return accountName;
@@ -143,23 +165,15 @@ public class Account {
 		this.pincode = pincode;
 	}
 
-	public String getUserName() {
-		return userName;
+	public Long getGroupId() {
+		return groupId;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setGroupId(Long groupId) {
+		this.groupId = groupId;
 	}
 
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
-
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -168,8 +182,35 @@ public class Account {
 		return "Account [id=" + id + ", accountName=" + accountName + ", guarantorName=" + guarantorName
 				+ ", HsnNumber=" + HsnNumber + ", email=" + email + ", mobileNumber1=" + mobileNumber1
 				+ ", mobileNumber2=" + mobileNumber2 + ", pan=" + pan + ", addressLine1=" + addressLine1
-				+ ", addressLine2=" + addressLine2 + ", city=" + city + ", pincode=" + pincode + ", userName="
-				+ userName + ", groupName=" + groupName + "]";
+				+ ", addressLine2=" + addressLine2 + ", city=" + city + ", pincode=" + pincode + ", groupId=" + groupId
+				+ "]";
+	}
+	public Account() {
+		
+	}
+	public Account(Long id,
+			@NotNull(message = "is required") @Size(min = 1, message = "is required") String accountName,
+			@NotNull(message = "is required") @Size(min = 1, message = "is required") String guarantorName,
+			String hsnNumber, String email, @NotNull(message = "is required") String mobileNumber1,
+			String mobileNumber2, String pan,
+			@NotNull(message = "is required") @Size(min = 1, message = "is required") String addressLine1,
+			String addressLine2, @NotNull(message = "is required") @Size(min = 1, message = "is required") String city,
+			@NotNull(message = "is required") @Size(min = 1, message = "is required") String pincode,
+			@NotNull(message = "is required") Long groupId) {
+		super();
+		this.id = id;
+		this.accountName = accountName;
+		this.guarantorName = guarantorName;
+		HsnNumber = hsnNumber;
+		this.email = email;
+		this.mobileNumber1 = mobileNumber1;
+		this.mobileNumber2 = mobileNumber2;
+		this.pan = pan;
+		this.addressLine1 = addressLine1;
+		this.addressLine2 = addressLine2;
+		this.city = city;
+		this.pincode = pincode;
+		this.groupId = groupId;
 	}
 
 }

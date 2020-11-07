@@ -99,5 +99,11 @@ public class UserServiceImpl implements UserService {
 		user.setMobileNumber2(crmUser.getMobilenumber2());
 		userDao.save(user);
 	}
+
+	@Override
+	public void save(User theUser) {
+		// TODO Auto-generated method stub
+		userDao.save(theUser);
+	}
 	
 }

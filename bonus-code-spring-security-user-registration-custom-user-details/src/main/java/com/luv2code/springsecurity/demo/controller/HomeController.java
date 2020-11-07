@@ -12,5 +12,12 @@ public class HomeController {
 		return "home";
 	}
 	
-	
+	@RequestMapping("/add")
+	public String showAdd(Model theModel) {
+		return "add";
+	}
+	@RequestMapping("/view")
+	public String showView(Model theModel) {
+		return "view";
+	}
 }

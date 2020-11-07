@@ -33,8 +33,11 @@ public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests()
 			.antMatchers("/").hasRole("EMPLOYEE")
-			.antMatchers("/leaders/**").hasRole("MANAGER")
-			.antMatchers("/systems/**").hasRole("ADMIN")
+			.antMatchers("/view/**").hasRole("EMPLOYEE")
+			.antMatchers("/add/**").hasRole("EMPLOYEE")
+			.antMatchers("/process/**").hasRole("EMPLOYEE")
+			.antMatchers("/delete/**").hasRole("EMPLOYEE")
+			.antMatchers("/update/**").hasRole("EMPLOYEE")
 			.and()
 			.formLogin()
 				.loginPage("/showMyLoginPage")

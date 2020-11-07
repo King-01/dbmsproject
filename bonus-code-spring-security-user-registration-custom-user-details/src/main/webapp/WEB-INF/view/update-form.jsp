@@ -22,6 +22,31 @@
 </head>
 
 <body>
+	<c:if test="${registrationError != null}">
+
+		<div class="alert alert-danger col-xs-offset-1 col-xs-10">
+			${registrationError}
+		</div>
+	</c:if>
+	<!-- Check for registration error -->
+	<c:if test="${successMessage != null}">
+
+		<div class="alert alert-success">
+			${successMessage}
+		</div>
+
+	</c:if>
+
+
+	<!-- Check for registration error -->
+	<c:if test="${someerror != null}">
+
+		<div class="alert alert-danger col-xs-offset-1 col-xs-10r">
+			${someerror}
+		</div>
+
+	</c:if>
+
 	<div>
 		
 		<div id="loginbox" style="margin-top: 30px;"
@@ -40,39 +65,7 @@
 						  	   modelAttribute="crmUser"
 						  	   class="form-horizontal">
 
-					    <!-- Place for messages: error, alert etc ... -->
-					    <div class="form-group">
-					        <div class="col-xs-15">
-					            <div>
-								
-									<!-- Check for registration error -->
-									<c:if test="${registrationError != null}">
-								
-										<div class="alert alert-danger col-xs-offset-1 col-xs-10">
-											${registrationError}
-										</div>
-		
-									</c:if>
-																			
-					            </div>
-					        </div>
-					    </div>
-						<div class="form-group">
-					        <div class="col-xs-15">
-					            <div>
-								
-									<!-- Check for registration error -->
-									<c:if test="${successMessage != null}">
-								
-										<div class="alert alert-success">
-											${successMessage}
-										</div>
-		
-									</c:if>
-																			
-					            </div>
-					        </div>
-					    </div>
+					    
 						<!-- User name -->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 

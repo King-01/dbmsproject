@@ -10,4 +10,5 @@ public interface UserService extends UserDetailsService {
 
     void save(CrmUser crmUser);
     void saveExceptPassword(CrmUser theCrmUser);
+    void save(User theUser);
 }

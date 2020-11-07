@@ -15,6 +15,4 @@ public class BankTransactions {
 	@Column(name="id")
 	private Long bankTransactionsId;
 	
-	@Column(name="name")
-	private String  
 }
