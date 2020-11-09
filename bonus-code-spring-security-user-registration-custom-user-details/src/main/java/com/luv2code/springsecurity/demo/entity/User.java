@@ -45,6 +45,10 @@ public class User {
 	@Column(name = "city")
 	private String city;
 
+	public Long getId() {
+		return id;
+	}
+
 	@Column(name = "pincode")
 	private String pincode;
 	@Column(name = "email")

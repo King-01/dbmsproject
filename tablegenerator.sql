@@ -118,17 +118,22 @@ foreign key(groupname) references group_s(id) on delete cascade
 insert into accounts value(
 '1', 'Yay', 'Pradeep Kumar', '1', NULL, NULL, '9782565081', NULL, NULL, NULL, 'Room Number - 9, C. V. Raman Hostel,', 'Varanasi, Uttar Pradesh', '221005');
 insert into accounts value('2', 'Dharma', 'Pradeep', '1', '123', NULL, '9782565081', NULL, NULL, NULL, 'Room Number - 9, C. V. Raman Hostel,', 'Varanasi, Uttar Pradesh', '221005');
-drop table if exists journalvoucher;
-create table journalvoucher(
-jvoucherid int not null auto_increment,
-date varchar(50) not null,
-credittotal double not null default 0,
-debittotal double not null default 0,
-name int not null,
-primary key(jvoucherid),
-username_id varchar(50) not null,
-foreign key(username_id) references user(username) on delete cascade,
-foreign key(name) references accounts(id) on delete cascade
+
+drop table if exists tax;
+create table tax(
+id int not null auto_increment,
+taxtype varchar(50) not null,
+username_id int not null,	
+taxrate varchar(50) not null default 0,
+foreign key(username_id) references user(id) on delete cascade,
+primary key(id),
+unique(taxtype, taxrate)
+);
+insert into tax value(
+'1', 'CGST', '1', '5'
+);
+insert into tax value(
+'2', 'SGST', '1', '6'
 );
 drop table if exists stockitem;
 create table stockitem(
@@ -136,32 +141,45 @@ id int not null auto_increment,
 primary key(id),
 itemname varchar(50) not null unique,
 hsngroup varchar(50),
-manditax double not null,
-kkfee double not null,
-commision double not null,
-labourcharge double not null,
-packing double not null,
+manditax varchar(50) not null,
+kkfee varchar(50) not null,
+commision varchar(50) not null,
+labourcharge varchar(50) not null,
+packing varchar(50) not null,
 groupname int not null,
 foreign key(groupname) references group_s(id) on delete cascade
 );
-drop table if exists tax;
-create table tax(
-id int not null auto_increment,
-primary key(id),
-taxtype varchar(50) not null,
-itemname varchar(50) not null,
+insert into stockitem value(
+'1', 'Wheat', NULL, '5', '6', '4', '2', '1', '1'
+);
+drop table if exists stock_tax;
+create table stock_tax(
+	id int unique not null auto_increment,
+	stock_id int not null,
+    tax_id int not null,
+    primary key(id),
+    foreign key(stock_id) references stockitem(id),
+    foreign key(tax_id) references tax(id),
+    unique(stock_id, tax_id)
+);
+drop table if exists journalvoucher;
+create table journalvoucher(
+jvoucherid int not null auto_increment,
+date date not null,
+credittotal varchar(50) not null default 0,
+debittotal varchar(50) not null default 0,
+name int not null,
+primary key(jvoucherid),
 username_id varchar(50) not null,
 foreign key(username_id) references user(username) on delete cascade,
-taxrate double not null default 0,
-foreign key(itemname) references stockitem(itemname) on delete cascade,
-unique(taxtype, itemname)
+foreign key(name) references accounts(id) on delete cascade
 );
 drop table if exists bankvoucher;
 create table bankvoucher(
 bvoucherid int not null auto_increment,
-date varchar(50) not null,
-credittotal double not null default 0,
-debittotal double not null default 0,
+date date not null,
+credittotal varchar(50) not null default 0,
+debittotal varchar(50) not null default 0,
 name int not null,
 primary key(bvoucherid),
 username_id varchar(50) not null,
@@ -171,9 +189,9 @@ foreign key(name) references accounts(id) on delete cascade
 drop table if exists cashvoucher;
 create table cashvoucher(
 cvoucherid int not null auto_increment,
-date varchar(50) not null,
-credittotal double not null default 0,
-debittotal double not null default 0,
+date date not null,
+credittotal varchar(50) not null default 0,
+debittotal varchar(50) not null default 0,
 name int not null,
 description varchar(100) not null default '-',
 primary key(cvoucherid),
@@ -186,7 +204,7 @@ create table banktransactions(
 id int not null auto_increment,
 name int not null,
 bvoucherid int not null,
-amount double not null default 0,
+amount varchar(50) not null default 0,
 iscredit bool not null default false,
 description varchar(100) not null default '-',
 primary key(id),
@@ -202,7 +220,7 @@ id int not null auto_increment,
 primary key(id),
 name varchar(50) not null,
 jvoucherid int not null,
-amount double not null default 0,
+amount varchar(50) not null default 0,
 iscredit bool not null default false,
 description varchar(100) not null default '-',
 foreign key (name) references accounts(accountname) on delete cascade,
@@ -215,8 +233,8 @@ drop table if exists purchasebill;
 create table purchasebill(
 pvoucherid int not null auto_increment,
 trucknumber varchar(50),
-fixedcost double not null default 0,
-currdate varchar(50) not null,
+fixedcost varchar(50) not null default 0,
+currdate date not null,
 iscredit bool not null default false,
 suppliername varchar(50) not null,
 primary key(pvoucherid),
@@ -228,7 +246,7 @@ drop table if exists salebill;
 create table salebill(
 svoucherid int not null auto_increment,
 iscredit bool not null default false,
-currdate varchar(50) not null,
+currdate date not null,
 username_id varchar(50) not null,
 foreign key(username_id) references user(username) on delete cascade,
 trucknumber varchar(50) not null default '-',
@@ -239,7 +257,7 @@ create table saleitems(
 id int not null auto_increment,
 primary key(id),
 quantity varchar(50) not null default 0,
-rate double not null default 0,
+rate varchar(50) not null default 0,
 svoucherid int not null,
 itemname varchar(50) not null,
 foreign key(svoucherid) references salebill(svoucherid) on delete cascade,
@@ -250,7 +268,7 @@ create table purchaseitems(
 id int not null auto_increment,
 primary key(id),
 quantity varchar(50) not null default 0,
-rate double not null default 0,
+rate varchar(50) not null default 0,
 pvoucherid int not null,
 itemname varchar(50) not null,
 foreign key(pvoucherid) references purchasebill(pvoucherid) on delete cascade,

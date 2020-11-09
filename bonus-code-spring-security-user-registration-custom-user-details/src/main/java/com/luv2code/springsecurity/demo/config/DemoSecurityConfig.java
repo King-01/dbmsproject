@@ -9,10 +9,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.luv2code.springsecurity.demo.service.UserService;
 
 @Configuration
+@EnableWebMvc
 @EnableWebSecurity
 public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -32,7 +34,9 @@ public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.authorizeRequests()
-			.antMatchers("/").hasRole("EMPLOYEE")
+			.antMatchers("/register/**").permitAll()
+			.antMatchers("/favicon.ico").permitAll()
+			.antMatchers("/**").hasRole("EMPLOYEE")
 			.antMatchers("/view/**").hasRole("EMPLOYEE")
 			.antMatchers("/add/**").hasRole("EMPLOYEE")
 			.antMatchers("/process/**").hasRole("EMPLOYEE")

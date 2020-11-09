@@ -6,7 +6,7 @@
 
 <head>
 	
-	<title>View Account</title>
+	<title>View Stock Item</title>
 	
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -59,7 +59,7 @@
 			<div class="panel panel-primary">
 
 				<div class="panel-heading">
-					<div class="panel-title">Create Account</div>
+					<div class="panel-title">Stock Item</div>
 				</div>
 
 				<div style="padding-top: 30px" class="panel-body">

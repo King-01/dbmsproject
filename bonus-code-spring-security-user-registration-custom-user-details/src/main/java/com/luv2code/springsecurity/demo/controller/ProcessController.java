@@ -1,13 +1,14 @@
 package com.luv2code.springsecurity.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.persistence.Query;
 import javax.validation.Valid;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,10 +28,14 @@ import com.luv2code.springsecurity.demo.entity.Account;
 import com.luv2code.springsecurity.demo.entity.Group;
 import com.luv2code.springsecurity.demo.entity.Schedule;
 import com.luv2code.springsecurity.demo.entity.StockItem;
+import com.luv2code.springsecurity.demo.entity.StockTax;
+import com.luv2code.springsecurity.demo.entity.Tax;
 import com.luv2code.springsecurity.demo.service.AccountService;
 import com.luv2code.springsecurity.demo.service.GroupService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
 import com.luv2code.springsecurity.demo.service.StockItemService;
+import com.luv2code.springsecurity.demo.service.StockTaxService;
+import com.luv2code.springsecurity.demo.service.TaxService;
 import com.luv2code.springsecurity.demo.user.ScheduleUser;
 
 @Controller
@@ -43,9 +48,13 @@ public class ProcessController {
 	@Autowired
 	private GroupService groupService;
 	@Autowired
+	private TaxService taxService;
+	@Autowired
 	private AccountService accountService;
 	@Autowired
 	private StockItemService stockItemService;
+	@Autowired
+	private StockTaxService stockTaxService;
 	private Logger logger = Logger.getLogger(getClass().getName());
 	
 	@InitBinder
@@ -318,6 +327,179 @@ public class ProcessController {
 				logger.info("Couldn't execute the add stock-item command due to exception: " + e);
 				theModel.addAttribute("registrationError", "an unexpected error occured : " + e);
 				return "add-stockitem";
+			}
+		}
+		theModel.addAttribute("registrationError", "Log in first to continue.");
+		return "redirect:/";
+	}
+	@RequestMapping("/tax")
+	public String addTax(
+			@ModelAttribute("addelem") @Valid Tax addItem,
+			BindingResult theBindingResult, 
+			Model theModel, 
+			RedirectAttributes ra)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((UserDetails)authentication).getUsername();
+			if(theBindingResult.hasErrors())
+			{
+				logger.info(theBindingResult.toString());
+				return "add-tax";
+			}
+			try {	
+				logger.info("processing add tax for user : " + userName + "in ProcessController, /process/tax" + " name of tax : " + addItem.getTaxName());
+				List<Tax> theItemList = taxService.getTaxByUserName(userName);
+				for(int i = 0;i < theItemList.size(); i++)
+				{
+					if(theItemList.get(i).getTaxName().equals(addItem.getTaxName()) && theItemList.get(i).getTaxPercent().equals(addItem.getTaxPercent()))
+					{
+						logger.info("Tax Item by the same name and percentage" + Long.toString(theItemList.get(i).getId()) + " already exists!");
+						theModel.addAttribute("registrationError", "Tax Item by the same name and percentage already exists!");
+						return "add-tax";
+					}
+				}
+				taxService.save(addItem);
+				logger.info("Stock Item creation by the name : " + addItem.getTaxName() + " successful!");
+				ra.addFlashAttribute("successMessage", "Tax item creation by the name : " + addItem.getTaxName() + " successful!");
+				return "redirect:/add";
+			}
+			catch(Exception e) {
+				logger.info("Couldn't execute the add tax-item command due to exception: " + e);
+				theModel.addAttribute("registrationError", "an unexpected error occured : " + e);
+				return "add-tax";
+			}
+		}
+		theModel.addAttribute("registrationError", "Log in first to continue.");
+		return "redirect:/";
+	}
+	@RequestMapping("/stocktax")
+	@Transactional
+	public String processStockTax(
+			@ModelAttribute("addelem") @Valid StockTax addItem,
+			BindingResult theBindingResult, 
+			Model theModel, 
+			RedirectAttributes ra)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((UserDetails)authentication).getUsername();
+			if(theBindingResult.hasErrors())
+			{
+				logger.info(theBindingResult.toString());
+				List<Tax> taxes = taxService.getTaxByUserName(userName);
+				List<StockItem> items = stockItemService.getStockItemByUserName(userName);
+				theModel.addAttribute("taxes", taxes);
+				theModel.addAttribute("items", items);
+				return "add-stocktax";
+			}
+			logger.info((Long.toString(addItem.getStockId())));
+			try {	
+				logger.info("processing add stocktax for user : " + userName + "in ProcessController, /process/stocktax" + " name of tax : " + addItem.getTaxId());
+				Session crs = sessionFactory.getCurrentSession();
+				Query<StockTax>
+				theQuery = crs.createQuery("from StockTax where taxId =: TaxId"
+						+ " and stockId =: StockId", StockTax.class);
+				theQuery.setParameter("TaxId", addItem.getTaxId());
+				theQuery.setParameter("StockId", addItem.getStockId());
+				List<StockTax> itml = theQuery.getResultList();
+				if(itml.size() > 0)
+				{
+					logger.info("Stock is already associated with this tax!");
+					ra.addFlashAttribute("registrationError", "Stock is already associated with this tax!");
+					return "redirect:/add/stocktax";
+				}
+				stockTaxService.save(addItem);
+				logger.info("Stock with id : " + Long.toString(addItem.getStockId()) + " successfully associated with tax with id : " + Long.toString(addItem.getTaxId()) + "!");
+				ra.addFlashAttribute("successMessage", "Opertion Successful!");
+				return "redirect:/add";
+			}
+			catch(Exception e) {
+				List<Tax> taxes = taxService.getTaxByUserName(userName);
+				List<StockItem> items = stockItemService.getStockItemByUserName(userName);
+				theModel.addAttribute("taxes", taxes);
+				theModel.addAttribute("items", items);
+				logger.info("Couldn't execute the add stocktax-item command due to exception: " + e);
+				theModel.addAttribute("registrationError", "an unexpected error occured : " + e);
+				return "add-stocktax";
+			}
+		}
+		theModel.addAttribute("registrationError", "Log in first to continue.");
+		return "redirect:/";
+	}
+	@RequestMapping("/stocktaxhandler")
+	@Transactional
+	public String processStockTaxHandler(
+			@ModelAttribute("addelem") StockTax addItem,
+			BindingResult theBindingResult, 
+			Model theModel, 
+			RedirectAttributes ra)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((UserDetails)authentication).getUsername();
+			if(theBindingResult.hasErrors())
+			{
+				logger.info(theBindingResult.toString());
+				return "redirect:/view";
+			}
+			try {	
+				logger.info("processing add stocktax for user : " + userName + "in ProcessController, /process/stocktax" + " name of tax : " + addItem.getTaxId());
+				if(addItem.getStockId() != null && addItem.getTaxId() != null)
+				{
+					ra.addFlashAttribute("someerror", "Invalid choice, please try again!");
+					return "redirect:/view";
+				}
+				if(addItem.getStockId() == null && addItem.getTaxId() == null)
+				{
+					ra.addFlashAttribute("someerror", "Invalid choice, please try again!");
+					return "redirect:/view";
+				}
+				if(addItem.getStockId() != null)
+				{
+					Session crs = sessionFactory.getCurrentSession();
+					Long id = addItem.getStockId();
+					List<StockTax> theList = stockTaxService.getStockTaxByStockId(id);
+					List<Tax> t = new ArrayList<Tax>();
+					for(int i = 0; i < theList.size(); i++)
+					{
+						Session crs1 = sessionFactory.getCurrentSession();
+						t.add(crs1.get(Tax.class, theList.get(i).getTaxId()));
+					}
+					logger.info("The size of Tax is : " + Integer.toString(t.size()) + " for stock item id : " + Long.toString(id));
+					theModel.addAttribute("taxes", t);
+					theModel.addAttribute("stock", crs.get(StockItem.class, id));
+					return "show-taxbystock";
+				}
+				else
+				{
+					Session crs = sessionFactory.getCurrentSession();
+					Long id = addItem.getTaxId();
+					logger.info(Long.toString(id));
+					List<StockTax> theList = stockTaxService.getStockTaxByTaxId(id);
+					List<StockItem> t = new ArrayList<StockItem>();
+					for(int i = 0; i < theList.size(); i++)
+					{
+						Session crs1 = sessionFactory.getCurrentSession();
+						t.add(crs1.get(StockItem.class, theList.get(i).getStockId()));
+					}
+					logger.info("The size of Stock item is : " + Integer.toString(t.size()) + " for tax item id : " + Long.toString(id));
+					theModel.addAttribute("stocks", t);
+					theModel.addAttribute("tax", crs.get(Tax.class, id));
+					return "show-stockbytax";
+				}
+			}
+			catch(Exception e) {
+				List<Tax> taxes = taxService.getTaxByUserName(userName);
+				List<StockItem> items = stockItemService.getStockItemByUserName(userName);
+				theModel.addAttribute("taxes", taxes);
+				theModel.addAttribute("items", items);
+				logger.info("Couldn't execute the add stocktax-item command due to exception: " + e);
+				theModel.addAttribute("registrationError", "an unexpected error occured : " + e);
+				return "add-stocktax";
 			}
 		}
 		theModel.addAttribute("registrationError", "Log in first to continue.");

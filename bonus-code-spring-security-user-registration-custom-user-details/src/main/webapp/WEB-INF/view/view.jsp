@@ -58,6 +58,18 @@
 			<a href="${pageContext.request.contextPath}/view/stockitem">View Stock Items</a>
 			
 	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/tax">View Tax</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/taxbystock">View Tax by Stock</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/stockbytax">View Stock by Taxes</a>
+			
+	</p>
 	
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 

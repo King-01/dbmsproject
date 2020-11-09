@@ -19,8 +19,16 @@ import com.love2code.springsecurity.demo.form.StockForm;
 import com.luv2code.springsecurity.demo.entity.Account;
 import com.luv2code.springsecurity.demo.entity.Group;
 import com.luv2code.springsecurity.demo.entity.Schedule;
+import com.luv2code.springsecurity.demo.entity.StockItem;
+import com.luv2code.springsecurity.demo.entity.StockTax;
+import com.luv2code.springsecurity.demo.entity.Tax;
+import com.luv2code.springsecurity.demo.entity.User;
 import com.luv2code.springsecurity.demo.service.GroupService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
+import com.luv2code.springsecurity.demo.service.StockItemService;
+import com.luv2code.springsecurity.demo.service.StockTaxService;
+import com.luv2code.springsecurity.demo.service.TaxService;
+import com.luv2code.springsecurity.demo.service.UserService;
 import com.luv2code.springsecurity.demo.user.ScheduleUser;
 @Controller
 @RequestMapping("/add")
@@ -31,6 +39,14 @@ public class AddController {
 	private GroupService groupService;
 	@Autowired
 	private SessionFactory sessionFactory;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private TaxService taxService;
+	@Autowired
+	private StockTaxService stockTaxService;
+	@Autowired
+	private StockItemService stockItemService;
 	
 	private Logger logger = Logger.getLogger(getClass().getName());
 	
@@ -116,6 +132,42 @@ public class AddController {
 			logger.info("Form to Add stock item for user : " + userName + " in AddController /add/stockitem");
 			theModel.addAttribute("listofgroup", listofgroup);
 			return "add-stockitem";
+		}
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		return "redirect:/";
+		
+	}
+	
+	@RequestMapping("/tax")
+	public String addTax(Model theModel, RedirectAttributes ra)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			User currentuser = userService.findByUserName((((UserDetails)authentication).getUsername()));
+			Tax addelem = new Tax();
+			addelem.setUserid(currentuser.getId());
+			theModel.addAttribute("addelem", addelem);
+			return "add-tax";
+		}
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		return "redirect:/";
+		
+	}
+	@RequestMapping("/stocktax")
+	public String addTaxToStock(Model theModel, RedirectAttributes ra)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((((UserDetails)authentication).getUsername()));
+			StockTax newelem = new StockTax();
+			List<Tax> taxes = taxService.getTaxByUserName(userName);
+			List<StockItem> items = stockItemService.getStockItemByUserName(userName);
+			theModel.addAttribute("addelem", newelem);
+			theModel.addAttribute("taxes", taxes);
+			theModel.addAttribute("items", items);
+			return "add-stocktax";
 		}
 		ra.addFlashAttribute("someerror", "Please Login to continue");
 		return "redirect:/";

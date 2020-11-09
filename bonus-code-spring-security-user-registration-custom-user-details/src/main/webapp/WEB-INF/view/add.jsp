@@ -57,6 +57,14 @@
 			<a href="${pageContext.request.contextPath}/add/stockitem">Add Stock Item</a>
 			
 	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/add/tax">Add Tax</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/add/stocktax">Add Tax to Stock</a>
+			
+	</p>
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 
 			   method="POST">

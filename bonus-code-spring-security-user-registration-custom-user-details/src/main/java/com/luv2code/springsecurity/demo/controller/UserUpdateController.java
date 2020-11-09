@@ -159,7 +159,7 @@ public class UserUpdateController {
 		theModel.addAttribute("UpdatePasswordUser", toAddUser);
 		return "update-password-form";
 	}
-	@RequestMapping("/updatePassword")
+	@PostMapping("/updatePassword")
 	@Transactional
 	public String updatePassword(
 			@Valid @ModelAttribute("UpdatePasswordUser") PasswordUser thePasswordUser, 
@@ -178,6 +178,11 @@ public class UserUpdateController {
 			return "update-password-form";
 	    }
 		User theUser = userService.findByUserName(userName);
+		if(!passwordEncoder.matches(thePasswordUser.getConfirmPassword(), theUser.getPassword()))
+		{
+			theModel.addAttribute("someerror", "Entered password does not match!");
+			return "update-password-form";
+		}
 		theUser.setPassword(passwordEncoder.encode(thePasswordUser.getChangePassword()));
 		userService.save(theUser);
 		theModel.addAttribute("successMessage", "Your Password has been changed Successfully!");

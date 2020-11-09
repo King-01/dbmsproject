@@ -23,10 +23,13 @@ import com.luv2code.springsecurity.demo.entity.Account;
 import com.luv2code.springsecurity.demo.entity.Group;
 import com.luv2code.springsecurity.demo.entity.Schedule;
 import com.luv2code.springsecurity.demo.entity.StockItem;
+import com.luv2code.springsecurity.demo.entity.StockTax;
+import com.luv2code.springsecurity.demo.entity.Tax;
 import com.luv2code.springsecurity.demo.service.AccountService;
 import com.luv2code.springsecurity.demo.service.GroupService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
 import com.luv2code.springsecurity.demo.service.StockItemService;
+import com.luv2code.springsecurity.demo.service.TaxService;
 
 @Controller
 @RequestMapping("/view")
@@ -41,6 +44,8 @@ public class ViewController {
 	private AccountService accountService;
 	@Autowired
 	private StockItemService stockItemService;
+	@Autowired
+	private TaxService taxService;
 	
 	private Logger logger = Logger.getLogger(getClass().getName());
 	
@@ -201,6 +206,95 @@ public class ViewController {
 			theModel.addAttribute("newstockitem", obj1);
 			return "show-specific-stockitem";
 			
+		}
+		
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		
+		return "redirect:/";
+	}
+
+	@RequestMapping("/tax")
+	public String showTax(Model theModel, RedirectAttributes ra)
+	{
+		Object authentication = 
+				SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((UserDetails)authentication)
+					.getUsername();
+			List<Tax> theList
+			= taxService.getTaxByUserName(userName);
+			
+			theModel.addAttribute("list", theList);
+			return "show-tax";
+		}
+		
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		
+		return "redirect:/";
+	}
+	@RequestMapping("/taxbyid")
+	@Transactional
+	public String showTaxById(Model theModel
+			, @RequestParam("taxId") Long theId
+			, RedirectAttributes ra)
+	{
+		Object authentication = SecurityContextHolder
+				.getContext().getAuthentication()
+				.getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			Session crs = sessionFactory.getCurrentSession();
+			Tax obj = crs.get(Tax.class, theId);
+			theModel.addAttribute("display", obj);
+			return "show-specific-tax";
+			
+		}
+		
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		
+		return "redirect:/";
+	}
+	@RequestMapping("/taxbystock")
+	public String showTaxbyStock(Model theModel, RedirectAttributes ra)
+	{
+		Object authentication = 
+				SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((UserDetails)authentication)
+					.getUsername();
+			List<Tax> theList
+			= taxService.getTaxByUserName(userName);
+			StockTax st = new StockTax();
+			theModel.addAttribute("addelem", st);
+			theModel.addAttribute("taxes", theList);
+			return "show-general";
+		}
+		
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		
+		return "redirect:/";
+	}
+	@RequestMapping("/stockbytax")
+	public String showStockbyTax(Model theModel, RedirectAttributes ra)
+	{
+		Object authentication = 
+				SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((UserDetails)authentication)
+					.getUsername();
+			List<StockItem> theList
+			= stockItemService.getStockItemByUserName(userName);
+
+			StockTax st = new StockTax();
+			theModel.addAttribute("addelem", st);
+			theModel.addAttribute("items", theList);
+			return "show-general";
 		}
 		
 		ra.addFlashAttribute("someerror", "Please Login to continue");

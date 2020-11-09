@@ -65,11 +65,11 @@ startcounter number:before {
 		<br><br><br>
 	</c:forEach>
 	</startcounter>
-	<form:form action="${pageContext.request.contextPath}/add/Schedule" 
+	<form:form action="${pageContext.request.contextPath}/add/group" 
 					  	   >
 	<div style="margin-top: 10px" class="form-group">						
 			<div class="col-sm-6 controls">
-				<button type="submit" class="btn btn-primary">Add New Schedule</button>
+				<button type="submit" class="btn btn-primary">Add New Group</button>
 			</div>
 		</div>
 	</form:form>
