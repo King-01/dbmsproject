@@ -1,5 +1,6 @@
 package com.luv2code.springsecurity.demo.controller;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -14,19 +15,24 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.love2code.springsecurity.demo.form.StockForm;
 import com.luv2code.springsecurity.demo.entity.Account;
+import com.luv2code.springsecurity.demo.entity.BankVoucher;
 import com.luv2code.springsecurity.demo.entity.Group;
+import com.luv2code.springsecurity.demo.entity.JournalVoucher;
 import com.luv2code.springsecurity.demo.entity.Schedule;
 import com.luv2code.springsecurity.demo.entity.StockItem;
 import com.luv2code.springsecurity.demo.entity.StockTax;
 import com.luv2code.springsecurity.demo.entity.Tax;
 import com.luv2code.springsecurity.demo.service.AccountService;
+import com.luv2code.springsecurity.demo.service.BankVoucherService;
 import com.luv2code.springsecurity.demo.service.GroupService;
+import com.luv2code.springsecurity.demo.service.JournalVoucherService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
 import com.luv2code.springsecurity.demo.service.StockItemService;
 import com.luv2code.springsecurity.demo.service.TaxService;
@@ -34,6 +40,7 @@ import com.luv2code.springsecurity.demo.service.TaxService;
 @Controller
 @RequestMapping("/view")
 public class ViewController {
+	private static DecimalFormat df = new DecimalFormat("0.00");
 	@Autowired
 	private ScheduleService scheduleService;
 	@Autowired
@@ -42,6 +49,10 @@ public class ViewController {
 	private GroupService groupService;
 	@Autowired
 	private AccountService accountService;
+	@Autowired
+	private JournalVoucherService journalVoucherService;
+    @Autowired
+    private BankVoucherService bankVoucherService;
 	@Autowired
 	private StockItemService stockItemService;
 	@Autowired
@@ -301,4 +312,247 @@ public class ViewController {
 		
 		return "redirect:/";
 	}
+	@RequestMapping("/journalvoucherbyaccount")
+	@Transactional
+	public String showJournalVoucher(
+			@ModelAttribute("addelem") JournalVoucher addelem,
+			Model theModel, 
+			RedirectAttributes ra)
+	{
+		Object authentication = 
+				SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((UserDetails)authentication)
+					.getUsername();
+			List<Account> theList
+			= accountService.getAccountByUserName(userName);
+			theModel.addAttribute("items", theList);
+			if(addelem == null) 
+			{
+				;
+			}
+			else if(addelem.getAccountId() == null)
+			{
+				theModel.addAttribute("registrationError", "Please select an account to view its vouchers!");
+			}
+			else
+			{
+				Double tot = 0.0;
+				List<JournalVoucher> theVouchers = journalVoucherService.
+						getJournalVoucher(addelem.getAccountId(), userName);
+				theModel.addAttribute("theVouchers", theVouchers);
+				for(int i = 0; i < theVouchers.size(); i++)
+				{
+					tot += theVouchers.get(i).getCreditTotal();
+					tot -= theVouchers.get(i).getDebitTotal();
+					theVouchers.get(i).setDebitTotal(Double.parseDouble(df.format(theVouchers.get(i).getDebitTotal())));
+					theVouchers.get(i).setCreditTotal(Double.parseDouble(df.format(theVouchers.get(i).getCreditTotal())));
+				}
+				String status = "Credit";
+				if(tot < 0)
+				{
+					status = "Debit";
+					tot = -tot;
+				}
+				theModel.addAttribute("tot", df.format(tot));
+				theModel.addAttribute("status", status);
+				Session crs = sessionFactory.getCurrentSession();
+				theModel.addAttribute("id", crs.get(Account.class, addelem.getAccountId()));
+			}
+			return "show-journalvouchersbyaccount";
+		}
+		
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		
+		return "redirect:/";
+	}
+	@RequestMapping("/alljournalvouchers")
+	public String showAllJournalVouchers(
+			Model theModel, 
+			RedirectAttributes ra)
+	{
+		Object authentication = 
+				SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((UserDetails)authentication)
+					.getUsername();
+			List<JournalVoucher> theList
+			= journalVoucherService.getJournalVoucherByUserName(userName);
+			Double tot = 0.0;
+			for(int i = 0; i < theList.size(); i++)
+			{
+				tot += theList.get(i).getCreditTotal();
+				tot -= theList.get(i).getDebitTotal();
+				theList.get(i).setDebitTotal(Double.parseDouble(df.format(theList.get(i).getDebitTotal())));
+				theList.get(i).setCreditTotal(Double.parseDouble(df.format(theList.get(i).getCreditTotal())));
+			}
+			String status = "Credit";
+			if(tot < 0)
+			{
+				status = "Debit";
+				tot = -tot;
+			}
+			theModel.addAttribute("tot", df.format(tot));
+			theModel.addAttribute("status", status);
+			theModel.addAttribute("items", theList);
+			return "show-alljournalvouchers";
+		}
+		
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		
+		return "redirect:/";
+	}
+	@RequestMapping("/specificjournalvoucher")
+	@Transactional
+	public String showSpecificJournalVoucher(
+			Model theModel, 
+			@RequestParam("jvoucherId")int jvoucherid,
+			RedirectAttributes ra)
+	{
+		Object authentication = 
+				SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			Long jvoucherId =  (long)jvoucherid;
+			String userName = ((UserDetails)authentication)
+					.getUsername();
+
+			Session crs = sessionFactory.getCurrentSession();
+			JournalVoucher item = crs.get(JournalVoucher.class, jvoucherId);
+			logger.info("I'm in showspecificjournalvoucher " + Long.toString(item.getAccountId()));
+			theModel.addAttribute("addelem", item);
+			return "show-specific-journalvoucher";
+		}
+		
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		
+		return "redirect:/";
+	}
+
+    @RequestMapping("/bankvoucherbyaccount")
+    @Transactional
+    public String showBankVoucher(
+            @ModelAttribute("addelem") BankVoucher addelem,
+            Model theModel, 
+            RedirectAttributes ra)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            List<Account> theList
+            = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("items", theList);
+            if(addelem == null) 
+            {
+                ;
+            }
+            else if(addelem.getAccountId() == null)
+            {
+                theModel.addAttribute("registrationError", "Please select an account to view its vouchers!");
+            }
+            else
+            {
+                Double tot = 0.0;
+                List<BankVoucher> theVouchers = bankVoucherService.
+                        getBankVoucher(addelem.getAccountId(), userName);
+                theModel.addAttribute("theVouchers", theVouchers);
+                for(int i = 0; i < theVouchers.size(); i++)
+                {
+                    tot += theVouchers.get(i).getCreditTotal();
+                    tot -= theVouchers.get(i).getDebitTotal();
+                    theVouchers.get(i).setDebitTotal(Double.parseDouble(df.format(theVouchers.get(i).getDebitTotal())));
+                    theVouchers.get(i).setCreditTotal(Double.parseDouble(df.format(theVouchers.get(i).getCreditTotal())));
+                }
+                String status = "Credit";
+                if(tot < 0)
+                {
+                    status = "Debit";
+                    tot = -tot;
+                }
+                theModel.addAttribute("tot", df.format(tot));
+                theModel.addAttribute("status", status);
+                Session crs = sessionFactory.getCurrentSession();
+                theModel.addAttribute("id", crs.get(Account.class, addelem.getAccountId()));
+            }
+            return "show-bankvouchersbyaccount";
+        }
+        
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/allbankvouchers")
+    public String showAllBankVouchers(
+            Model theModel, 
+            RedirectAttributes ra)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            List<BankVoucher> theList
+            = bankVoucherService.getBankVoucherByUserName(userName);
+            Double tot = 0.0;
+            for(int i = 0; i < theList.size(); i++)
+            {
+                tot += theList.get(i).getCreditTotal();
+                tot -= theList.get(i).getDebitTotal();
+                theList.get(i).setDebitTotal(Double.parseDouble(df.format(theList.get(i).getDebitTotal())));
+                theList.get(i).setCreditTotal(Double.parseDouble(df.format(theList.get(i).getCreditTotal())));
+            }
+            String status = "Credit";
+            if(tot < 0)
+            {
+                status = "Debit";
+                tot = -tot;
+            }
+            theModel.addAttribute("tot", df.format(tot));
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("items", theList);
+            return "show-allbankvouchers";
+        }
+        
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/specificbankvoucher")
+    @Transactional
+    public String showSpecificBankVoucher(
+            Model theModel, 
+            @RequestParam("jvoucherId")int jvoucherid,
+            RedirectAttributes ra)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            Long jvoucherId =  (long)jvoucherid;
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+
+            Session crs = sessionFactory.getCurrentSession();
+            BankVoucher item = crs.get(BankVoucher.class, jvoucherId);
+            logger.info("I'm in showspecificbankvoucher " + Long.toString(item.getAccountId()));
+            theModel.addAttribute("addelem", item);
+            return "show-specific-bankvoucher";
+        }
+        
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
 }

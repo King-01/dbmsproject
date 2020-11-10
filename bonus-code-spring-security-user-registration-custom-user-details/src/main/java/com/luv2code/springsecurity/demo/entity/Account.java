@@ -71,7 +71,6 @@ public class Account {
 	@IsPincode
 	private String pincode;
 	
-	
 	@Column(name="groupname")
 	@NotNull(message="is required")
 	private Long groupId;

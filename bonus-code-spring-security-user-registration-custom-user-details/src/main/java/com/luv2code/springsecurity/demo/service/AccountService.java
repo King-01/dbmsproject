@@ -5,8 +5,9 @@ import java.util.List;
 import com.luv2code.springsecurity.demo.entity.Account;
 
 public interface AccountService {
-	
+
 	Account getAccount(String AccountName, Long groupId);
+	Account getAccount(Long accountId);
 	
 	void save(Account theAccount);
 	

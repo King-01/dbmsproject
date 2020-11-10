@@ -9,4 +9,5 @@ public interface AccountDao {
 	List<Account> getAccountByGroupId(Long groupId);
 	Account getAccount(String AccountName, Long groupId);
 	List<Account> getAccountByUserName(String UserName);
+	Account getAccount(Long accountId);
 }

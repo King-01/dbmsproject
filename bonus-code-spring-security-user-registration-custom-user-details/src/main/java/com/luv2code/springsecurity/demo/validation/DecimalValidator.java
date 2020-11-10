@@ -4,17 +4,16 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 
-public class PercentageValidator implements ConstraintValidator<IsNumber, String> {
+public class DecimalValidator implements ConstraintValidator<IsDecimal, Double> {
 
 	@Override
-	public boolean isValid(final String value,final ConstraintValidatorContext context) {
+	public boolean isValid(final Double value,final ConstraintValidatorContext context) {
 		// TODO Auto-generated method stub
 		if(value == null) {
 			return true;
 		}
 		try {
-			Double num = Double.parseDouble(value);
-			if(num < 0 || num - 100 > 0)
+			if(value < 0)
 			{
 				return false;
 			}

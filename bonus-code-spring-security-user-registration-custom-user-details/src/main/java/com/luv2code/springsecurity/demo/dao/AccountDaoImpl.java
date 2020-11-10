@@ -70,6 +70,14 @@ public class AccountDaoImpl implements AccountDao {
 		}
 		return theAccountList;
 	}
+
+	@Override
+	@Transactional
+	public Account getAccount(Long accountId) {
+		// TODO Auto-generated method stub
+		Session crs = sessionFactory.getCurrentSession();
+		return crs.get(Account.class, accountId);
+	}
 	
 	
 

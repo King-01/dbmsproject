@@ -17,12 +17,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.love2code.springsecurity.demo.form.StockForm;
 import com.luv2code.springsecurity.demo.entity.Account;
+import com.luv2code.springsecurity.demo.entity.BankVoucher;
 import com.luv2code.springsecurity.demo.entity.Group;
+import com.luv2code.springsecurity.demo.entity.JournalVoucher;
 import com.luv2code.springsecurity.demo.entity.Schedule;
 import com.luv2code.springsecurity.demo.entity.StockItem;
 import com.luv2code.springsecurity.demo.entity.StockTax;
 import com.luv2code.springsecurity.demo.entity.Tax;
 import com.luv2code.springsecurity.demo.entity.User;
+import com.luv2code.springsecurity.demo.service.AccountService;
 import com.luv2code.springsecurity.demo.service.GroupService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
 import com.luv2code.springsecurity.demo.service.StockItemService;
@@ -37,6 +40,8 @@ public class AddController {
 	private ScheduleService scheduleService;
 	@Autowired
 	private GroupService groupService;
+	@Autowired
+	private AccountService accountService;
 	@Autowired
 	private SessionFactory sessionFactory;
 	@Autowired
@@ -173,4 +178,55 @@ public class AddController {
 		return "redirect:/";
 		
 	}
+	@RequestMapping("/journalvoucher")
+	public String addJournalVoucher(Model theModel, RedirectAttributes ra)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((((UserDetails)authentication).getUsername()));
+			Double credit = (double) 0, debit = (double) 0;
+//			DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//			SimpleDateFormat dft= new SimpleDateFormat("yyyy-MM-dd");
+//			LocalDateTime now = LocalDateTime.now();
+//			Date curDate = (Date) df.parse(dft.format(now));
+			JournalVoucher toadd = new JournalVoucher();
+//			toadd.setDate(curDate);
+			toadd.setDebitTotal(debit);
+			toadd.setCreditTotal(credit);
+			toadd.setUserName(userName);
+			theModel.addAttribute("addelem",toadd);
+			List<Account> thelist = accountService.getAccountByUserName(userName);
+			theModel.addAttribute("theaccountlist", thelist);
+			return "add-journalvoucher";
+		}
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		return "redirect:/";
+		
+	}
+    @RequestMapping("/bankvoucher")
+    public String addBankVoucher(Model theModel, RedirectAttributes ra)
+    {
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((((UserDetails)authentication).getUsername()));
+            Double credit = (double) 0, debit = (double) 0;
+//          DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//          SimpleDateFormat dft= new SimpleDateFormat("yyyy-MM-dd");
+//          LocalDateTime now = LocalDateTime.now();
+//          Date curDate = (Date) df.parse(dft.format(now));
+            BankVoucher toadd = new BankVoucher();
+//          toadd.setDate(curDate);
+            toadd.setDebitTotal(debit);
+            toadd.setCreditTotal(credit);
+            toadd.setUserName(userName);
+            theModel.addAttribute("addelem",toadd);
+            List<Account> thelist = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("theaccountlist", thelist);
+            return "add-bankvoucher";
+        }
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        return "redirect:/";
+    }
 }

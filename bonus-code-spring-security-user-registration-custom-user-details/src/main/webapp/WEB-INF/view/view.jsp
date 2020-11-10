@@ -70,6 +70,22 @@
 			<a href="${pageContext.request.contextPath}/view/stockbytax">View Stock by Taxes</a>
 			
 	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/alljournalvouchers">View All Journal Vouchers</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/journalvoucherbyaccount">View Journal Voucher By Account</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/allbankvouchers">View All Bank Vouchers</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/bankvoucherbyaccount">View Bank Voucher By Account</a>
+			
+	</p>
 	
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 

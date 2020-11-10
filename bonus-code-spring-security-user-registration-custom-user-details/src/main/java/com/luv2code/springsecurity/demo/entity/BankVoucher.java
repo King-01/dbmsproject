@@ -8,12 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="journalvoucher")
+@Table(name="bankvoucher")
 public class BankVoucher {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="cvoucherid")
-	private Long cvoucherId;
+	@Column(name="bvoucherid")
+	private Long bvoucherId;
 	
 	@Column(name="date")
 	private String date;
@@ -26,12 +26,24 @@ public class BankVoucher {
 	
 	@Column(name="name")
 	private String accountName;
-	
 	@Column(name="username_id")
 	private String userName;
 	@Column(name="description")
 	private String description;
-	
+	public Long getBvoucherId() {
+		return bvoucherId;
+	}
+
+	@Column(name = "accountid")
+	private Long accountId;
+	public Long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -81,14 +93,14 @@ public class BankVoucher {
 	}
 
 	public Long getCvoucherId() {
-		return cvoucherId;
+		return bvoucherId;
 	}
 
 	@Override
 	public String toString() {
-		return "BankVoucher [cvoucherId=" + cvoucherId + ", date=" + date + ", creditTotal=" + creditTotal
+		return "BankVoucher [bvoucherId=" + bvoucherId + ", date=" + date + ", creditTotal=" + creditTotal
 				+ ", debitTotal=" + debitTotal + ", accountName=" + accountName + ", userName=" + userName
-				+ ", description=" + description + "]";
+				+ ", description=" + description + ", accountId=" + accountId + "]";
 	}
 	
 	

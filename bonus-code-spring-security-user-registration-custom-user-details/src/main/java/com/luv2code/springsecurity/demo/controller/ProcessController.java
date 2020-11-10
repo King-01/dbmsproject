@@ -1,5 +1,6 @@
 package com.luv2code.springsecurity.demo.controller;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -25,13 +26,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.love2code.springsecurity.demo.form.StockForm;
 import com.luv2code.springsecurity.demo.entity.Account;
+import com.luv2code.springsecurity.demo.entity.BankVoucher;
 import com.luv2code.springsecurity.demo.entity.Group;
+import com.luv2code.springsecurity.demo.entity.JournalVoucher;
 import com.luv2code.springsecurity.demo.entity.Schedule;
 import com.luv2code.springsecurity.demo.entity.StockItem;
 import com.luv2code.springsecurity.demo.entity.StockTax;
 import com.luv2code.springsecurity.demo.entity.Tax;
 import com.luv2code.springsecurity.demo.service.AccountService;
+import com.luv2code.springsecurity.demo.service.BankVoucherService;
 import com.luv2code.springsecurity.demo.service.GroupService;
+import com.luv2code.springsecurity.demo.service.JournalVoucherService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
 import com.luv2code.springsecurity.demo.service.StockItemService;
 import com.luv2code.springsecurity.demo.service.StockTaxService;
@@ -41,8 +46,11 @@ import com.luv2code.springsecurity.demo.user.ScheduleUser;
 @Controller
 @RequestMapping("/process")
 public class ProcessController {
+	private static DecimalFormat df = new DecimalFormat("0.00");
 	@Autowired
 	private ScheduleService scheduleService;
+	@Autowired
+	private BankVoucherService bankVoucherService;
 	@Autowired
 	private SessionFactory sessionFactory;
 	@Autowired
@@ -53,6 +61,8 @@ public class ProcessController {
 	private AccountService accountService;
 	@Autowired
 	private StockItemService stockItemService;
+	@Autowired
+	private JournalVoucherService journalVoucherService;
 	@Autowired
 	private StockTaxService stockTaxService;
 	private Logger logger = Logger.getLogger(getClass().getName());
@@ -505,4 +515,90 @@ public class ProcessController {
 		theModel.addAttribute("registrationError", "Log in first to continue.");
 		return "redirect:/";
 	}
+	@RequestMapping("/journalvoucher")
+	public String processJournalVoucher(@ModelAttribute("addelem")@Valid JournalVoucher addelem,
+			BindingResult theBindingResult,
+			Model theModel,
+			RedirectAttributes ra
+		)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			String userName = ((UserDetails)authentication).getUsername();
+
+			List<Account> tl = accountService.getAccountByUserName(userName);
+			if(theBindingResult.hasErrors())
+			{
+				logger.info(theBindingResult.toString());
+				theModel.addAttribute("addelem", addelem);
+				theModel.addAttribute("theaccountlist", tl);
+				return "add-journalvoucher";
+			}
+			try 
+			{	
+				logger.info("processing add journal voucher for user :"
+						+ " " + userName + "in "
+								+ "ProcessController, /process/journalvoucher" + " "
+										+ "name of account to process for: "
+										+ "" + Long.toString(addelem.getAccountId()));
+				addelem.setAccountName(accountService.getAccount(addelem.getAccountId()).getAccountName());
+				journalVoucherService.save(addelem);
+				logger.info("Journal Voucher Creation Successful!");
+				ra.addFlashAttribute("successMessage", "Journal Voucher with id : " + Long.toString(addelem.getJvoucherId()) + " Successful!");
+				return "redirect:/add";
+			}
+			catch(Exception e) {
+				theModel.addAttribute("addelem", addelem);
+				theModel.addAttribute("theaccountlist", tl);
+				logger.info("Couldn't execute the add journal voucher command due to exception: " + e);
+				return "add-journalvoucher";
+			}
+		}
+		theModel.addAttribute("registrationError", "Log in first to continue.");
+		return "redirect:/";
+	}
+    @RequestMapping("/bankvoucher")
+    public String processBankVoucher(@ModelAttribute("addelem")@Valid BankVoucher addelem,
+            BindingResult theBindingResult,
+            Model theModel,
+            RedirectAttributes ra
+        )
+    {
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication).getUsername();
+
+            List<Account> tl = accountService.getAccountByUserName(userName);
+            if(theBindingResult.hasErrors())
+            {
+                logger.info(theBindingResult.toString());
+                theModel.addAttribute("addelem", addelem);
+                theModel.addAttribute("theaccountlist", tl);
+                return "add-bankvoucher";
+            }
+            try 
+            {   
+                logger.info("processing add bank voucher for user :"
+                        + " " + userName + "in "
+                                + "ProcessController, /process/bankvoucher" + " "
+                                        + "name of account to process for: "
+                                        + "" + Long.toString(addelem.getAccountId()));
+                addelem.setAccountName(accountService.getAccount(addelem.getAccountId()).getAccountName());
+                bankVoucherService.save(addelem);
+                logger.info("Bank Voucher Creation Successful!");
+                ra.addFlashAttribute("successMessage", "Bank Voucher with id : " + Long.toString(addelem.getBvoucherId()) + " Successful!");
+                return "redirect:/add";
+            }
+            catch(Exception e) {
+                theModel.addAttribute("addelem", addelem);
+                theModel.addAttribute("theaccountlist", tl);
+                logger.info("Couldn't execute the add bank voucher command due to exception: " + e);
+                return "add-bankvoucher";
+            }
+        }
+        theModel.addAttribute("registrationError", "Log in first to continue.");
+        return "redirect:/";
+    }
 }

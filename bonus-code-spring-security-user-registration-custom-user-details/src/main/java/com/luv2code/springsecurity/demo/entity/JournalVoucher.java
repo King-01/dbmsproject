@@ -1,11 +1,21 @@
 package com.luv2code.springsecurity.demo.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.luv2code.springsecurity.demo.validation.IsDecimal;
 
 @Entity
 @Table(name="journalvoucher")
@@ -16,25 +26,47 @@ public class JournalVoucher {
 	private Long jvoucherId;
 	
 	@Column(name="date")
-	private String date;
-	
+    @Temporal(TemporalType.DATE)
+	@NotNull(message = "is required")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date date;
+	@NotNull(message = "is required")
 	@Column(name="credittotal")
 	private Double creditTotal;
-	
+	@IsDecimal
+	@NotNull(message = "is required")
 	@Column(name="debittotal")
 	private Double debitTotal;
+
+	@NotNull(message = "is required")
+	@Column(name="accountid")
+	private Long accountId;
 	
 	@Column(name="name")
 	private String accountName;
 	
+	@NotNull(message = "is required")
 	@Column(name="username_id")
+	@Size(min = 1, message = "is required")
 	private String userName;
+	
 
-	public String getDate() {
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	@Column(name="description")
+	private String description;
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 
@@ -54,12 +86,21 @@ public class JournalVoucher {
 		this.debitTotal = debitTotal;
 	}
 
-	public String getAccountName() {
-		return accountName;
+
+	public Long getAccountId() {
+		return accountId;
 	}
 
-	public void setAccountName(String accountName) {
-		this.accountName = accountName;
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public String getUserName() {
@@ -77,7 +118,8 @@ public class JournalVoucher {
 	@Override
 	public String toString() {
 		return "JournalVoucher [jvoucherId=" + jvoucherId + ", date=" + date + ", creditTotal=" + creditTotal
-				+ ", debitTotal=" + debitTotal + ", accountName=" + accountName + ", userName=" + userName + "]";
+				+ ", debitTotal=" + debitTotal + ", accountId=" + accountId + ", accountName=" + accountName
+				+ ", userName=" + userName + ", description=" + description + "]";
 	}
 	
 	
