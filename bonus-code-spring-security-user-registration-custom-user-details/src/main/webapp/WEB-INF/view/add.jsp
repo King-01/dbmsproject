@@ -13,7 +13,11 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 	
 	<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	
+	<style>
+	p{
+	margin-top:1em;
+	}
+	</style>
 </head>
 <body>
 	<c:if test="${registrationError != null}">
@@ -40,7 +44,7 @@
 		</div>
 
 	</c:if>
-
+	<br><br><br>
 	<p>
 			<a href="${pageContext.request.contextPath}/add/Schedule">Add Schedule</a>
 			
@@ -81,6 +85,11 @@
 			<a href="${pageContext.request.contextPath}/add/stockitemsforpurchaseitems">Add Purchase Voucher</a>
 			
 	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/add/stockitemsforsaleitems">Add Sale Bill</a>
+			
+	</p>
+	
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 
 			   method="POST">

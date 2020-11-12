@@ -138,9 +138,15 @@
 				<td style='white-space:nowrap;'><c:out value="${thef.total}" /></td>
 				<td style='white-space:nowrap;'><c:out value="${thef.taxbreakup}"/></td>
 			</tr>
-				<td><input type="hidden" name="theform[${status.index}].stockitemquantity" value="${thef.stockitemquantity}"/></td>
+			<input type="hidden" name="theform[${status.index}].stockitemquantity" value="${thef.stockitemquantity}"/>
 			<input type="hidden" name="theform[${status.index}].id" value="${thef.id}"/>
-			
+			<input type="hidden" name="theform[${ status.index }].stockitemName" value="${thef.stockitemName}" readonly="true"/>
+			<input type="hidden" name="theform[${ status.index }].quantity" value="${thef.quantity}" readonly="true"/>
+			<input type="hidden" name="theform[${ status.index }].rate" value="${thef.rate}" readonly="true"/>
+			<input type="hidden" name="theform[${ status.index }].tax" value="${thef.tax}" readonly="true"/>
+			<input type="hidden" name="theform[${ status.index }].total" value="${thef.total}" readonly="true" />
+			<input type="hidden" name="theform[${ status.index }].taxbreakup" value="${thef.taxbreakup}" readonly="true"/>
+						
 		</c:forEach>
 		
 	</table>	

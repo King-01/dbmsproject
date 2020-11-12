@@ -26,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.love2code.springsecurity.demo.form.PurchaseBillVoucherForm;
+import com.love2code.springsecurity.demo.form.SaleBillForm;
 import com.love2code.springsecurity.demo.form.StockForm;
 import com.love2code.springsecurity.demo.form.StockPurchaseForm;
+import com.love2code.springsecurity.demo.form.StockSaleForm;
 import com.luv2code.springsecurity.demo.entity.Account;
 import com.luv2code.springsecurity.demo.entity.BankVoucher;
 import com.luv2code.springsecurity.demo.entity.CashVoucher;
@@ -35,6 +37,8 @@ import com.luv2code.springsecurity.demo.entity.Group;
 import com.luv2code.springsecurity.demo.entity.JournalVoucher;
 import com.luv2code.springsecurity.demo.entity.PurchaseBillTransactions;
 import com.luv2code.springsecurity.demo.entity.PurchaseBillVoucher;
+import com.luv2code.springsecurity.demo.entity.SaleBill;
+import com.luv2code.springsecurity.demo.entity.SaleBillTransactions;
 import com.luv2code.springsecurity.demo.entity.Schedule;
 import com.luv2code.springsecurity.demo.entity.StockItem;
 import com.luv2code.springsecurity.demo.entity.StockTax;
@@ -44,7 +48,10 @@ import com.luv2code.springsecurity.demo.service.BankVoucherService;
 import com.luv2code.springsecurity.demo.service.CashVoucherService;
 import com.luv2code.springsecurity.demo.service.GroupService;
 import com.luv2code.springsecurity.demo.service.JournalVoucherService;
+import com.luv2code.springsecurity.demo.service.PurchaseBillTransactionsService;
 import com.luv2code.springsecurity.demo.service.PurchaseBillVoucherService;
+import com.luv2code.springsecurity.demo.service.SaleBillService;
+import com.luv2code.springsecurity.demo.service.SaleBillTransactionsService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
 import com.luv2code.springsecurity.demo.service.StockItemService;
 import com.luv2code.springsecurity.demo.service.StockTaxService;
@@ -55,6 +62,12 @@ import com.luv2code.springsecurity.demo.user.ScheduleUser;
 @RequestMapping("/process")
 public class ProcessController {
 	private static DecimalFormat df = new DecimalFormat("0.00");
+    @Autowired
+    private SaleBillTransactionsService saleBillTransactionsService;
+    @Autowired
+    private SaleBillService saleBillService;
+	@Autowired
+	private PurchaseBillTransactionsService purchaseBillTransactionsService;
 	@Autowired
 	private ScheduleService scheduleService;
 	@Autowired
@@ -748,7 +761,6 @@ public class ProcessController {
 
                 	logger.info(itm.toString());
                 	StockItem st = stockItemService.get(itm.getId());
-                	List<StockTax> thestocktaxlist = stockTaxService.getStockTaxByStockId(st.getId());
                 	st.setQuantity(st.getQuantity() + itm.getQuantity());
                 	stockItemService.save(st);
                 	newbill.setTax(itm.getTax());
@@ -756,44 +768,79 @@ public class ProcessController {
                 	newbill.setRate(itm.getRate());
                 	newbill.setTaxBreakup(itm.getTaxbreakup());
                 	newbill.setTotalAmount(itm.getTotal());
-//                	{
-//                		double taxation = 0.0;
-//                		taxation = taxation + Double.parseDouble(st.getCommision());
-//                		taxation = taxation + Double.parseDouble(st.getKkFee());
-//                		taxation = taxation + Double.parseDouble(st.getLabourCharge());
-//                		taxation = taxation + Double.parseDouble(st.getMandiTax());
-//                		taxation = taxation / 100.00;
-//                		double perc = taxation * 100.0;
-//                		double price = 0.0;
-//                		price += (itm.getRate() * itm.getQuantity());
-//                		price += (itm.getQuantity() * Double.parseDouble(st.getPacking()));
-//                		double stocktax = 0.0;
-//                		String sttax = new String();
-//                		for(int j = 0; j < thestocktaxlist.size(); j++)
-//                		{
-//                			logger.info("j : " + Integer.toString(j));
-//                			Tax thetax = taxService.get(thestocktaxlist.get(j).getTaxId());
-//                			stocktax += Double.parseDouble(thetax.getTaxPercent());
-//                			sttax += thetax.getTaxName() + ":" + thetax.getTaxPercent() + "% ";
-//                		}
-//                		stocktax /= 100.00;
-//                		String ffg = "Total tax:Rs." + df.format(price * ((taxation + stocktax))) + "(" + df.format(perc)+ 
-//                				"%: " + "KKFee:" + df.format(Double.parseDouble(st.getKkFee()))+
-//                				"% Commision:" + df.format(Double.parseDouble(st.getCommision())) +
-//                				"% Labour Charge:"+df.format(Double.parseDouble(st.getLabourCharge()))+
-//                				"% Mandi Tax:"+df.parse(st.getMandiTax()) + " " + sttax;
-//                		newbill.setTaxBreakup(ffg);
-//                		price *= (1.00 + stocktax + taxation);
-//                		
-//                		price = Double.parseDouble(df.format(price));
-//                		newbill.setTotalAmount(price);
-//                	}
-                	
                 	pbv.addPurchaseitem(newbill);
+                	purchaseBillTransactionsService.save(newbill);
+                    purchaseBillVoucherService.save(pbv);
                 }
-                purchaseBillVoucherService.save(pbv);
-                
                 ra.addFlashAttribute("successMessage" ,"Addition for purchase voucher successful!");
+                return "redirect:/add";
+            }
+            catch(Exception e) {
+                logger.info("Couldn't execute the process purchase voucher command due to exception: " + e);
+                return "redirect:/add";
+            }
+        }
+        theModel.addAttribute("registrationError", "Log in first to continue.");
+        return "redirect:/";
+    }
+    @RequestMapping("/salebill")
+    public String processSaleBill(@ModelAttribute("addelem")@Valid SaleBillForm addelem,
+            BindingResult theBindingResult,
+            Model theModel,
+            RedirectAttributes ra
+        )
+    {
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication).getUsername();
+            if(theBindingResult.hasErrors())
+            {
+                logger.info(theBindingResult.toString());
+                theModel.addAttribute("addelem", addelem);
+                return "add-salebill";
+            }
+            try 
+            {   
+                logger.info("processing add Sale bill for user :"
+                        + " " + userName + "in "
+                                + "ProcessController, /process/salebill");
+                Account theAccount = accountService.getAccount(addelem.getAccountId());
+                addelem.setAccountName(theAccount.getAccountName());
+                SaleBill pbv = new SaleBill();
+                pbv.setAccountId(addelem.getAccountId());
+                pbv.setAccountName(addelem.getAccountName());
+                pbv.setCost(addelem.getCost());
+                pbv.setDate(addelem.getDate());
+                pbv.setDescription(addelem.getDescription());
+                pbv.setTrucknumber(addelem.getTrucknumber());
+                pbv.setUserName(addelem.getUserName());
+                saleBillService.save(pbv);
+                logger.info("Successfully saved the element in purchase bill voucher, id : " + Long.toString(pbv.getId()));
+                if(addelem.getTheform() == null)
+                {
+                    logger.info("Hi");
+                }
+                for(int i = 0; i < addelem.getTheform().size(); i++)
+                {
+                    SaleBillTransactions newbill = new SaleBillTransactions();
+                    StockSaleForm itm = addelem.getTheform().get(i);
+                    newbill.setItemName(itm.getStockitemName());
+
+                    logger.info(itm.toString());
+                    StockItem st = stockItemService.get(itm.getId());
+                    st.setQuantity(st.getQuantity() + itm.getQuantity());
+                    stockItemService.save(st);
+                    newbill.setTax(itm.getTax());
+                    newbill.setQuantity(itm.getStockitemquantity());
+                    newbill.setRate(itm.getRate());
+                    newbill.setTaxBreakup(itm.getTaxbreakup());
+                    newbill.setTotalAmount(itm.getTotal());
+                    pbv.addSaleitem(newbill);
+                    saleBillTransactionsService.save(newbill);
+                    saleBillService.save(pbv);
+                }
+                ra.addFlashAttribute("successMessage" ,"Addition for Sale Bill successful!");
                 return "redirect:/add";
             }
             catch(Exception e) {

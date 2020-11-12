@@ -22,10 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.love2code.springsecurity.demo.form.ListOfStockPurchaseForm;
+import com.love2code.springsecurity.demo.form.ListOfStockSaleForm;
 import com.love2code.springsecurity.demo.form.PurchaseBillVoucherForm;
+import com.love2code.springsecurity.demo.form.SaleBillForm;
 import com.love2code.springsecurity.demo.form.StockForm;
 import com.love2code.springsecurity.demo.form.StockItemForm;
 import com.love2code.springsecurity.demo.form.StockPurchaseForm;
+import com.love2code.springsecurity.demo.form.StockSaleForm;
 import com.luv2code.springsecurity.demo.entity.Account;
 import com.luv2code.springsecurity.demo.entity.BankVoucher;
 import com.luv2code.springsecurity.demo.entity.CashVoucher;
@@ -326,7 +329,7 @@ public class AddController {
     }
     @RequestMapping("/purchasebillstep")
     public String addPurchaseBill(
-    		@ModelAttribute("theform") StockItemForm theform,
+    		@ModelAttribute("theform")@Valid StockItemForm theform,
     		BindingResult theBindingResult,
     		Model theModel,
     		RedirectAttributes ra
@@ -338,8 +341,8 @@ public class AddController {
         {
             if(theBindingResult.hasErrors())
             {
-            	ra.addFlashAttribute("registrationError", theBindingResult.toString());
-            	return "redirect:/add/stockitemsforpurchaseitems";
+            	ra.addFlashAttribute("registrationError", "Invalid Request!");
+            	return "redirect:/add";
             }
             if(theform == null)
             {
@@ -349,7 +352,7 @@ public class AddController {
             if(0 == theform.getStockitems().size())
             {
             	ra.addFlashAttribute("registrationError", "Please select atleast one item");
-            	return "redirect:/add";
+            	return "redirect:/add/stockitemsforpurchaseitems";
             }
             List<StockPurchaseForm> theList1 = new ArrayList<StockPurchaseForm> ();
             for(int i = 0; i < theform.getStockitems().size(); i++)
@@ -381,12 +384,16 @@ public class AddController {
         {
             String userName = ((UserDetails)authentication).getUsername();
 
+            if(theform == null || theform.getTheStockPurchaseFormList() == null)
+            {
+            	ra.addFlashAttribute("registrationError", "Invalid Request!");
+            	return "redirect:/add";        	
+            }
             if(theBindingResult.hasErrors())
             {
                 logger.info(theBindingResult.toString());
-                theModel.addAttribute("addelem", theform);
-                theModel.addAttribute("registrationError", theBindingResult.toString());
-                return "add-purchasebillstep";
+                ra.addFlashAttribute("registrationError", "Invalid Request!");
+                return "redirect:/add";
             }
             try 
             {   
@@ -413,29 +420,36 @@ public class AddController {
                 		double perc = taxation * 100.0;
                 		double stocktax = 0.0;
                 		String sttax = new String();
-                		
                 		price += (itm.getRate() * itm.getQuantity());
-                		price += (itm.getQuantity() * Double.parseDouble(st.getPacking()));
+//                		price += (itm.getQuantity() * Double.parseDouble(st.getPacking()));
                 		for(int j = 0; j < thestocktaxlist.size(); j++)
                 		{
                 			Tax thetax = taxService.get(thestocktaxlist.get(j).getTaxId());
                 			stocktax += Double.parseDouble(thetax.getTaxPercent());
                 			sttax += thetax.getTaxName() + ":" + thetax.getTaxPercent() + "% ";
                     	}
+                        perc += stocktax;
                 		stocktax /= 100.00;
                 		String ffg = "Total tax:Rs." + df.format(price * ((taxation + stocktax))) + "(" + df.format(perc)+ 
                 				"%: " + "KKFee:" + df.format(Double.parseDouble(st.getKkFee()))+
                 				"% Commision:" + df.format(Double.parseDouble(st.getCommision())) +
                 				"% Labour Charge:"+df.format(Double.parseDouble(st.getLabourCharge()))+
-                				"% Mandi Tax:"+df.parse(st.getMandiTax()) + " " + sttax;
+                				"% Mandi Tax:"+df.parse(st.getMandiTax()) + "% " + sttax + ") Packing Charges:Rs" + st.getPacking()+" Per Unit";
                 		theform.getTheStockPurchaseFormList().get(i).setTax(Double.parseDouble(df.format(price * (stocktax + taxation))));
                 		logger.info(ffg);
                 		price *= (1.00 + stocktax + taxation);
-                		price = Double.parseDouble(df.format(price));                		
+                		price += (itm.getQuantity() * Double.parseDouble(st.getPacking()));
+                        price = Double.parseDouble(df.format(price));                		
                 		theform.getTheStockPurchaseFormList().get(i).setTotal(price);
                 		theform.getTheStockPurchaseFormList().get(i).setTaxbreakup(ffg);
                 		fp += price;
                 	}
+                }
+                if(fp - 0.0 <= 0.0)
+                {
+                    ra.addFlashAttribute("registrationError", "Billing amount must be greater than zero.");
+                    return "redirect:/add";
+                	
                 }
                 PurchaseBillVoucherForm theform1 = new PurchaseBillVoucherForm();
                 theform1.setCost(fp);
@@ -447,6 +461,188 @@ public class AddController {
             }
             catch(Exception e) {
                 logger.info("Couldn't execute the processing phase of purchase voucher command due to exception: " + e);
+                ra.addFlashAttribute("registrationError", "Invalid request!");
+                return "redirect:/add";
+            }
+        }
+        theModel.addAttribute("registrationError", "Log in first to continue.");
+        return "redirect:/";
+    }
+    @RequestMapping("/stockitemsforsaleitems")
+    public String addStockItemsForSaleItems(Model theModel, RedirectAttributes ra)
+    {
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((((UserDetails)authentication).getUsername()));
+//          DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//          SimpleDateFormat dft= new SimpleDateFormat("yyyy-MM-dd");
+//          LocalDateTime now = LocalDateTime.now();
+//          Date curDate = (Date) df.parse(dft.format(now));
+            List<StockItem> theitems = stockItemService.getStockItemByUserName(userName);
+            StockItemForm theform = new StockItemForm();
+            theModel.addAttribute("items", theitems);
+            theModel.addAttribute("theform", theform);
+            return "add-stockitemsforsaleitems";
+        }
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        return "redirect:/";
+    }
+    @RequestMapping("/salebillstep")
+    public String addSaleBillStep(
+            @ModelAttribute("theform") StockItemForm theform,
+            BindingResult theBindingResult,
+            Model theModel,
+            RedirectAttributes ra
+            )
+    {
+
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            if(theBindingResult.hasErrors())
+            {
+            	ra.addFlashAttribute("registrationError", "Invalid Request!");
+            	return "redirect:/add";
+            }
+            if(theform == null)
+            {
+            	ra.addFlashAttribute("registrationError", "Invalid Request!");
+            	return "redirect:/add";        	
+            }
+            if(0 == theform.getStockitems().size())
+            {
+            	ra.addFlashAttribute("registrationError", "Please select atleast one item");
+            	return "redirect:/add/stockitemsforsaleitems";
+            }
+            List<StockSaleForm> theList1 = new ArrayList<StockSaleForm> ();
+            for(int i = 0; i < theform.getStockitems().size(); i++)
+            {
+                logger.info(theform.getStockitems().get(i).toString());
+                StockSaleForm e = new StockSaleForm();
+                e.setStockitemName(theform.getStockitems().get(i).getStockItemName());
+                e.setId(theform.getStockitems().get(i).getId());
+                e.setStockitemquantity(theform.getStockitems().get(i).getQuantity());
+                theList1.add(e);
+            }
+            ListOfStockSaleForm theList = new ListOfStockSaleForm();
+            theList.setTheStockSaleFormList(theList1);
+            theModel.addAttribute("addelem", theList);
+            return "add-salebillstep";
+        }
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        return "redirect:/";
+    }
+    @RequestMapping("/salebill")
+    public String addSaleBill(@ModelAttribute("addelem")@Valid ListOfStockSaleForm theform,
+            BindingResult theBindingResult,
+            Model theModel,
+            RedirectAttributes ra
+        )
+    {
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication).getUsername();
+
+            if(theform == null)
+            {
+            	ra.addFlashAttribute("registrationError", "Invalid Request!");
+            	return "redirect:/add";        	
+            }
+            if(theBindingResult.hasErrors())
+            {
+                logger.info(theBindingResult.toString());
+                theModel.addAttribute("addelem", theform);
+                theModel.addAttribute("registrationError", theBindingResult.toString());
+                return "add-salebillstep";
+            }
+            try 
+            {   
+                List<Account> tl = accountService.getAccountByUserName(userName);
+                logger.info("processing add cash voucher for user :"
+                        + " " + userName + " in "
+                                + "AddController, /add/salebill");
+                theModel.addAttribute("listofaccounts" ,tl);
+                double fp = 0.0;
+                String ts = new String();
+                for(int i = 0; i < theform.getTheStockSaleFormList().size(); i++)
+                {
+                    StockSaleForm itm = theform.getTheStockSaleFormList().get(i);
+                    StockItem st = stockItemService.get(itm.getId());
+                    theform.getTheStockSaleFormList().get(i).setId(st.getId());
+                    List<StockTax> thestocktaxlist = stockTaxService.getStockTaxByStockId(st.getId());
+                    if(itm.getQuantity() > st.getQuantity())
+                    {
+                      if(ts.length() > 0) {
+                        ts = ", " + ts;
+                      }
+                      else
+                      {
+                        ts = " " + ts;
+                      }
+                      ts = ts + itm.getStockitemName();
+                    }
+                    {
+                        double taxation = 0.0;
+                        taxation = taxation + Double.parseDouble(st.getCommision());
+                        taxation = taxation + Double.parseDouble(st.getKkFee());
+                        taxation = taxation + Double.parseDouble(st.getLabourCharge());
+                        taxation = taxation + Double.parseDouble(st.getMandiTax());
+                        taxation = taxation / 100.00;
+                        double price = 0.0;
+                        double perc = taxation * 100.0;
+                        double stocktax = 0.0;
+                        String sttax = new String();
+                        
+                        price += (itm.getRate() * itm.getQuantity());
+//                		price += (itm.getQuantity() * Double.parseDouble(st.getPacking()));
+                        sttax = "Packing Charges: Rs" + st.getPacking() + " per unit ";
+                        for(int j = 0; j < thestocktaxlist.size(); j++)
+                        {
+                            Tax thetax = taxService.get(thestocktaxlist.get(j).getTaxId());
+                            stocktax += Double.parseDouble(thetax.getTaxPercent());
+                            sttax += thetax.getTaxName() + ":" + thetax.getTaxPercent() + "% ";
+                        }
+                        perc += stocktax;
+                        stocktax /= 100.00;
+                        String ffg = "Total tax:Rs." + df.format(price * ((taxation + stocktax))) + "(" + df.format(perc)+ 
+                				"%: " + "KKFee:" + df.format(Double.parseDouble(st.getKkFee()))+
+                				"% Commision:" + df.format(Double.parseDouble(st.getCommision())) +
+                				"% Labour Charge:"+df.format(Double.parseDouble(st.getLabourCharge()))+
+                				"% Mandi Tax:"+df.parse(st.getMandiTax()) + "% " + sttax + ") Packing Charges:Rs" + st.getPacking()+" Per Unit";theform.getTheStockSaleFormList().get(i).setTax(Double.parseDouble(df.format(price * (stocktax + taxation))));
+                        logger.info(ffg);
+                        price *= (1.00 + stocktax + taxation);
+                        price = Double.parseDouble(df.format(price));                       
+                        price += (itm.getQuantity() * Double.parseDouble(st.getPacking()));
+                        theform.getTheStockSaleFormList().get(i).setTotal(price);
+                        theform.getTheStockSaleFormList().get(i).setTaxbreakup(ffg);
+                        fp += price;
+                    }
+                }
+                if(fp - 0.0 <= 0.0)
+                {
+                    ra.addFlashAttribute("registrationError", "Billing amount must be greater than zero.");
+                    return "redirect:/add";
+                	
+                }
+                if(ts.length() > 0)
+                {
+                  theModel.addAttribute("addelem", theform);
+                  theModel.addAttribute("registrationError", "The following stocks had less quantity left than being entered: " + ts);
+                  return "add-salebillstep";
+                }
+                SaleBillForm theform1 = new SaleBillForm();
+                theform1.setCost(fp);
+                theform1.setTheform(theform.getTheStockSaleFormList());
+                theform1.setUserName(userName);
+                theModel.addAttribute("addelem", theform1);
+                logger.info("Successfully reached step 2 for adding purchase bill, redirecting to final url!");
+                return "add-salebill";
+            }
+            catch(Exception e) {
+                logger.info("Couldn't execute the processing phase of sale voucher command due to exception: " + e);
+                ra.addFlashAttribute("registrationError", "Invalid request!");
                 return "redirect:/add";
             }
         }

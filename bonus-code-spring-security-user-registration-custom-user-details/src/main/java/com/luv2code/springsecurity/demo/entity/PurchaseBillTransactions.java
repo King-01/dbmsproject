@@ -45,16 +45,12 @@ public class PurchaseBillTransactions {
 	private PurchaseBillVoucher purchaseBillVoucher;
     
 
-    public void setPurchaseBillVoucher(PurchaseBillVoucher ppp)
-    {
-    	this.purchaseBillVoucher=ppp;
-    }
-    public PurchaseBillVoucher getPurchaseBillVoucher()
-    {
-    	return purchaseBillVoucher;
-    }
-
-
+	public PurchaseBillVoucher getPurchaseBillVoucher() {
+		return purchaseBillVoucher;
+	}
+	public void setPurchaseBillVoucher(PurchaseBillVoucher purchaseBillVoucher) {
+		this.purchaseBillVoucher = purchaseBillVoucher;
+	}
 	public Long getQuantity() {
 		return quantity;
 	}
