@@ -162,10 +162,10 @@ groupname int not null,
 foreign key(groupname) references group_s(id) on delete cascade
 );
 insert into stockitem value(
-'1', '0', 'Wheat', NULL, '5', '6', '4', '2', '1', '1'
+'1', '1', 'Wheat', NULL, '5', '6', '4', '2', '1', '1'
 );
 insert into stockitem value(
-'2', '0','Corn', NULL, '2', '4', '2', '8', '1', '2'
+'2', '2','Corn', NULL, '2', '4', '2', '8', '1', '2'
 );
 drop table if exists stock_tax;
 create table stock_tax(
@@ -254,19 +254,20 @@ tax double,
 foreign key(username_id) references user(username) on delete cascade,
 foreign key(supplierid) references accounts(id) on delete cascade
 );
+insert into purchasebill value ('1', NULL, '10.3', '2020-11-03', 'Yay', NULL, '1', 'aasavbadera', NULL);
 drop table if exists salebill;
 create table salebill(
 svoucherid int not null auto_increment,
+cost double,
 currdate date not null,
 username_id varchar(50) not null,
 suppliername varchar(50) not null,
 supplierid int not null,
 description text,
 foreign key(username_id) references user(username) on delete cascade,
-foreign key(supplierid) references accounts(groupname) on delete cascade,
+foreign key(supplierid) references accounts(id) on delete cascade,
 trucknumber varchar(50),
 tax double,
-taxbreakup text,
 primary key(svoucherid)
 );
 drop table if exists saleitems;
@@ -297,6 +298,9 @@ itemname varchar(50) not null,
 foreign key(pvoucherid) references purchasebill(pvoucherid) on delete cascade,
 unique(quantity, rate, pvoucherid, itemname)
 );
+insert into purchaseitems values 
+('1', '0', '1', '2.44', 'Total tax:Rs.0.44(22.00%: KKFee:6.00% Commision:4.00% Labour Charge:2.00% Mandi Tax:5% CGST:5%', '0.44', '1', 'Wheat'),
+('2', '0', '2', '7.86', 'Total tax:Rs.1.86(31.00%: KKFee:4.00% Commision:2.00% Labour Charge:8.00% Mandi Tax:2% CGST:5% GSTIN:10%', '1.86', '1', 'Corn');
 drop table if exists current_availability;
 create table current_availability(
 id int not null auto_increment,
