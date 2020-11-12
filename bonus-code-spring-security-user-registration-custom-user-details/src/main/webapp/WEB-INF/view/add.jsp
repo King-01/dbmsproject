@@ -73,6 +73,14 @@
 			<a href="${pageContext.request.contextPath}/add/bankvoucher">Add Bank Voucher</a>
 			
 	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/add/cashvoucher">Add Cash Voucher</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/add/stockitemsforpurchaseitems">Add Purchase Voucher</a>
+			
+	</p>
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 
 			   method="POST">

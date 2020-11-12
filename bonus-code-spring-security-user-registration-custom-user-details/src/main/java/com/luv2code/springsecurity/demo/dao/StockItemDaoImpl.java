@@ -45,7 +45,8 @@ public class StockItemDaoImpl implements StockItemDao {
 	public StockItem getStockItem(String StockItemName, Long groupId) {
 		// TODO Auto-generated method stub
 		Session crs = sessionFactory.getCurrentSession();
-		Query<StockItem> theQuery = crs.createQuery("from StockItem where groupId=:GroupId and stockItemName=:StockItemName", StockItem.class);
+		Query<StockItem> theQuery = crs.createQuery("from StockItem where groupId=:GroupId "
+				+ "and stockItemName=:StockItemName", StockItem.class);
 		theQuery.setParameter("GroupId", groupId);
 		theQuery.setParameter("StockItemName", StockItemName);
 		StockItem toReturn = theQuery.getSingleResult();
@@ -71,6 +72,28 @@ public class StockItemDaoImpl implements StockItemDao {
 			}
 		}
 		return theStockItemList;
+	}
+
+	@Override
+	@Transactional
+	public StockItem get(Long id) {
+		// TODO Auto-generated method stub
+
+		Session crs = sessionFactory.getCurrentSession();
+		return crs.get(StockItem.class, id);
+	}
+
+	@Override
+	@Transactional
+	public StockItem getStockItem(String StockItemName, String userName) {
+		// TODO Auto-generated method stub
+		Session crs = sessionFactory.getCurrentSession();
+		Query<StockItem> theQuery = crs.createQuery("from StockItem where userName=:UserName "
+				+ "and stockItemName=:StockItemName", StockItem.class);
+		theQuery.setParameter("UserName", userName);
+		theQuery.setParameter("StockItemName", StockItemName);
+		StockItem toReturn = theQuery.getSingleResult();
+		return toReturn;
 	}
 	
 	

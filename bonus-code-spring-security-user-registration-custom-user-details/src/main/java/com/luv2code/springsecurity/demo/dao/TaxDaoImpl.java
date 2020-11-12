@@ -1,6 +1,5 @@
 package com.luv2code.springsecurity.demo.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -10,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.luv2code.springsecurity.demo.entity.StockTax;
 import com.luv2code.springsecurity.demo.entity.Tax;
-import com.luv2code.springsecurity.demo.service.TaxService;
 import com.luv2code.springsecurity.demo.service.UserService;
 @Repository
 public class TaxDaoImpl implements TaxDao {
@@ -50,6 +47,13 @@ public class TaxDaoImpl implements TaxDao {
 				+ " userid=:userId", Tax.class);
 		theQuery.setParameter("userId", userId);
 		return theQuery.getResultList();
+	}
+	@Override
+	@Transactional
+	public Tax get(Long id) {
+		// TODO Auto-generated method stub
+		Session crs = sessionFactory.getCurrentSession();
+		return crs.get(Tax.class, id);
 	}	
 
 	

@@ -86,6 +86,14 @@
 			<a href="${pageContext.request.contextPath}/view/bankvoucherbyaccount">View Bank Voucher By Account</a>
 			
 	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/allcashvouchers">View All Cash Vouchers</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/cashvoucherbyaccount">View Cash Voucher By Account</a>
+			
+	</p>
 	
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 

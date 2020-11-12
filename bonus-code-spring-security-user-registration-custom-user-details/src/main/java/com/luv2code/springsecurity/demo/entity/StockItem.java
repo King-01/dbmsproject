@@ -40,12 +40,22 @@ public class StockItem {
 	
 	@Column(name="groupname")
 	private Long groupId;
+	
+	@Column(name = "quantity")
+	private Long quantity;
+	public Long getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(Long quantity) {
+		this.quantity = quantity;
+	}
 
 	@Override
 	public String toString() {
 		return "StockItem [id=" + id + ", stockItemName=" + stockItemName + ", hsnGroup=" + hsnGroup + ", mandiTax="
 				+ mandiTax + ", kkFee=" + kkFee + ", commision=" + commision + ", labourCharge=" + labourCharge
-				+ ", packing=" + packing + ", groupId=" + groupId + "]";
+				+ ", packing=" + packing + ", groupId=" + groupId + ", quantity=" + quantity + "]";
 	}
 
 	public String getStockItemName() {
@@ -128,6 +138,7 @@ public class StockItem {
 		toret.setMandiTax(st.getMandiTax());
 		toret.setPacking(st.getPacking());
 		toret.setStockItemName(st.getStockItemName());
+		toret.setQuantity((long) 0);
 		return toret;
 	}
 	

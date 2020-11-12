@@ -31,8 +31,7 @@ public class StockForm {
 	@IsPercentage
 	@NotNull(message = "is required")
 	private String packing;
-	
-	@NotNull(message = "is required")
+	@NotNull(message="is required")
 	private Long groupId;
 	public StockForm()
 	{
@@ -52,6 +51,7 @@ public class StockForm {
 		return toret;
 	}
 
+	
 	public String getStockItemName() {
 		return stockItemName;
 	}

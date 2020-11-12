@@ -30,4 +30,10 @@ public class TaxServiceImpl implements TaxService {
 		return taxDao.getTaxByUserName(userName);
 	}
 
+	@Override
+	public Tax get(Long id) {
+		// TODO Auto-generated method stub
+		return taxDao.get(id);
+	}
+
 }

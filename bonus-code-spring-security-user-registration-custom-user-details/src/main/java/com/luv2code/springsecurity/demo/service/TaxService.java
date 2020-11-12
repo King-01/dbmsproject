@@ -11,5 +11,5 @@ public interface TaxService {
 	void save(Tax toSave);
 	
 	List<Tax> getTaxByUserName(String userName);
-	
+	Tax get(Long id);
 }

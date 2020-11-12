@@ -36,4 +36,16 @@ public class StockItemServiceImpl implements StockItemService {
 		return stockItemDao.getStockItemByUserName(userName);
 	}
 
+	@Override
+	public StockItem get(Long id) {
+		// TODO Auto-generated method stub
+		return stockItemDao.get(id);
+	}
+
+	@Override
+	public StockItem getStockItem(String StockName, String userName) {
+		// TODO Auto-generated method stub
+		return stockItemDao.getStockItem(StockName, userName);
+	}
+
 }

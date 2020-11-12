@@ -1,23 +1,34 @@
 package com.luv2code.springsecurity.demo.controller;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.SessionFactory;
+import javax.validation.Valid;
+
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomCollectionEditor;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.love2code.springsecurity.demo.form.ListOfStockPurchaseForm;
+import com.love2code.springsecurity.demo.form.PurchaseBillVoucherForm;
 import com.love2code.springsecurity.demo.form.StockForm;
+import com.love2code.springsecurity.demo.form.StockItemForm;
+import com.love2code.springsecurity.demo.form.StockPurchaseForm;
 import com.luv2code.springsecurity.demo.entity.Account;
 import com.luv2code.springsecurity.demo.entity.BankVoucher;
+import com.luv2code.springsecurity.demo.entity.CashVoucher;
 import com.luv2code.springsecurity.demo.entity.Group;
 import com.luv2code.springsecurity.demo.entity.JournalVoucher;
 import com.luv2code.springsecurity.demo.entity.Schedule;
@@ -26,6 +37,7 @@ import com.luv2code.springsecurity.demo.entity.StockTax;
 import com.luv2code.springsecurity.demo.entity.Tax;
 import com.luv2code.springsecurity.demo.entity.User;
 import com.luv2code.springsecurity.demo.service.AccountService;
+import com.luv2code.springsecurity.demo.service.CashVoucherService;
 import com.luv2code.springsecurity.demo.service.GroupService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
 import com.luv2code.springsecurity.demo.service.StockItemService;
@@ -36,6 +48,7 @@ import com.luv2code.springsecurity.demo.user.ScheduleUser;
 @Controller
 @RequestMapping("/add")
 public class AddController {
+	private static DecimalFormat df = new DecimalFormat("0.00");
 	@Autowired
 	private ScheduleService scheduleService;
 	@Autowired
@@ -43,11 +56,11 @@ public class AddController {
 	@Autowired
 	private AccountService accountService;
 	@Autowired
-	private SessionFactory sessionFactory;
-	@Autowired
 	private UserService userService;
 	@Autowired
 	private TaxService taxService;
+	@Autowired
+	private CashVoucherService cashVoucherService;
 	@Autowired
 	private StockTaxService stockTaxService;
 	@Autowired
@@ -61,6 +74,31 @@ public class AddController {
 		StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
 		
 		dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+		dataBinder.registerCustomEditor(List.class, "stockitems", new CustomCollectionEditor(List.class)
+        {
+          @Override
+          protected Object convertElement(Object element)
+          {
+              Long id = null;
+
+              if(element instanceof String && !((String)element).equals("")){
+                  //From the JSP 'element' will be a String
+                  try{
+                      id = Long.parseLong((String) element);
+                  }
+                  catch (NumberFormatException e) {
+                      System.out.println("Element was " + ((String) element));
+                      e.printStackTrace();
+                  }
+              }
+              else if(element instanceof Long) {
+                  //From the database 'element' will be a Long
+                  id = (Long) element;
+              }
+
+              return id != null ? stockItemService.get(id) : null;
+          }
+        });
 	}	
 	@RequestMapping("/")
 	public String addHome(Model theModel,
@@ -227,6 +265,192 @@ public class AddController {
             return "add-bankvoucher";
         }
         ra.addFlashAttribute("someerror", "Please Login to continue");
+        return "redirect:/";
+    }
+
+    @RequestMapping("/cashvoucher")
+    public String addCashVoucher(Model theModel, RedirectAttributes ra)
+    {
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((((UserDetails)authentication).getUsername()));
+            Double credit = (double) 0, debit = (double) 0;
+//          DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//          SimpleDateFormat dft= new SimpleDateFormat("yyyy-MM-dd");
+//          LocalDateTime now = LocalDateTime.now();
+//          Date curDate = (Date) df.parse(dft.format(now));
+            CashVoucher toadd = new CashVoucher();
+//          toadd.setDate(curDate);
+
+            {
+                Double debt = 0.0;
+                List<CashVoucher> tle = cashVoucherService.getCashVoucherByUserName(userName);
+                for(int i = 0; i < tle.size(); i++)
+                {
+                    debt += tle.get(i).getCreditTotal();
+                    debt -= tle.get(i).getDebitTotal();
+                }
+                theModel.addAttribute("cashbalance", Math.round(debt));
+            }
+            toadd.setDebitTotal(debit);
+            toadd.setCreditTotal(credit);
+            toadd.setUserName(userName);
+            theModel.addAttribute("addelem",toadd);
+            List<Account> thelist = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("theaccountlist", thelist);
+            return "add-cashvoucher";
+        }
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        return "redirect:/";
+    }
+    @RequestMapping("/stockitemsforpurchaseitems")
+    public String addStockItemsForPurchaseItems(Model theModel, RedirectAttributes ra)
+    {
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((((UserDetails)authentication).getUsername()));
+//          DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//          SimpleDateFormat dft= new SimpleDateFormat("yyyy-MM-dd");
+//          LocalDateTime now = LocalDateTime.now();
+//          Date curDate = (Date) df.parse(dft.format(now));
+            List<StockItem> theitems = stockItemService.getStockItemByUserName(userName);
+            StockItemForm theform = new StockItemForm();
+            theModel.addAttribute("items", theitems);
+            theModel.addAttribute("theform", theform);
+            return "add-stockitemsforpurchaseitems";
+        }
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        return "redirect:/";
+    }
+    @RequestMapping("/purchasebillstep")
+    public String addPurchaseBill(
+    		@ModelAttribute("theform") StockItemForm theform,
+    		BindingResult theBindingResult,
+    		Model theModel,
+    		RedirectAttributes ra
+    		)
+    {
+
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            if(theBindingResult.hasErrors())
+            {
+            	ra.addFlashAttribute("registrationError", theBindingResult.toString());
+            	return "redirect:/add/stockitemsforpurchaseitems";
+            }
+            if(theform == null)
+            {
+            	ra.addFlashAttribute("registrationError", "Invalid Request!");
+            	return "redirect:/add";        	
+            }
+            if(0 == theform.getStockitems().size())
+            {
+            	ra.addFlashAttribute("registrationError", "Please select atleast one item");
+            	return "redirect:/add";
+            }
+            List<StockPurchaseForm> theList1 = new ArrayList<StockPurchaseForm> ();
+            for(int i = 0; i < theform.getStockitems().size(); i++)
+            {
+            	logger.info(theform.getStockitems().get(i).toString());
+            	StockPurchaseForm e = new StockPurchaseForm();
+            	e.setStockitemName(theform.getStockitems().get(i).getStockItemName());
+            	e.setId(theform.getStockitems().get(i).getId());
+            	e.setStockitemquantity(theform.getStockitems().get(i).getQuantity());
+            	theList1.add(e);
+            }
+            ListOfStockPurchaseForm theList = new ListOfStockPurchaseForm();
+            theList.setTheStockPurchaseFormList(theList1);
+            theModel.addAttribute("addelem", theList);
+            return "add-purchasebillstep";
+        }
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        return "redirect:/";
+    }
+    @RequestMapping("/purchasebill")
+    public String addPurchaseBillVoucher(@ModelAttribute("addelem")@Valid ListOfStockPurchaseForm theform,
+            BindingResult theBindingResult,
+            Model theModel,
+            RedirectAttributes ra
+        )
+    {
+        Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication).getUsername();
+
+            if(theBindingResult.hasErrors())
+            {
+                logger.info(theBindingResult.toString());
+                theModel.addAttribute("addelem", theform);
+                theModel.addAttribute("registrationError", theBindingResult.toString());
+                return "add-purchasebillstep";
+            }
+            try 
+            {   
+                List<Account> tl = accountService.getAccountByUserName(userName);
+                logger.info("processing add cash voucher for user :"
+                        + " " + userName + " in "
+                                + "AddController, /add/purchasebill");
+                theModel.addAttribute("listofaccounts" ,tl);
+                double fp = 0.0;
+                for(int i = 0; i < theform.getTheStockPurchaseFormList().size(); i++)
+                {
+                	StockPurchaseForm itm = theform.getTheStockPurchaseFormList().get(i);
+                	StockItem st = stockItemService.get(itm.getId());
+                	theform.getTheStockPurchaseFormList().get(i).setId(st.getId());
+                	List<StockTax> thestocktaxlist = stockTaxService.getStockTaxByStockId(st.getId());
+                	{
+                		double taxation = 0.0;
+                		taxation = taxation + Double.parseDouble(st.getCommision());
+                		taxation = taxation + Double.parseDouble(st.getKkFee());
+                		taxation = taxation + Double.parseDouble(st.getLabourCharge());
+                		taxation = taxation + Double.parseDouble(st.getMandiTax());
+                		taxation = taxation / 100.00;
+                		double price = 0.0;
+                		double perc = taxation * 100.0;
+                		double stocktax = 0.0;
+                		String sttax = new String();
+                		
+                		price += (itm.getRate() * itm.getQuantity());
+                		price += (itm.getQuantity() * Double.parseDouble(st.getPacking()));
+                		for(int j = 0; j < thestocktaxlist.size(); j++)
+                		{
+                			Tax thetax = taxService.get(thestocktaxlist.get(j).getTaxId());
+                			stocktax += Double.parseDouble(thetax.getTaxPercent());
+                			sttax += thetax.getTaxName() + ":" + thetax.getTaxPercent() + "% ";
+                    	}
+                		stocktax /= 100.00;
+                		String ffg = "Total tax:Rs." + df.format(price * ((taxation + stocktax))) + "(" + df.format(perc)+ 
+                				"%: " + "KKFee:" + df.format(Double.parseDouble(st.getKkFee()))+
+                				"% Commision:" + df.format(Double.parseDouble(st.getCommision())) +
+                				"% Labour Charge:"+df.format(Double.parseDouble(st.getLabourCharge()))+
+                				"% Mandi Tax:"+df.parse(st.getMandiTax()) + " " + sttax;
+                		theform.getTheStockPurchaseFormList().get(i).setTax(Double.parseDouble(df.format(price * (stocktax + taxation))));
+                		logger.info(ffg);
+                		price *= (1.00 + stocktax + taxation);
+                		price = Double.parseDouble(df.format(price));                		
+                		theform.getTheStockPurchaseFormList().get(i).setTotal(price);
+                		theform.getTheStockPurchaseFormList().get(i).setTaxbreakup(ffg);
+                		fp += price;
+                	}
+                }
+                PurchaseBillVoucherForm theform1 = new PurchaseBillVoucherForm();
+                theform1.setCost(fp);
+                theform1.setTheform(theform.getTheStockPurchaseFormList());
+                theform1.setUserName(userName);
+                theModel.addAttribute("addelem", theform1);
+                logger.info("Successfully reached step 2 for adding purchase bill, redirecting to final url!");
+                return "add-purchasevoucher";
+            }
+            catch(Exception e) {
+                logger.info("Couldn't execute the processing phase of purchase voucher command due to exception: " + e);
+                return "redirect:/add";
+            }
+        }
+        theModel.addAttribute("registrationError", "Log in first to continue.");
         return "redirect:/";
     }
 }

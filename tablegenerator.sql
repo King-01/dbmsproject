@@ -150,7 +150,8 @@ drop table if exists stockitem;
 create table stockitem(
 id int not null auto_increment,
 primary key(id),
-itemname varchar(50) not null unique,
+quantity int not null,
+itemname varchar(50) not null,
 hsngroup varchar(50),
 manditax varchar(50) not null,
 kkfee varchar(50) not null,
@@ -161,10 +162,10 @@ groupname int not null,
 foreign key(groupname) references group_s(id) on delete cascade
 );
 insert into stockitem value(
-'1', 'Wheat', NULL, '5', '6', '4', '2', '1', '1'
+'1', '0', 'Wheat', NULL, '5', '6', '4', '2', '1', '1'
 );
 insert into stockitem value(
-'2', 'Corn', NULL, '2', '4', '2', '8', '1', '2'
+'2', '0','Corn', NULL, '2', '4', '2', '8', '1', '2'
 );
 drop table if exists stock_tax;
 create table stock_tax(
@@ -194,7 +195,7 @@ name varchar(50),
 foreign key(accountid) references accounts(id) on delete cascade,
 foreign key(username_id) references user(username) on delete cascade
 );
-insert into journalvoucher(jvoucherid, date, credittotal, debittotal, description, accountid, username_id) values
+insert into journalvoucher(jvoucherid, date, credittotal, debittotal, accountid, description, username_id, name) values
 ('1', '2020-11-08', '24.14', '324.15', '1', 'NA', 'aasavbadera', 'Yay'),
 ('2', '2020-11-08', '32.24', '21.31', '1', NULL, 'aasavbadera', 'Yay'),
 ('3', '2020-11-14', '511.15', '21.3', '2', 'Loss', 'aasavbadera', 'Dharma'),
@@ -216,7 +217,7 @@ foreign key(username_id) references user(username) on delete cascade,
 foreign key(accountid) references accounts(id) on delete cascade
 );
 
-insert into bankvoucher(bvoucherid, date, credittotal, debittotal, description, accountid, username_id) values
+insert into bankvoucher(bvoucherid, date, credittotal, description, accountid, debittotal, name, username_id) values
 ('1', '2020-11-01', '12314.0', 'Cheque Id - 521421', '2', '0.0', 'Dharma', 'aasavbadera'),
 ('2', '2020-11-09', '4123.14', 'Id - 3', '2', '3162.4', 'Dharma', 'aasavbadera'),
 ('3', '2020-11-11', '2131.0', 'id = 4', '1', '21984.1', 'Yay', 'aasavbadera'),
@@ -242,23 +243,30 @@ drop table if exists purchasebill;
 create table purchasebill(
 pvoucherid int not null auto_increment,
 trucknumber varchar(50),
-fixedcost varchar(50) not null default 0,
+cost Double,
 currdate date not null,
-iscredit bool not null default false,
 suppliername varchar(50) not null,
+description text,
+supplierid int not null,
 primary key(pvoucherid),
 username_id varchar(50) not null,
+tax double,
 foreign key(username_id) references user(username) on delete cascade,
-foreign key(suppliername) references group_s(groupname) on delete cascade
+foreign key(supplierid) references accounts(id) on delete cascade
 );
 drop table if exists salebill;
 create table salebill(
 svoucherid int not null auto_increment,
-iscredit bool not null default false,
 currdate date not null,
 username_id varchar(50) not null,
+suppliername varchar(50) not null,
+supplierid int not null,
+description text,
 foreign key(username_id) references user(username) on delete cascade,
-trucknumber varchar(50) not null default '-',
+foreign key(supplierid) references accounts(groupname) on delete cascade,
+trucknumber varchar(50),
+tax double,
+taxbreakup text,
 primary key(svoucherid)
 );
 drop table if exists saleitems;
@@ -269,6 +277,9 @@ quantity varchar(50) not null default 0,
 rate varchar(50) not null default 0,
 svoucherid int not null,
 itemname varchar(50) not null,
+totalamount double,
+tax double,
+taxbreakup text,
 foreign key(svoucherid) references salebill(svoucherid) on delete cascade,
 unique(quantity, rate, svoucherid, itemname)
 );
@@ -276,10 +287,21 @@ drop table if exists purchaseitems;
 create table purchaseitems(
 id int not null auto_increment,
 primary key(id),
-quantity varchar(50) not null default 0,
-rate varchar(50) not null default 0,
+quantity int not null default 0,
+rate double not null default 0,
+totalamount double,
+taxbreakup text,
+tax double,
 pvoucherid int not null,
 itemname varchar(50) not null,
 foreign key(pvoucherid) references purchasebill(pvoucherid) on delete cascade,
 unique(quantity, rate, pvoucherid, itemname)
+);
+drop table if exists current_availability;
+create table current_availability(
+id int not null auto_increment,
+stock_id int not null,
+quantity int not null,
+primary key(id),
+foreign key(stock_id) references stockitem(id)
 );
