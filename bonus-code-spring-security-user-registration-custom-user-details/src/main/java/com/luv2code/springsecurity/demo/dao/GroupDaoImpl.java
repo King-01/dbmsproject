@@ -7,7 +7,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +70,14 @@ public class GroupDaoImpl implements GroupDao {
 			}
 		}
 		return theGroupList;
+	}
+
+	@Override
+	@Transactional
+	public Group getGroupById(Long id) {
+		// TODO Auto-generated method stub
+		Session crs = sessionFactory.getCurrentSession();
+		return crs.get(Group.class, id);
 	}
 
 }

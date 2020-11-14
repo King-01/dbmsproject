@@ -1,6 +1,9 @@
 package com.luv2code.springsecurity.demo.controller;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -13,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.love2code.springsecurity.demo.form.DateForm;
+import com.love2code.springsecurity.demo.form.DateGroupForm;
+import com.love2code.springsecurity.demo.form.DateScheduleForm;
 import com.love2code.springsecurity.demo.form.StockForm;
 import com.luv2code.springsecurity.demo.entity.Account;
 import com.luv2code.springsecurity.demo.entity.BankVoucher;
@@ -38,13 +45,17 @@ import com.luv2code.springsecurity.demo.service.JournalVoucherService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
 import com.luv2code.springsecurity.demo.service.StockItemService;
 import com.luv2code.springsecurity.demo.service.TaxService;
+import com.luv2code.springsecurity.demo.service.UserService;
 
 @Controller
 @RequestMapping("/view")
 public class ViewController {
+	private static SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
 	private static DecimalFormat df = new DecimalFormat("0.00");
 	@Autowired
 	private ScheduleService scheduleService;
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private CashVoucherService cashVoucherService;
 	@Autowired
@@ -93,14 +104,17 @@ public class ViewController {
 		return "redirect:/";
 	}
 	@RequestMapping("/scheduleById")
-	@Transactional
 	public String showScheduleById(Model theModel, @RequestParam("scheduleId") Long scheduleId, RedirectAttributes ra)
 	{
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(authentication instanceof UserDetails)
 		{
-			Session crs = sessionFactory.getCurrentSession();
-			Schedule obj = crs.get(Schedule.class, scheduleId);
+			Schedule obj = scheduleService.get(scheduleId);
+			if(!obj.getUserName().equals(((UserDetails)authentication).getUsername()))
+			{
+				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+				return "redirect:/";
+			}
 			theModel.addAttribute("newschedule", obj);
 			return "show-specific-schedule";
 			
@@ -128,14 +142,18 @@ public class ViewController {
 		return "redirect:/";
 	}
 	@RequestMapping("/groupById")
-	@Transactional
 	public String showGroupById(Model theModel, @RequestParam("groupId") Long groupId, RedirectAttributes ra)
 	{
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(authentication instanceof UserDetails)
 		{
-			Session crs = sessionFactory.getCurrentSession();
-			Group obj = crs.get(Group.class, groupId);
+			String userName = ((UserDetails)authentication).getUsername();
+			Group obj = groupService.getGroupById(groupId);
+			if(!(scheduleService.get(obj.getSchedule())).getUserName().equals(userName))
+			{
+				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+				return "redirect:/";
+			}
 			theModel.addAttribute("newgroup", obj);
 			return "show-specific-group";
 			
@@ -163,16 +181,22 @@ public class ViewController {
 		return "redirect:/";
 	}
 	@RequestMapping("/accountById")
-	@Transactional
-	public String showAccountById(Model theModel, @RequestParam("accountId") Long accountId, RedirectAttributes ra)
+	public String showAccountById(Model theModel, 
+			@RequestParam("accountId") Long accountId, 
+			RedirectAttributes ra)
 	{
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(authentication instanceof UserDetails)
 		{
-			Session crs = sessionFactory.getCurrentSession();
-			Account obj = crs.get(Account.class, accountId);
-			Session crs1 = sessionFactory.getCurrentSession();
-			Group schedule = crs1.get(Group.class, obj.getGroupId());
+			String userName = ((UserDetails)authentication).getUsername();
+			Account obj = accountService.getAccount(accountId);
+			Group schedule = groupService.getGroupById(obj.getGroupId());
+			Schedule thes = scheduleService.get(schedule.getSchedule());
+			if(!thes.getUserName().equals(userName))
+			{
+				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+				return "redirect:/";
+			}
 			theModel.addAttribute("scheduleName", schedule.getGroupName());
 			theModel.addAttribute("scheduleId", schedule.getId());
 			theModel.addAttribute("newaccount", obj);
@@ -202,7 +226,6 @@ public class ViewController {
 		return "redirect:/";
 	}
 	@RequestMapping("/stockItemById")
-	@Transactional
 	public String showStockItemById(Model theModel
 			, @RequestParam("stockItemId") Long stockItemId
 			, RedirectAttributes ra)
@@ -210,12 +233,17 @@ public class ViewController {
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(authentication instanceof UserDetails)
 		{
-			Session crs = sessionFactory.getCurrentSession();
-			StockItem obj = crs.get(StockItem.class, stockItemId);
-			Session crs1 = sessionFactory.getCurrentSession();
+			String userName = ((UserDetails)authentication).getUsername();
+			StockItem obj = stockItemService.get(stockItemId);
 			StockForm obj1 = new StockForm();
 			obj1 = obj1.createStockForm(obj);
-			Group schedule = crs1.get(Group.class, obj.getGroupId());
+			Group schedule = groupService.getGroupById(obj.getGroupId());
+			Schedule thes = scheduleService.get(schedule.getSchedule());
+			if(!thes.getUserName().equals(userName))
+			{
+				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+				return "redirect:/";
+			}
 			theModel.addAttribute("scheduleName", schedule.getGroupName());
 			theModel.addAttribute("scheduleId", schedule.getId());
 			theModel.addAttribute("newstockitem", obj1);
@@ -250,7 +278,6 @@ public class ViewController {
 		return "redirect:/";
 	}
 	@RequestMapping("/taxbyid")
-	@Transactional
 	public String showTaxById(Model theModel
 			, @RequestParam("taxId") Long theId
 			, RedirectAttributes ra)
@@ -260,8 +287,14 @@ public class ViewController {
 				.getPrincipal();
 		if(authentication instanceof UserDetails)
 		{
-			Session crs = sessionFactory.getCurrentSession();
-			Tax obj = crs.get(Tax.class, theId);
+			String userName = ((UserDetails)authentication)
+					.getUsername();
+			Tax obj = taxService.get(theId);
+			if(!userService.get(obj.getUserid()).getUserName().equals(userName))
+			{
+				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+				return "redirect:/";
+			}
 			theModel.addAttribute("display", obj);
 			return "show-specific-tax";
 			
@@ -411,7 +444,6 @@ public class ViewController {
 		return "redirect:/";
 	}
 	@RequestMapping("/specificjournalvoucher")
-	@Transactional
 	public String showSpecificJournalVoucher(
 			Model theModel, 
 			@RequestParam("jvoucherId")int jvoucherid,
@@ -422,10 +454,15 @@ public class ViewController {
 				.getPrincipal();
 		if(authentication instanceof UserDetails)
 		{
+			String userName = ((UserDetails)authentication)
+					.getUsername();
 			Long jvoucherId =  (long)jvoucherid;
-
-			Session crs = sessionFactory.getCurrentSession();
-			JournalVoucher item = crs.get(JournalVoucher.class, jvoucherId);
+			JournalVoucher item = journalVoucherService.getJournalVoucher(jvoucherId);
+			if(!item.getUserName().equals(userName))
+			{
+				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+				return "redirect:/";
+			}	
 			logger.info("I'm in showspecificjournalvoucher " + Long.toString(item.getAccountId()));
 			theModel.addAttribute("addelem", item);
 			return "show-specific-journalvoucher";
@@ -534,7 +571,7 @@ public class ViewController {
     @Transactional
     public String showSpecificBankVoucher(
             Model theModel, 
-            @RequestParam("jvoucherId")int jvoucherid,
+            @RequestParam("bvoucherId")int bvoucherid,
             RedirectAttributes ra)
     {
         Object authentication = 
@@ -542,10 +579,17 @@ public class ViewController {
                 .getPrincipal();
         if(authentication instanceof UserDetails)
         {
-            Long jvoucherId =  (long)jvoucherid;
+        	Long bvoucherId =  (long)bvoucherid;
 
             Session crs = sessionFactory.getCurrentSession();
-            BankVoucher item = crs.get(BankVoucher.class, jvoucherId);
+            BankVoucher item = crs.get(BankVoucher.class, bvoucherId);
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(!item.getUserName().equals(userName))
+			{
+				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+				return "redirect:/";
+			}
             logger.info("I'm in showspecificbankvoucher " + Long.toString(item.getAccountId()));
             theModel.addAttribute("addelem", item);
             return "show-specific-bankvoucher";
@@ -665,11 +709,1476 @@ public class ViewController {
             Long cvoucherId =  (long)cvoucherid;
             Session crs = sessionFactory.getCurrentSession();
             CashVoucher item = crs.get(CashVoucher.class, cvoucherId);
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(!item.getUserName().equals(userName))
+			{
+				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+				return "redirect:/";
+			}
             logger.info("I'm in showspecificcashvoucher " + Long.toString(item.getAccountId()));
             theModel.addAttribute("addelem", item);
             return "show-specific-cashvoucher";
         }
         
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/cashvoucherbetweendates")
+    public String showCashVoucherBetweenDates(
+    		@ModelAttribute("theform") DateForm theform,
+    		BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+    		)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+        	String userName = ((UserDetails)authentication)
+                    .getUsername();
+        	if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getAccountId() == null))
+        	{
+        		theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Account to proceed for query!");
+        		theform = new DateForm();
+        		theModel.addAttribute("theform", theform);
+        		List<Account> thel = accountService.getAccountByUserName(userName);
+            	theModel.addAttribute("items", thel);
+            	return "show-cashvoucherbetweendates";
+        	}
+        	logger.info(theform.toString());
+        	List<CashVoucher> theList = new ArrayList<> ();
+        	int key = 0;
+        	if(theform.getStartDate() == null && theform.getEndDate() == null)
+        	{
+        		key = 1;
+        	}
+        	else if(theform.getStartDate() == null)
+        	{
+        		List<CashVoucher> theList1 = cashVoucherService.getCashVoucherByUserName(userName);
+        		for(int i = 0; i < theList1.size(); i++)
+        		{
+        			try {
+	        			Date temp = dt1.parse(theList1.get(i).getDate());
+	        			Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+	        			if(temp1.after(temp))
+	        			{
+	        				theList.add(theList1.get(i));
+	        			}
+        			} catch(Exception e)
+        			{
+        				;
+        			}
+        		}
+        	}
+        	else if(theform.getEndDate() == null)
+        	{
+        		List<CashVoucher> theList1 = cashVoucherService.getCashVoucherByUserName(userName);
+        		for(int i = 0; i < theList1.size(); i++)
+        		{
+        			try {
+	        			Date temp = dt1.parse(theList1.get(i).getDate());
+	        			Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+	        			if(!temp1.after(temp))
+	        			{
+	        				theList.add(theList1.get(i));
+	        			}
+        			} catch(Exception e)
+        			{
+        				;
+        			}
+        		}
+        		
+        	}
+        	else
+        	{
+                List<CashVoucher> theList1 = cashVoucherService.getCashVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                	
+                }
+        	}
+        	if(key == 1)
+        	{
+        		theList = cashVoucherService.getCashVoucherByUserName(userName);
+        	}
+        	if(theform.getAccountId() == null)
+        	{
+        		;
+        	}
+        	else
+        	{
+        		logger.info("The List size : " + Integer.toString(theList.size()));
+        		List<CashVoucher> theList1 = new ArrayList<> ();
+        		for(int i = 0; i < theList.size(); i++)
+        		{
+        			logger.info("i");
+        			logger.info(theform.getAccountId());
+        			logger.info(theList.get(i).getAccountId());
+        			if(theList.get(i).getAccountId() == theform.getAccountId())
+        			{
+        				theList1.add(theList.get(i));
+        			}
+        		}
+        		Account theaccount = accountService.getAccount(theform.getAccountId());
+        		theModel.addAttribute("id", theaccount);
+        		theList.clear();
+        		theList.addAll(theList1);
+        		logger.info("The List size : " + Integer.toString(theList.size()));
+        		
+        	}
+        	double price = 0.00;
+        	for(int i = 0 ; i < theList.size(); i++)
+        	{
+        		price += theList.get(i).getCreditTotal();
+        		price -= theList.get(i).getDebitTotal();
+        	}
+        	String status = "Credit";
+        	if(price < 0.00)
+        	{
+        		status = "Debit";
+        		price = -price;
+        	}
+        	price = Double.parseDouble(df.format(price));
+        	theModel.addAttribute("theList", theList);
+        	theModel.addAttribute("status", status);
+    		theModel.addAttribute("theform", theform);
+        	theModel.addAttribute("price", price);
+        	List<Account> thel = accountService.getAccountByUserName(userName);
+        	theModel.addAttribute("items", thel);
+        	return "show-cashvoucherbetweendates";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/cashvoucherbetweendatesbygroup")
+    public String showCashVoucherBetweenDates(
+            @ModelAttribute("theform") DateGroupForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getGroupId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Group to proceed for query!");
+                theform = new DateGroupForm();
+                theModel.addAttribute("theform", theform);
+                List<Group> thel = groupService.getGroupByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-cashvoucherbetweendatesbygroup";
+            }
+            logger.info(theform.toString());
+            List<CashVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<CashVoucher> theList1 = cashVoucherService.getCashVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<CashVoucher> theList1 = cashVoucherService.getCashVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<CashVoucher> theList1 = cashVoucherService.getCashVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                	
+                }
+            }
+            if(key == 1)
+            {
+                theList = cashVoucherService.getCashVoucherByUserName(userName);
+            }
+            if(theform.getGroupId() == null)
+            {
+                ;
+            }
+            else
+            {
+//            	List<Account> theAccountList = accountService.getAccountByGroupId(theform.getGroupId());
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<CashVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getGroupId());
+                    logger.info(theList.get(i).getAccountId());
+//                    for(int j = 0 ; j < theAccountList.size(); j++) {
+//	                    if(theList.get(i).getAccountId() == theAccountList.get(j).getId())
+//	                    {
+//	                        theList1.add(theList.get(i));
+//	                    }
+//                    }
+                    if(accountService.getAccount(theList.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                    {
+                    	theList1.add(theList.get(i));
+                    }
+                }
+        		Group theaccount = groupService.getGroupById(theform.getGroupId());
+        		theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price += theList.get(i).getCreditTotal();
+                price -= theList.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Group> thel = groupService.getGroupByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-cashvoucherbetweendatesbygroup";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/cashvoucherbetweendatesbyschedule")
+    public String showCashVoucherBetweenDates(
+            @ModelAttribute("theform") DateScheduleForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getScheduleId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Schedule to proceed for query!");
+                theform = new DateScheduleForm();
+                theModel.addAttribute("theform", theform);
+                List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-cashvoucherbetweendatesbyschedule";
+            }
+            logger.info(theform.toString());
+            List<CashVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<CashVoucher> theList1 = cashVoucherService.getCashVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<CashVoucher> theList1 = cashVoucherService.getCashVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<CashVoucher> theList1 = cashVoucherService.getCashVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                	
+                }
+            }
+            if(key == 1)
+            {
+                theList = cashVoucherService.getCashVoucherByUserName(userName);
+            }
+            if(theform.getScheduleId() == null)
+            {
+                ;
+            }
+            else
+            {
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<CashVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getScheduleId());
+                    logger.info(theList.get(i).getAccountId());
+                    if(groupService.getGroupById(theList.get(i).getAccountId()).getSchedule() == theform.getScheduleId())
+                    {
+                    	theList1.add(theList.get(i));
+                    }
+                }
+        		Schedule theaccount = scheduleService.get(theform.getScheduleId());
+        		theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price += theList.get(i).getCreditTotal();
+                price -= theList.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-cashvoucherbetweendatesbyschedule";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/bankvoucherbetweendates")
+    public String showBankVoucherBetweenDates(
+            @ModelAttribute("theform") DateForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getAccountId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Account to proceed for query!");
+                theform = new DateForm();
+                theModel.addAttribute("theform", theform);
+                List<Account> thel = accountService.getAccountByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-bankvoucherbetweendates";
+            }
+            logger.info(theform.toString());
+            List<BankVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<BankVoucher> theList1 = bankVoucherService.getBankVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<BankVoucher> theList1 = bankVoucherService.getBankVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<BankVoucher> theList1 = bankVoucherService.getBankVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = bankVoucherService.getBankVoucherByUserName(userName);
+            }
+            if(theform.getAccountId() == null)
+            {
+                ;
+            }
+            else
+            {
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<BankVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getAccountId());
+                    logger.info(theList.get(i).getAccountId());
+                    if(theList.get(i).getAccountId() == theform.getAccountId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Account theaccount = accountService.getAccount(theform.getAccountId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price += theList.get(i).getCreditTotal();
+                price -= theList.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Account> thel = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-bankvoucherbetweendates";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/bankvoucherbetweendatesbygroup")
+    public String showBankVoucherBetweenDates(
+            @ModelAttribute("theform") DateGroupForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getGroupId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Group to proceed for query!");
+                theform = new DateGroupForm();
+                theModel.addAttribute("theform", theform);
+                List<Group> thel = groupService.getGroupByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-bankvoucherbetweendatesbygroup";
+            }
+            logger.info(theform.toString());
+            List<BankVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<BankVoucher> theList1 = bankVoucherService.getBankVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<BankVoucher> theList1 = bankVoucherService.getBankVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<BankVoucher> theList1 = bankVoucherService.getBankVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = bankVoucherService.getBankVoucherByUserName(userName);
+            }
+            if(theform.getGroupId() == null)
+            {
+                ;
+            }
+            else
+            {
+//              List<Account> theAccountList = accountService.getAccountByGroupId(theform.getGroupId());
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<BankVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getGroupId());
+                    logger.info(theList.get(i).getAccountId());
+//                    for(int j = 0 ; j < theAccountList.size(); j++) {
+//                      if(theList.get(i).getAccountId() == theAccountList.get(j).getId())
+//                      {
+//                          theList1.add(theList.get(i));
+//                      }
+//                    }
+                    if(accountService.getAccount(theList.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Group theaccount = groupService.getGroupById(theform.getGroupId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price += theList.get(i).getCreditTotal();
+                price -= theList.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Group> thel = groupService.getGroupByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-bankvoucherbetweendatesbygroup";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/bankvoucherbetweendatesbyschedule")
+    public String showBankVoucherBetweenDates(
+            @ModelAttribute("theform") DateScheduleForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getScheduleId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Schedule to proceed for query!");
+                theform = new DateScheduleForm();
+                theModel.addAttribute("theform", theform);
+                List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-bankvoucherbetweendatesbyschedule";
+            }
+            logger.info(theform.toString());
+            List<BankVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<BankVoucher> theList1 = bankVoucherService.getBankVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<BankVoucher> theList1 = bankVoucherService.getBankVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<BankVoucher> theList1 = bankVoucherService.getBankVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(theList1.get(i).getDate());
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = bankVoucherService.getBankVoucherByUserName(userName);
+            }
+            if(theform.getScheduleId() == null)
+            {
+                ;
+            }
+            else
+            {
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<BankVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getScheduleId());
+                    logger.info(theList.get(i).getAccountId());
+                    if(groupService.getGroupById(theList.get(i).getAccountId()).getSchedule() == theform.getScheduleId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Schedule theaccount = scheduleService.get(theform.getScheduleId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price += theList.get(i).getCreditTotal();
+                price -= theList.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-bankvoucherbetweendatesbyschedule";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/journalvoucherbetweendates")
+    public String showJournalVoucherBetweenDates(
+            @ModelAttribute("theform") DateForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getAccountId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Account to proceed for query!");
+                theform = new DateForm();
+                theModel.addAttribute("theform", theform);
+                List<Account> thel = accountService.getAccountByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-journalvoucherbetweendates";
+            }
+            logger.info(theform.toString());
+            List<JournalVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<JournalVoucher> theList1 = journalVoucherService.getJournalVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<JournalVoucher> theList1 = journalVoucherService.getJournalVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<JournalVoucher> theList1 = journalVoucherService.getJournalVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = journalVoucherService.getJournalVoucherByUserName(userName);
+            }
+            if(theform.getAccountId() == null)
+            {
+                ;
+            }
+            else
+            {
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<JournalVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getAccountId());
+                    logger.info(theList.get(i).getAccountId());
+                    if(theList.get(i).getAccountId() == theform.getAccountId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Account theaccount = accountService.getAccount(theform.getAccountId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price += theList.get(i).getCreditTotal();
+                price -= theList.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Account> thel = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-journalvoucherbetweendates";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/journalvoucherbetweendatesbygroup")
+    public String showJournalVoucherBetweenDates(
+            @ModelAttribute("theform") DateGroupForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getGroupId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Group to proceed for query!");
+                theform = new DateGroupForm();
+                theModel.addAttribute("theform", theform);
+                List<Group> thel = groupService.getGroupByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-journalvoucherbetweendatesbygroup";
+            }
+            logger.info(theform.toString());
+            List<JournalVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<JournalVoucher> theList1 = journalVoucherService.getJournalVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<JournalVoucher> theList1 = journalVoucherService.getJournalVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<JournalVoucher> theList1 = journalVoucherService.getJournalVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = journalVoucherService.getJournalVoucherByUserName(userName);
+            }
+            if(theform.getGroupId() == null)
+            {
+                ;
+            }
+            else
+            {
+//              List<Account> theAccountList = accountService.getAccountByGroupId(theform.getGroupId());
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<JournalVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getGroupId());
+                    logger.info(theList.get(i).getAccountId());
+//                    for(int j = 0 ; j < theAccountList.size(); j++) {
+//                      if(theList.get(i).getAccountId() == theAccountList.get(j).getId())
+//                      {
+//                          theList1.add(theList.get(i));
+//                      }
+//                    }
+                    if(accountService.getAccount(theList.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Group theaccount = groupService.getGroupById(theform.getGroupId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price += theList.get(i).getCreditTotal();
+                price -= theList.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Group> thel = groupService.getGroupByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-journalvoucherbetweendatesbygroup";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/journalvoucherbetweendatesbyschedule")
+    public String showJournalVoucherBetweenDates(
+            @ModelAttribute("theform") DateScheduleForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getScheduleId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Schedule to proceed for query!");
+                theform = new DateScheduleForm();
+                theModel.addAttribute("theform", theform);
+                List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-journalvoucherbetweendatesbyschedule";
+            }
+            logger.info(theform.toString());
+            List<JournalVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<JournalVoucher> theList1 = journalVoucherService.getJournalVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<JournalVoucher> theList1 = journalVoucherService.getJournalVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<JournalVoucher> theList1 = journalVoucherService.getJournalVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = journalVoucherService.getJournalVoucherByUserName(userName);
+            }
+            if(theform.getScheduleId() == null)
+            {
+                ;
+            }
+            else
+            {
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<JournalVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getScheduleId());
+                    logger.info(theList.get(i).getAccountId());
+                    if(groupService.getGroupById(theList.get(i).getAccountId()).getSchedule() == theform.getScheduleId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Schedule theaccount = scheduleService.get(theform.getScheduleId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price += theList.get(i).getCreditTotal();
+                price -= theList.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-journalvoucherbetweendatesbyschedule";
+        }
+      
         ra.addFlashAttribute("someerror", "Please Login to continue");
         
         return "redirect:/";

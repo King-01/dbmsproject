@@ -105,5 +105,12 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		userDao.save(theUser);
 	}
+
+	@Override
+	@Transactional
+	public User get(long id) {
+		// TODO Auto-generated method stub
+		return userDao.get(id);
+	}
 	
 }

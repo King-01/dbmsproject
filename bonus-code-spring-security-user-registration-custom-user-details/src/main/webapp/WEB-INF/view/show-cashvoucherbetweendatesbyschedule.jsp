@@ -6,7 +6,7 @@
 
 <head>
   
-  <title>View Cash Voucher by account</title>
+  <title>View Cash Voucher</title>
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -66,7 +66,7 @@
 </head>
 
 <body>
-  <h3>View Cash Voucher by Account</h3>
+  <h3>View Cash Voucher by Schedule</h3>
   <c:if test="${registrationError != null}">
 
     <div class="alert alert-danger col-xs-offset-1 col-xs-10">
@@ -91,34 +91,27 @@
     </div>
 
   </c:if>
-  <form:form action="${pageContext.request.contextPath}/view/cashvoucherbyaccount" 
-           modelAttribute="addelem"
+  <form:form action="${pageContext.request.contextPath}/view/cashvoucherbetweendatesbyschedule" 
+           modelAttribute="theform"
            class="form-horizontal">
-    <form:hidden path="cvoucherId"/>
-    <form:hidden path="userName"/>
-    <form:hidden path="accountName"/>
     <!-- Password -->
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="creditTotal" cssClass="error alert alert-danger" />
-      <form:hidden path="date"/>
+      <form:errors path="startDate" cssClass="error alert alert-danger" />
+      Start Date : <form:input type="date"  path="startDate" placeholder="Date (*)" class="form-control" />
+    </div>
+    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
+      <form:errors path="endDate" cssClass="error alert alert-danger" />
+      End Date : <form:input type="date"  path="endDate" placeholder="Date (*)" class="form-control" />
     </div>
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">
-      <form:errors path="accountId" cssClass="error alert alert-danger" />
-      Select Account: <form:select path="accountId">
-        <form:option value="${ null }" label = "Select a Account from this List (*)"></form:option>
+      <form:errors path="scheduleId" cssClass="error alert alert-danger" />
+      Select Schedule: <form:select path="scheduleId">
+        <form:option value="${ null }" label = "Select a Schedule from this List (*)"></form:option>
         <c:forEach var="oneschedule" items="${items}">
-          <form:option value="${oneschedule.getId()}" label = "${ oneschedule.getAccountName() }"></form:option>
+          <form:option value="${oneschedule.getId()}" label = "${ oneschedule.getScheduleName() }"></form:option>
         </c:forEach>
       </form:select>  
           
-    </div>
-    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="creditTotal" cssClass="error alert alert-danger" />
-      <form:hidden path="creditTotal" />
-    </div>
-    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="debitTotal" cssClass="error alert alert-danger" />
-      <form:hidden path="debitTotal"/>
     </div>
     <!-- Register Button -->
     <div style="margin-top: 10px; margin-left:4px" class="form-group">            
@@ -128,13 +121,15 @@
     </div>
   </form:form>
   
-  <c:if test="${ id != null }" >
-    <h4>For the Account (${ id.getAccountName() }), Overall Status - ${ status } and it sums to a value of ${ tot }</h4>
-    <h4>List of Cash Vouchers are - </h4>
-  
+  <h4><c:if test="${ id != null }" >
+    For the Schedule (${ id.getScheduleName() })</c:if></h4>
+   <c:if test = "${ status != null }" ><h4>
+    Overall Status - ${ status } and it sums to a value of ${ price }</h4>
+    <h4>List of Cash Vouchers are - </h4></c:if>
+  <c:if test = "${ theList != null }">
   <br>
   <startcounter>
-  <c:forEach var="schedule" items="${theVouchers}">
+  <c:forEach var="schedule" items="${theList}">
     <c:url var="schedulelink" value="/view/specificcashvoucher">
       <c:param name="cvoucherId" value="${schedule.getCvoucherId()}" />
     </c:url><br>

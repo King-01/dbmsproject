@@ -8,4 +8,5 @@ public interface ScheduleDao {
 	void save(Schedule theSchedule);
 	List<Schedule> getScheduleByUserName(String UserName);
 	Schedule getSchedule(String ScheduleName, String UserName);
+	Schedule get(Long id);
 }

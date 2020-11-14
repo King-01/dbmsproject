@@ -42,4 +42,11 @@ public class ScheduleDaoImpl implements ScheduleDao {
 		return toReturn;
 	}
 
+	@Override
+	public Schedule get(Long id) {
+		// TODO Auto-generated method stub
+		Session crs = sessionFactory.getCurrentSession();
+		return crs.get(Schedule.class, id);
+	}
+
 }

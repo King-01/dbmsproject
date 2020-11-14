@@ -94,6 +94,42 @@
 			<a href="${pageContext.request.contextPath}/view/cashvoucherbyaccount">View Cash Voucher By Account</a>
 			
 	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/cashvoucherbetweendates">View Cash Voucher By Dates/Account</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/cashvoucherbetweendatesbygroup">View Cash Voucher By Dates/Group</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/cashvoucherbetweendatesbyschedule">View Cash Voucher By Dates/Schedule</a>
+			
+	</p>
+	  <p>
+	      <a href="${pageContext.request.contextPath}/view/bankvoucherbetweendates">View Bank Voucher By Dates/Account</a>
+	      
+	  </p>
+	  <p>
+	      <a href="${pageContext.request.contextPath}/view/bankvoucherbetweendatesbygroup">View Bank Voucher By Dates/Group</a>
+	      
+	  </p>
+	  <p>
+	      <a href="${pageContext.request.contextPath}/view/bankvoucherbetweendatesbyschedule">View Bank Voucher By Dates/Schedule</a>
+	      
+	  </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/journalvoucherbetweendates">View Journal Voucher By Dates/Account</a>
+          
+      </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/journalvoucherbetweendatesbygroup">View Journal Voucher By Dates/Group</a>
+          
+      </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/journalvoucherbetweendatesbyschedule">View Journal Voucher By Dates/Schedule</a>
+          
+      </p>
 	
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 

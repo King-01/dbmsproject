@@ -6,7 +6,7 @@
 
 <head>
   
-  <title>View Cash Voucher by account</title>
+  <title>View Cash Voucher</title>
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -91,16 +91,17 @@
     </div>
 
   </c:if>
-  <form:form action="${pageContext.request.contextPath}/view/cashvoucherbyaccount" 
-           modelAttribute="addelem"
+  <form:form action="${pageContext.request.contextPath}/view/cashvoucherbetweendates" 
+           modelAttribute="theform"
            class="form-horizontal">
-    <form:hidden path="cvoucherId"/>
-    <form:hidden path="userName"/>
-    <form:hidden path="accountName"/>
     <!-- Password -->
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="creditTotal" cssClass="error alert alert-danger" />
-      <form:hidden path="date"/>
+      <form:errors path="startDate" cssClass="error alert alert-danger" />
+      Start Date : <form:input type="date"  path="startDate" placeholder="Date (*)" class="form-control" />
+    </div>
+    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
+      <form:errors path="endDate" cssClass="error alert alert-danger" />
+      End Date : <form:input type="date"  path="endDate" placeholder="Date (*)" class="form-control" />
     </div>
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">
       <form:errors path="accountId" cssClass="error alert alert-danger" />
@@ -112,14 +113,6 @@
       </form:select>  
           
     </div>
-    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="creditTotal" cssClass="error alert alert-danger" />
-      <form:hidden path="creditTotal" />
-    </div>
-    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="debitTotal" cssClass="error alert alert-danger" />
-      <form:hidden path="debitTotal"/>
-    </div>
     <!-- Register Button -->
     <div style="margin-top: 10px; margin-left:4px" class="form-group">            
       <div class="col-sm-6 controls">
@@ -128,13 +121,15 @@
     </div>
   </form:form>
   
-  <c:if test="${ id != null }" >
-    <h4>For the Account (${ id.getAccountName() }), Overall Status - ${ status } and it sums to a value of ${ tot }</h4>
-    <h4>List of Cash Vouchers are - </h4>
-  
+  <h4><c:if test="${ id != null }" >
+    For the Account (${ id.getAccountName() })</c:if></h4>
+   <c:if test = "${ status != null }" ><h4>
+    Overall Status - ${ status } and it sums to a value of ${ price }</h4>
+    <h4>List of Cash Vouchers are - </h4></c:if>
+  <c:if test = "${ theList != null }">
   <br>
   <startcounter>
-  <c:forEach var="schedule" items="${theVouchers}">
+  <c:forEach var="schedule" items="${theList}">
     <c:url var="schedulelink" value="/view/specificcashvoucher">
       <c:param name="cvoucherId" value="${schedule.getCvoucherId()}" />
     </c:url><br>

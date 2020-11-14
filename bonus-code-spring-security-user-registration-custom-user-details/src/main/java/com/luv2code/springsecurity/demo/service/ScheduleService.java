@@ -12,5 +12,5 @@ public interface ScheduleService {
 	
 	List<Schedule> getScheduleByUserName(String UserName);
 	
-	
+	Schedule get(Long id);
 }

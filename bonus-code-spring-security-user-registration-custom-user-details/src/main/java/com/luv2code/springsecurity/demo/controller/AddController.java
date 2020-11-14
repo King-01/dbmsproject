@@ -575,11 +575,11 @@ public class AddController {
                     if(itm.getQuantity() > st.getQuantity())
                     {
                       if(ts.length() > 0) {
-                        ts = ", " + ts;
+                        ts = ts + ", ";
                       }
                       else
                       {
-                        ts = " " + ts;
+                        ts = ts + " ";
                       }
                       ts = ts + itm.getStockitemName();
                     }
@@ -613,8 +613,8 @@ public class AddController {
                 				"% Mandi Tax:"+df.parse(st.getMandiTax()) + "% " + sttax + ") Packing Charges:Rs" + st.getPacking()+" Per Unit";theform.getTheStockSaleFormList().get(i).setTax(Double.parseDouble(df.format(price * (stocktax + taxation))));
                         logger.info(ffg);
                         price *= (1.00 + stocktax + taxation);
-                        price = Double.parseDouble(df.format(price));                       
                         price += (itm.getQuantity() * Double.parseDouble(st.getPacking()));
+                        price = Double.parseDouble(df.format(price));                       
                         theform.getTheStockSaleFormList().get(i).setTotal(price);
                         theform.getTheStockSaleFormList().get(i).setTaxbreakup(ffg);
                         fp += price;

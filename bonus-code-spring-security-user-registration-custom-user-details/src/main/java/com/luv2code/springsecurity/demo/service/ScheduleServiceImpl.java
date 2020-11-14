@@ -35,4 +35,11 @@ public class ScheduleServiceImpl implements ScheduleService {
 		return scheduleDao.getSchedule(ScheduleName, UserName);
 	}
 
+	@Override
+	@Transactional
+	public Schedule get(Long id) {
+		// TODO Auto-generated method stub
+		return scheduleDao.get(id);
+	}
+
 }

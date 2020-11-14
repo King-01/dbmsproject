@@ -15,7 +15,7 @@ public class ErrorController {
     @ExceptionHandler(value = Exception.class)
     public String handleException(HttpServletRequest request, Exception ex, Model theModel, RedirectAttributes ra) {
     	logger.warning("Request " + request.getRequestURL() + " Threw an exception : " + ex);
-    	ra.addFlashAttribute("someerror", "Request " + request.getRequestURL() + " Threw an exception : " + ex);
+    	ra.addFlashAttribute("someerror", "Invalid Request!");
         return "redirect:/";
     }
 

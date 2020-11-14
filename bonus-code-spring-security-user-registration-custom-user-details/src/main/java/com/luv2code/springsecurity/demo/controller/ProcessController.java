@@ -698,7 +698,7 @@ public class ProcessController {
                                         + "name of account to process for: "
                                         + "" + Long.toString(addelem.getAccountId()));
                 addelem.setAccountName(accountService.getAccount(addelem.getAccountId()).getAccountName());
-                
+                logger.info(addelem.toString());
                 cashVoucherService.save(addelem);
                 logger.info("Cash Voucher Creation Successful!");
                 ra.addFlashAttribute("successMessage", "Cash Voucher with id : " + Long.toString(addelem.getCvoucherId()) + " Successful!");
@@ -796,8 +796,10 @@ public class ProcessController {
             String userName = ((UserDetails)authentication).getUsername();
             if(theBindingResult.hasErrors())
             {
+                List<Account> tl = accountService.getAccountByUserName(userName);
                 logger.info(theBindingResult.toString());
                 theModel.addAttribute("addelem", addelem);
+                theModel.addAttribute("listofaccounts" ,tl);
                 return "add-salebill";
             }
             try 

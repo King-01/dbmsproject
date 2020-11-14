@@ -42,4 +42,11 @@ public class UserDaoImpl implements UserDao {
 		currentSession.saveOrUpdate(theUser);
 	}
 
+	@Override
+	public User get(long id) {
+		// TODO Auto-generated method stub
+		Session crs = sessionFactory.getCurrentSession();
+		return crs.get(User.class, id);
+	}
+
 }

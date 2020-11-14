@@ -136,7 +136,7 @@
 	<startcounter>
 	<c:forEach var="schedule" items="${theVouchers}">
 		<c:url var="schedulelink" value="/view/specificbankvoucher">
-			<c:param name="jvoucherId" value="${schedule.getBvoucherId()}" />
+			<c:param name="bvoucherId" value="${schedule.getBvoucherId()}" />
 		</c:url><br>
 		<number><a href="${schedulelink}"><c:out value="Date - ${schedule.getDate()} | Account Name - ${ schedule.getAccountName() } | Debit - ${ schedule.getDebitTotal() } | Credit - ${ schedule.getCreditTotal() }"/></a></number>
 		<br>

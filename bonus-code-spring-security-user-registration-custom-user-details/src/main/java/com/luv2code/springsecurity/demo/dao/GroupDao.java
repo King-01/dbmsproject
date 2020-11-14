@@ -9,4 +9,5 @@ public interface GroupDao {
 	List<Group> getGroupByScheduleId(Long scheduleId);
 	Group getGroup(String GroupName, Long scheduleId);
 	List<Group> getGroupByUserName(String UserName);
+	Group getGroupById(Long id);
 }

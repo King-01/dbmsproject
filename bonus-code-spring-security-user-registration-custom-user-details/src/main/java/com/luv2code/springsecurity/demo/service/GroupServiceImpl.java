@@ -35,4 +35,10 @@ public class GroupServiceImpl implements GroupService {
 		return groupDao.getGroupByUserName(userName);
 	}
 
+	@Override
+	public Group getGroupById(Long id) {
+		// TODO Auto-generated method stub
+		return groupDao.getGroupById(id);
+	}
+
 }
