@@ -33,6 +33,10 @@ import com.luv2code.springsecurity.demo.entity.BankVoucher;
 import com.luv2code.springsecurity.demo.entity.CashVoucher;
 import com.luv2code.springsecurity.demo.entity.Group;
 import com.luv2code.springsecurity.demo.entity.JournalVoucher;
+import com.luv2code.springsecurity.demo.entity.PurchaseBillTransactions;
+import com.luv2code.springsecurity.demo.entity.PurchaseBillVoucher;
+import com.luv2code.springsecurity.demo.entity.SaleBill;
+import com.luv2code.springsecurity.demo.entity.SaleBillTransactions;
 import com.luv2code.springsecurity.demo.entity.Schedule;
 import com.luv2code.springsecurity.demo.entity.StockItem;
 import com.luv2code.springsecurity.demo.entity.StockTax;
@@ -42,6 +46,10 @@ import com.luv2code.springsecurity.demo.service.BankVoucherService;
 import com.luv2code.springsecurity.demo.service.CashVoucherService;
 import com.luv2code.springsecurity.demo.service.GroupService;
 import com.luv2code.springsecurity.demo.service.JournalVoucherService;
+import com.luv2code.springsecurity.demo.service.PurchaseBillTransactionsService;
+import com.luv2code.springsecurity.demo.service.PurchaseBillVoucherService;
+import com.luv2code.springsecurity.demo.service.SaleBillService;
+import com.luv2code.springsecurity.demo.service.SaleBillTransactionsService;
 import com.luv2code.springsecurity.demo.service.ScheduleService;
 import com.luv2code.springsecurity.demo.service.StockItemService;
 import com.luv2code.springsecurity.demo.service.TaxService;
@@ -72,7 +80,14 @@ public class ViewController {
 	private StockItemService stockItemService;
 	@Autowired
 	private TaxService taxService;
-	
+	@Autowired
+	private PurchaseBillVoucherService purchaseBillVoucherService;
+	@Autowired
+	private PurchaseBillTransactionsService purchaseBillTransactionsService;
+	@Autowired
+	private SaleBillTransactionsService saleBillTransactionsService;
+	@Autowired
+	private SaleBillService saleBillService;
 	private Logger logger = Logger.getLogger(getClass().getName());
 	
 	@InitBinder
@@ -2177,6 +2192,1213 @@ public class ViewController {
             List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-journalvoucherbetweendatesbyschedule";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/purchasebillvoucherbyaccount")
+    public String showPurchaseBillVoucher(
+            @ModelAttribute("addelem") PurchaseBillVoucher addelem,
+            Model theModel, 
+            RedirectAttributes ra)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            List<Account> theList
+            = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("items", theList);
+            if(addelem == null) 
+            {
+                ;
+            }
+            else if(addelem.getAccountId() == null)
+            {
+                theModel.addAttribute("registrationError", "Please select an account to view its vouchers!");
+            }
+            else
+            {
+                Double tot = 0.0;
+                List<PurchaseBillVoucher> theVouchers = purchaseBillVoucherService.
+                        getPurchaseBillVoucher(addelem.getAccountId(), userName);
+                for(int i = 0; i < theVouchers.size(); i++)
+                {
+                    tot += 0;
+                    tot -= theVouchers.get(i).getCost();
+                    theVouchers.get(i).setCost(Double.parseDouble(df.format(theVouchers.get(i).getCost())));
+                }
+                String status = "Credit";
+                if(tot < 0)
+                {
+                    status = "Debit";
+                    tot = -tot;
+                }
+                theModel.addAttribute("theVouchers", theVouchers);
+                theModel.addAttribute("tot", df.format(tot));
+                theModel.addAttribute("status", status);
+                theModel.addAttribute("id", accountService.getAccount(addelem.getAccountId()));
+            }
+            return "show-purchasebillvouchersbyaccount";
+        }
+        
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/allpurchasebillvouchers")
+    public String showAllPurchaseBillVouchers(
+            Model theModel, 
+            RedirectAttributes ra)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            List<PurchaseBillVoucher> theList
+            = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+            Double tot = 0.0;
+            for(int i = 0; i < theList.size(); i++)
+            {
+                tot -= theList.get(i).getCost();
+                theList.get(i).setCost(Double.parseDouble(df.format(theList.get(i).getCost())));
+            }
+            String status = "Credit";
+            if(tot < 0)
+            {
+                status = "Debit";
+                tot = -tot;
+            }
+            theModel.addAttribute("tot", df.format(tot));
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("items", theList);
+            return "show-allpurchasebillvouchers";
+        }
+        
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/specificpurchasebillvoucher")
+    public String showSpecificPurchaseBillVoucher(
+            Model theModel, 
+            @RequestParam("id")int pvoucherid,
+            RedirectAttributes ra)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            Long pvoucherId =  (long)pvoucherid;
+            PurchaseBillVoucher item = purchaseBillVoucherService.getPurchaseBillVoucher(pvoucherId);
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(!item.getUserName().equals(userName))
+          {
+            ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+            return "redirect:/";
+          }
+            logger.info("I'm in showspecificpurchasebillvoucher " + Long.toString(item.getAccountId()));
+            theModel.addAttribute("addelem", item);
+            List<PurchaseBillTransactions> items = purchaseBillTransactionsService.getPurchaseBillVoucherTransactions(item.getId());
+            theModel.addAttribute("items", items);
+            return "show-specific-purchasebillvoucher";
+        }
+        
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    } 
+
+    @RequestMapping("/purchasebillvoucherbetweendates")
+    public String showPurchaseBillVoucherBetweenDates(
+            @ModelAttribute("theform") DateForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getAccountId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Account to proceed for query!");
+                theform = new DateForm();
+                theModel.addAttribute("theform", theform);
+                List<Account> thel = accountService.getAccountByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-purchasebillvoucherbetweendates";
+            }
+            logger.info(theform.toString());
+            List<PurchaseBillVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<PurchaseBillVoucher> theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<PurchaseBillVoucher> theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<PurchaseBillVoucher> theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+            }
+            if(theform.getAccountId() == null)
+            {
+                ;
+            }
+            else
+            {
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<PurchaseBillVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getAccountId());
+                    logger.info(theList.get(i).getAccountId());
+                    if(theList.get(i).getAccountId() == theform.getAccountId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Account theaccount = accountService.getAccount(theform.getAccountId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price -= theList.get(i).getCost();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Account> thel = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-purchasebillvoucherbetweendates";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/purchasebillvoucherbetweendatesbygroup")
+    public String showPurchaseBillVoucherBetweenDates(
+            @ModelAttribute("theform") DateGroupForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getGroupId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Group to proceed for query!");
+                theform = new DateGroupForm();
+                theModel.addAttribute("theform", theform);
+                List<Group> thel = groupService.getGroupByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-purchasebillvoucherbetweendatesbygroup";
+            }
+            logger.info(theform.toString());
+            List<PurchaseBillVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<PurchaseBillVoucher> theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<PurchaseBillVoucher> theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<PurchaseBillVoucher> theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+            }
+            if(theform.getGroupId() == null)
+            {
+                ;
+            }
+            else
+            {
+//              List<Account> theAccountList = accountService.getAccountByGroupId(theform.getGroupId());
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<PurchaseBillVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getGroupId());
+                    logger.info(theList.get(i).getAccountId());
+//                    for(int j = 0 ; j < theAccountList.size(); j++) {
+//                      if(theList.get(i).getAccountId() == theAccountList.get(j).getId())
+//                      {
+//                          theList1.add(theList.get(i));
+//                      }
+//                    }
+                    if(accountService.getAccount(theList.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Group theaccount = groupService.getGroupById(theform.getGroupId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price -= theList.get(i).getCost();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Group> thel = groupService.getGroupByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-purchasebillvoucherbetweendatesbygroup";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/purchasebillvoucherbetweendatesbyschedule")
+    public String showPurchaseBillVoucherBetweenDates(
+            @ModelAttribute("theform") DateScheduleForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getScheduleId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Schedule to proceed for query!");
+                theform = new DateScheduleForm();
+                theModel.addAttribute("theform", theform);
+                List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-purchasebillvoucherbetweendatesbyschedule";
+            }
+            logger.info(theform.toString());
+            List<PurchaseBillVoucher> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<PurchaseBillVoucher> theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<PurchaseBillVoucher> theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<PurchaseBillVoucher> theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+            }
+            if(theform.getScheduleId() == null)
+            {
+                ;
+            }
+            else
+            {
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<PurchaseBillVoucher> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getScheduleId());
+                    logger.info(theList.get(i).getAccountId());
+                    if(groupService.getGroupById(theList.get(i).getAccountId()).getSchedule() == theform.getScheduleId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Schedule theaccount = scheduleService.get(theform.getScheduleId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price -= theList.get(i).getCost();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-purchasebillvoucherbetweendatesbyschedule";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }@RequestMapping("/salebillbyaccount")
+    public String showSaleBill(
+            @ModelAttribute("addelem") SaleBill addelem,
+            Model theModel, 
+            RedirectAttributes ra)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            List<Account> theList
+            = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("items", theList);
+            if(addelem == null) 
+            {
+                ;
+            }
+            else if(addelem.getAccountId() == null)
+            {
+                theModel.addAttribute("registrationError", "Please select an account to view its vouchers!");
+            }
+            else
+            {
+                Double tot = 0.0;
+                List<SaleBill> theVouchers = saleBillService.
+                        getSaleBill(addelem.getAccountId(), userName);
+                for(int i = 0; i < theVouchers.size(); i++)
+                {
+                    tot += 0;
+                    tot -= theVouchers.get(i).getCost();
+                    theVouchers.get(i).setCost(Double.parseDouble(df.format(theVouchers.get(i).getCost())));
+                }
+                String status = "Credit";
+                if(tot < 0)
+                {
+                    status = "Debit";
+                    tot = -tot;
+                }
+                theModel.addAttribute("theVouchers", theVouchers);
+                theModel.addAttribute("tot", df.format(tot));
+                theModel.addAttribute("status", status);
+                theModel.addAttribute("id", accountService.getAccount(addelem.getAccountId()));
+            }
+            return "show-salebillsbyaccount";
+        }
+        
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/allsalebills")
+    public String showAllSaleBills(
+            Model theModel, 
+            RedirectAttributes ra)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            List<SaleBill> theList
+            = saleBillService.getSaleBillByUserName(userName);
+            Double tot = 0.0;
+            for(int i = 0; i < theList.size(); i++)
+            {
+                tot -= theList.get(i).getCost();
+                theList.get(i).setCost(Double.parseDouble(df.format(theList.get(i).getCost())));
+            }
+            String status = "Credit";
+            if(tot < 0)
+            {
+                status = "Debit";
+                tot = -tot;
+            }
+            theModel.addAttribute("tot", df.format(tot));
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("items", theList);
+            return "show-allsalebills";
+        }
+        
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/specificsalebill")
+    public String showSpecificSaleBill(
+            Model theModel, 
+            @RequestParam("id")int pvoucherid,
+            RedirectAttributes ra)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            Long pvoucherId =  (long)pvoucherid;
+            SaleBill item = saleBillService.getSaleBill(pvoucherId);
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(!item.getUserName().equals(userName))
+          {
+            ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
+            return "redirect:/";
+          }
+            logger.info("I'm in showspecificsalebill " + Long.toString(item.getAccountId()));
+            theModel.addAttribute("addelem", item);
+            List<SaleBillTransactions> items = saleBillTransactionsService.getSaleBillTransactions(item.getId());
+            theModel.addAttribute("items", items);
+            return "show-specific-salebill";
+        }
+        
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    } 
+
+    @RequestMapping("/salebillbetweendates")
+    public String showSaleBillBetweenDates(
+            @ModelAttribute("theform") DateForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getAccountId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Account to proceed for query!");
+                theform = new DateForm();
+                theModel.addAttribute("theform", theform);
+                List<Account> thel = accountService.getAccountByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-salebillbetweendates";
+            }
+            logger.info(theform.toString());
+            List<SaleBill> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<SaleBill> theList1 = saleBillService.getSaleBillByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<SaleBill> theList1 = saleBillService.getSaleBillByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<SaleBill> theList1 = saleBillService.getSaleBillByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = saleBillService.getSaleBillByUserName(userName);
+            }
+            if(theform.getAccountId() == null)
+            {
+                ;
+            }
+            else
+            {
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<SaleBill> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getAccountId());
+                    logger.info(theList.get(i).getAccountId());
+                    if(theList.get(i).getAccountId() == theform.getAccountId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Account theaccount = accountService.getAccount(theform.getAccountId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price -= theList.get(i).getCost();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Account> thel = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-salebillbetweendates";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/salebillbetweendatesbygroup")
+    public String showSaleBillBetweenDates(
+            @ModelAttribute("theform") DateGroupForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getGroupId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Group to proceed for query!");
+                theform = new DateGroupForm();
+                theModel.addAttribute("theform", theform);
+                List<Group> thel = groupService.getGroupByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-salebillbetweendatesbygroup";
+            }
+            logger.info(theform.toString());
+            List<SaleBill> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<SaleBill> theList1 = saleBillService.getSaleBillByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<SaleBill> theList1 = saleBillService.getSaleBillByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<SaleBill> theList1 = saleBillService.getSaleBillByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = saleBillService.getSaleBillByUserName(userName);
+            }
+            if(theform.getGroupId() == null)
+            {
+                ;
+            }
+            else
+            {
+//              List<Account> theAccountList = accountService.getAccountByGroupId(theform.getGroupId());
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<SaleBill> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getGroupId());
+                    logger.info(theList.get(i).getAccountId());
+//                    for(int j = 0 ; j < theAccountList.size(); j++) {
+//                      if(theList.get(i).getAccountId() == theAccountList.get(j).getId())
+//                      {
+//                          theList1.add(theList.get(i));
+//                      }
+//                    }
+                    if(accountService.getAccount(theList.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Group theaccount = groupService.getGroupById(theform.getGroupId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price -= theList.get(i).getCost();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Group> thel = groupService.getGroupByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-salebillbetweendatesbygroup";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/salebillbetweendatesbyschedule")
+    public String showSaleBillBetweenDates(
+            @ModelAttribute("theform") DateScheduleForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getScheduleId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Schedule to proceed for query!");
+                theform = new DateScheduleForm();
+                theModel.addAttribute("theform", theform);
+                List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-salebillbetweendatesbyschedule";
+            }
+            logger.info(theform.toString());
+            List<SaleBill> theList = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                List<SaleBill> theList1 = saleBillService.getSaleBillByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        logger.info(temp1.after(temp));
+                        if(temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                List<SaleBill> theList1 = saleBillService.getSaleBillByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                
+            }
+            else
+            {
+                List<SaleBill> theList1 = saleBillService.getSaleBillByUserName(userName);
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                        if(!temp1.after(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                }
+                theList1.clear();
+                theList1.addAll(theList);
+                theList.clear();
+                for(int i = 0; i < theList1.size(); i++)
+                {
+                    try {
+                        Date temp = dt1.parse(dt1.format(theList1.get(i).getDate()));
+                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                        if(!temp1.before(temp))
+                        {
+                            theList.add(theList1.get(i));
+                        }
+                    } catch(Exception e)
+                    {
+                        ;
+                    }
+                    
+                }
+            }
+            if(key == 1)
+            {
+                theList = saleBillService.getSaleBillByUserName(userName);
+            }
+            if(theform.getScheduleId() == null)
+            {
+                ;
+            }
+            else
+            {
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                List<SaleBill> theList1 = new ArrayList<> ();
+                for(int i = 0; i < theList.size(); i++)
+                {
+                    logger.info("i");
+                    logger.info(theform.getScheduleId());
+                    logger.info(theList.get(i).getAccountId());
+                    if(groupService.getGroupById(theList.get(i).getAccountId()).getSchedule() == theform.getScheduleId())
+                    {
+                        theList1.add(theList.get(i));
+                    }
+                }
+                Schedule theaccount = scheduleService.get(theform.getScheduleId());
+                theModel.addAttribute("id", theaccount);
+                theList.clear();
+                theList.addAll(theList1);
+                logger.info("The List size : " + Integer.toString(theList.size()));
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price -= theList.get(i).getCost();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-salebillbetweendatesbyschedule";
         }
       
         ra.addFlashAttribute("someerror", "Please Login to continue");

@@ -130,6 +130,46 @@
           <a href="${pageContext.request.contextPath}/view/journalvoucherbetweendatesbyschedule">View Journal Voucher By Dates/Schedule</a>
           
       </p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/allpurchasebillvouchers">View All Purchase Vouchers</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/view/purchasebillvoucherbyaccount">View Purchase Voucher By Account</a>
+			
+	</p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/purchasebillvoucherbetweendates">View Purchase Voucher By Dates/Account</a>
+          
+      </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/purchasebillvoucherbetweendatesbygroup">View Purchase Voucher By Dates/Group</a>
+          
+      </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/purchasebillvoucherbetweendatesbyschedule">View Purchase Voucher By Dates/Schedule</a>
+          
+      </p>
+  <p>
+      <a href="${pageContext.request.contextPath}/view/allsalebills">View All Sale Vouchers</a>
+      
+  </p>
+  <p>
+      <a href="${pageContext.request.contextPath}/view/salebillbyaccount">View Sale Voucher By Account</a>
+      
+  </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/salebillbetweendates">View Sale Voucher By Dates/Account</a>
+          
+      </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/salebillbetweendatesbygroup">View Sale Voucher By Dates/Group</a>
+          
+      </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/salebillbetweendatesbyschedule">View Sale Voucher By Dates/Schedule</a>
+          
+      </p>
 	
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 

@@ -38,7 +38,7 @@ public class PurchaseBillVoucherTransactionsDaoImpl implements PurchaseBillVouch
 	public List<PurchaseBillTransactions> getPurchaseBillVoucherTransactions(Long pvoucherid) {
 		// TODO Auto-generated method stub
         Session crs = sessionFactory.getCurrentSession();
-        Query<PurchaseBillTransactions> theQuery = crs.createQuery("from PurchaseBillVoucher where "
+        Query<PurchaseBillTransactions> theQuery = crs.createQuery("from PurchaseBillTransactions where "
                 + "pvoucherid=:Pvoucherid", PurchaseBillTransactions.class);
 		theQuery.setParameter("Pvoucherid", pvoucherid);
         return theQuery.getResultList();

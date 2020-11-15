@@ -6,7 +6,7 @@
 
 <head>
   
-  <title>View Bank Voucher</title>
+  <title>View Sale Voucher by account</title>
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -66,7 +66,7 @@
 </head>
 
 <body>
-  <h3>View Bank Voucher</h3>
+  <h3>View Sale Voucher by Account</h3>
   <c:if test="${registrationError != null}">
 
     <div class="alert alert-danger col-xs-offset-1 col-xs-10">
@@ -91,52 +91,56 @@
     </div>
 
   </c:if>
-  <form:form action="${pageContext.request.contextPath}/" 
+  <form:form action="${pageContext.request.contextPath}/view/salebillbyaccount" 
            modelAttribute="addelem"
            class="form-horizontal">
-    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="bvoucherId" cssClass="error alert alert-danger" />
-    Bank voucher Id - <form:input path="bvoucherId" placeholder="Bank Voucher Id (*)" class="form-control" readonly="true" />
-    </div>
-    
-    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="userName" cssClass="error alert alert-danger" />
-    User Name - <form:input path="userName" placeholder="User Name (*)" class="form-control" readonly="true" />
+    <form:hidden path="id"/>
+    <form:hidden path="userName"/>
+    <form:hidden path="accountName"/>
+    <form:hidden path="description"/>
+    <form:hidden path="trucknumber"/>
     <!-- Password -->
-    </div>
-    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="accountName" cssClass="error alert alert-danger" />
-    Account Name - <form:input path="accountName" placeholder="User Name (*)" class="form-control" readonly="true" />
-    <!-- Password -->
-    </div>
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
       <form:errors path="date" cssClass="error alert alert-danger" />
-      
-      Date : <form:input type="date" path="date" placeholder="Date (*)" class="form-control" readonly="true"/>
+      <form:hidden path="date"/>
     </div>
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">
       <form:errors path="accountId" cssClass="error alert alert-danger" />
-      <form:input type="hidden"  path="accountId" placeholder="Account id (*)" class="form-control" readonly="true"/>
-    
+      Select Account: <form:select path="accountId">
+        <form:option value="${ null }" label = "Select a Account from this List (*)"></form:option>
+        <c:forEach var="oneschedule" items="${items}">
+          <form:option value="${oneschedule.getId()}" label = "${ oneschedule.getAccountName() }"></form:option>
+        </c:forEach>
+      </form:select>  
           
     </div>
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="creditTotal" cssClass="error alert alert-danger" />
-      
-      Credit : <form:input path="creditTotal" placeholder="Credit (*)" class="form-control" readonly="true"/>
+      <form:errors path="cost" cssClass="error alert alert-danger" />
+      <form:hidden path="cost" />
     </div>
-    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="debitTotal" cssClass="error alert alert-danger" />
-      
-      Debit : <form:input path="debitTotal" placeholder="Debit (*)" class="form-control" readonly="true" />
-    </div>
-    
-    <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
-      <form:errors path="description" cssClass="error alert alert-danger" />
-      
-      Description : <form:input path="description" placeholder="Not Available" class="form-control" readonly="true" />
+    <!-- Register Button -->
+    <div style="margin-top: 10px; margin-left:4px" class="form-group">            
+      <div class="col-sm-6 controls">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
     </div>
   </form:form>
+  
+  <c:if test="${ id != null }" >
+    <h4>For the Account (${ id.getAccountName() }), Overall Status - ${ status } and it sums to a value of ${ tot }</h4>
+    <h4>List of Sale Vouchers are - </h4>
+  
+  <br>
+  <startcounter>
+  <c:forEach var="schedule" items="${theVouchers}">
+    <c:url var="schedulelink" value="/view/specificsalebill">
+      <c:param name="id" value="${schedule.getId()}" />
+    </c:url><br>
+    <number><a href="${schedulelink}"><c:out value="Date - ${schedule.getDate()} | Account Name - ${ schedule.getAccountName() } | Total Amount - ${ schedule.getCost() }"/></a></number>
+    <br>
+  </c:forEach>
+  </startcounter>
+  </c:if>
   <button type="submit" style="margin-top : 8px; margin-left:15px" class="btn btn-primary" onclick="history.go(-1);" > Back </button>
   
   <form:form action="${pageContext.request.contextPath}/" 

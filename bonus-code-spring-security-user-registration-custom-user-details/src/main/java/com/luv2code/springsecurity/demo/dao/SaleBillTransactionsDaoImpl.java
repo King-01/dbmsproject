@@ -38,7 +38,7 @@ public class SaleBillTransactionsDaoImpl implements SaleBillTransactionsDao {
     public List<SaleBillTransactions> getSaleBillTransactions(Long svoucherid) {
         // TODO Auto-generated method stub
         Session crs = sessionFactory.getCurrentSession();
-        Query<SaleBillTransactions> theQuery = crs.createQuery("from PurchaseBillVoucher where "
+        Query<SaleBillTransactions> theQuery = crs.createQuery("from SaleBillTransactions where "
                 + "svoucherid=:Svoucherid", SaleBillTransactions.class);
         theQuery.setParameter("Svoucherid", svoucherid);
         return theQuery.getResultList();

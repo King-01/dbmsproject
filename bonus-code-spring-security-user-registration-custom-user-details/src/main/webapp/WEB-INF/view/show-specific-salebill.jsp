@@ -6,7 +6,7 @@
 
 <head>
     
-    <title>View Cash Voucher</title>
+    <title>View Sale Voucher</title>
     
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -62,11 +62,14 @@
         .button5:hover {
           box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
         }
+        table, th, td {
+  border: 1px solid black;
+}
     </style>    
 </head>
 
 <body>
-    <h3>View Cash Voucher</h3>
+    <h3>View Sale Voucher</h3>
     <c:if test="${registrationError != null}">
 
         <div class="alert alert-danger col-xs-offset-1 col-xs-10">
@@ -95,8 +98,8 @@
                modelAttribute="addelem"
                class="form-horizontal">
         <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
-            <form:errors path="cvoucherId" cssClass="error alert alert-danger" />
-        Cash voucher Id - <form:input path="cvoucherId" placeholder="Bank Voucher Id (*)" class="form-control" readonly="true" />
+            <form:errors path="id" cssClass="error alert alert-danger" />
+        Sale voucher Id - <form:input path="id" placeholder="Sale Voucher Id (*)" class="form-control" readonly="true" />
         </div>
         
         <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
@@ -116,19 +119,14 @@
         </div>
         <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">
             <form:errors path="accountId" cssClass="error alert alert-danger" />
-            <form:input type = "hidden" path="accountId" placeholder="Account id (*)" class="form-control" readonly="true"/>
+            <form:input type="hidden"  path="accountId" placeholder="Account id (*)" class="form-control" readonly="true"/>
         
                     
         </div>
         <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
-            <form:errors path="creditTotal" cssClass="error alert alert-danger" />
+            <form:errors path="cost" cssClass="error alert alert-danger" />
             
-            Credit : <form:input path="creditTotal" placeholder="Credit (*)" class="form-control" readonly="true"/>
-        </div>
-        <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
-            <form:errors path="debitTotal" cssClass="error alert alert-danger" />
-            
-            Debit : <form:input path="debitTotal" placeholder="Debit (*)" class="form-control" readonly="true" />
+            Total Amount : <form:input path="cost" placeholder="Credit (*)" class="form-control" readonly="true"/>
         </div>
         
         <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
@@ -136,6 +134,43 @@
             
             Description : <form:input path="description" placeholder="Not Available" class="form-control" readonly="true" />
         </div>
+        <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
+            <form:errors path="trucknumber" cssClass="error alert alert-danger" />
+            
+            Truck Details : <form:input path="trucknumber" placeholder="Not Available" class="form-control" readonly="true" />
+        </div>
+        
+        <h3>Stock items for the current voucher</h3>
+        <table>
+    <tr>
+      <th>No.</th>
+      <th>Stock Name</th>
+      <th>Quantity</th>
+      <th>Rate</th>
+      <th>Tax</th>
+      <th>Total(Incl. Taxes)</th>
+      <th>Tax Breakup </th>
+    </tr>
+    <c:forEach items="${items}" var="thef" varStatus="status">
+      <tr>
+        <td style='white-space:nowrap;' align="center">${status.count}</td>
+        <td style='white-space:nowrap;'><c:out value="${thef.itemName}"/></td>
+        <td style='white-space:nowrap;'><c:out value="${thef.quantity}"/></td>
+        <td style='white-space:nowrap;'><c:out value="${thef.rate}"/></td>
+        <td style='white-space:nowrap;'><c:out value="${thef.tax}"/></td>
+        <td style='white-space:nowrap;'><c:out value="${thef.totalAmount}" /></td>
+        <td style='white-space:nowrap;'><c:out value="${thef.taxBreakup}"/></td>
+      </tr>
+      <input type="hidden" name="theform[${status.index}].id" value="${thef.id}"/>
+      <input type="hidden" name="theform[${ status.index }].itemName" value="${thef.itemName}" readonly="true"/>
+      <input type="hidden" name="theform[${ status.index }].quantity" value="${thef.quantity}" readonly="true"/>
+      <input type="hidden" name="theform[${ status.index }].rate" value="${thef.rate}" readonly="true"/>
+      <input type="hidden" name="theform[${ status.index }].tax" value="${thef.tax}" readonly="true"/>
+      <input type="hidden" name="theform[${ status.index }].totalAmount" value="${thef.totalAmount}" readonly="true" />
+      <input type="hidden" name="theform[${ status.index }].taxBreakup" value="${thef.taxBreakup}" readonly="true"/>
+            
+    </c:forEach>
+    </table>
     </form:form>
     <button type="submit" style="margin-top : 8px; margin-left:15px" class="btn btn-primary" onclick="history.go(-1);" > Back </button>
     

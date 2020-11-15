@@ -764,7 +764,7 @@ public class ProcessController {
                 	st.setQuantity(st.getQuantity() + itm.getQuantity());
                 	stockItemService.save(st);
                 	newbill.setTax(itm.getTax());
-                	newbill.setQuantity(itm.getStockitemquantity());
+                	newbill.setQuantity(itm.getQuantity());
                 	newbill.setRate(itm.getRate());
                 	newbill.setTaxBreakup(itm.getTaxbreakup());
                 	newbill.setTotalAmount(itm.getTotal());
@@ -834,7 +834,7 @@ public class ProcessController {
                     st.setQuantity(st.getQuantity() + itm.getQuantity());
                     stockItemService.save(st);
                     newbill.setTax(itm.getTax());
-                    newbill.setQuantity(itm.getStockitemquantity());
+                    newbill.setQuantity(itm.getQuantity());
                     newbill.setRate(itm.getRate());
                     newbill.setTaxBreakup(itm.getTaxbreakup());
                     newbill.setTotalAmount(itm.getTotal());
