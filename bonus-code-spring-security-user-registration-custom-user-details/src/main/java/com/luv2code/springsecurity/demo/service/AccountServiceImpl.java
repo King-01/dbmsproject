@@ -41,5 +41,11 @@ public class AccountServiceImpl implements AccountService {
 		// TODO Auto-generated method stub
 		return accountDao.getAccount(accountId);
 	}
+
+	@Override
+	public Account getAccount(String accountName) {
+		// TODO Auto-generated method stub
+		return accountDao.getAccount(accountName);
+	}
 	
 }

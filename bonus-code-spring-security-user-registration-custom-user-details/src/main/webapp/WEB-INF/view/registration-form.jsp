@@ -110,7 +110,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="displayName" cssClass="error alert alert-danger" />
-							<form:input path="displayName" placeholder="Display Name (*)" class="form-control" />
+							<form:input path="displayName" placeholder="Your Name (*)" class="form-control" />
 						</div>
 						
 						<!-- Email-->

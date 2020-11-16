@@ -18,10 +18,10 @@ public class GroupDaoImpl implements GroupDao {
 	private SessionFactory sessionFactory;
 	@Override
 	@Transactional
-	public void save(Group theGroup) {
+	public void save(com.luv2code.springsecurity.demo.entity.Group theGroup) {
 		// TODO Auto-generated method stub
 		Session crs = sessionFactory.getCurrentSession();
-		crs.saveOrUpdate(theGroup);
+		crs.saveOrUpdate((com.luv2code.springsecurity.demo.entity.Group)theGroup);
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class GroupDaoImpl implements GroupDao {
 	public List<Group> getGroupByScheduleId(Long scheduleId) {
 		// TODO Auto-generated method stub
 		Session crs = sessionFactory.getCurrentSession();
-		Query theQuery = crs.createQuery("from Group where schedule=:scheduleId", Group.class);
+		Query<Group> theQuery = crs.createQuery("from Group where schedule=:scheduleId", Group.class);
 		theQuery.setParameter("scheduleId", scheduleId);
 		List<Group> toReturn = theQuery.getResultList();
 		return toReturn;
@@ -52,7 +52,7 @@ public class GroupDaoImpl implements GroupDao {
 	public List<Group> getGroupByUserName(String userName) {
 		// TODO Auto-generated method stubString userName = ((UserDetails)authentication).getUsername();
 		Session crs = sessionFactory.getCurrentSession();
-		Query theQuery = crs.createQuery("from Schedule where userName=:UserName", Schedule.class
+		Query<Schedule> theQuery = crs.createQuery("from Schedule where userName=:UserName", Schedule.class
 				);
 		theQuery.setParameter("UserName", userName);
 		List<Schedule> theList = theQuery.getResultList();
@@ -61,7 +61,7 @@ public class GroupDaoImpl implements GroupDao {
 		{
 			Long scheduleId = theList.get(i).getId();
 			Session crs1 = sessionFactory.getCurrentSession();
-			Query nextQuery = crs1.createQuery("from Group where schedule=:scheduleId", Group.class);
+			Query<Group> nextQuery = crs1.createQuery("from Group where schedule=:scheduleId", Group.class);
 			nextQuery.setParameter("scheduleId", scheduleId);
 			List<Group> itmList = nextQuery.getResultList();
 			for(int j = 0; j < itmList.size(); j++)
@@ -78,6 +78,35 @@ public class GroupDaoImpl implements GroupDao {
 		// TODO Auto-generated method stub
 		Session crs = sessionFactory.getCurrentSession();
 		return crs.get(Group.class, id);
+	}
+
+	@Override
+	@Transactional
+	public Group getGroupByName(String groupName, String userName) {
+		// TODO Auto-generated method stub
+		Session crs = sessionFactory.getCurrentSession();
+		Query<Schedule> theQuery = crs.createQuery("from Schedule where userName=:UserName", Schedule.class
+				);
+		theQuery.setParameter("UserName", userName);
+		List<Schedule> theList = theQuery.getResultList();
+		List<Group> theGroupList = new ArrayList<Group>();
+		for(int i = 0; i < theList.size(); i++)
+		{
+			Long scheduleId = theList.get(i).getId();
+			Session crs1 = sessionFactory.getCurrentSession();
+			Query<Group> nextQuery = crs1.createQuery("from Group where schedule=:scheduleId", Group.class);
+			nextQuery.setParameter("scheduleId", scheduleId);
+			List<Group> itmList = nextQuery.getResultList();
+			theGroupList.addAll(itmList);
+		}
+		for(int i = 0; i < theGroupList.size(); i++)
+		{
+			if(theGroupList.get(i).getGroupName().equals(groupName))
+			{
+				return theGroupList.get(i);
+			}
+		}
+		return null;
 	}
 
 }

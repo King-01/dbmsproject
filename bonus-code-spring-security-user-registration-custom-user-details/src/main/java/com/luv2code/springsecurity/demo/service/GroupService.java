@@ -13,4 +13,5 @@ public interface GroupService {
 	List<Group> getGroupByScheduleId(Long scheduleId);
 	List<Group> getGroupByUserName(String userName);
 	Group getGroupById(Long id);
+	Group getGroupByName(String groupName, String userName);
 }

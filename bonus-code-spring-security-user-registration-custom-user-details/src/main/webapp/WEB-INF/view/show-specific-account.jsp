@@ -65,7 +65,7 @@
 				<div style="padding-top: 30px" class="panel-body">
 
 					<!-- Registration Form -->
-					<form:form action="${pageContext.request.contextPath}/process/justupdateaccount" 
+					<form:form action="${pageContext.request.contextPath}/view/updateaccount.to" 
 						  	   modelAttribute="newaccount"
 						  	   class="form-horizontal">
 
@@ -87,25 +87,25 @@
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="HsnNumber" cssClass="error alert alert-danger" />
 							
-							<form:input path="HsnNumber" placeholder="HSN Number " class="form-control" />
+							<form:input path="HsnNumber" placeholder="HSN Number " class="form-control"  readonly="true"/>
 						</div>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="email" cssClass="error alert alert-danger" />
 							
-							<form:input path="email" placeholder="Account holder email" class="form-control" />
+							<form:input path="email" placeholder="Account holder email" class="form-control" readonly="true" />
 						</div>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="mobileNumber1" cssClass="error alert alert-danger" />
 							
-							<form:input path="mobileNumber1" placeholder="Mobile Number (*)" class="form-control" />
+							<form:input path="mobileNumber1" placeholder="Mobile Number (*)" class="form-control"  readonly="true"/>
 						</div>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="mobileNumber2" cssClass="error alert alert-danger" />
 							
-							<form:input path="mobileNumber2" placeholder="Alternate Mobile Number " class="form-control"  />
+							<form:input path="mobileNumber2" placeholder="Alternate Mobile Number " class="form-control"  readonly="true" />
 						</div>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
@@ -117,25 +117,25 @@
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="addressLine1" cssClass="error alert alert-danger" />
 							
-							<form:input path="addressLine1" placeholder="Address Line 1 (*)" class="form-control"  />
+							<form:input path="addressLine1" placeholder="Address Line 1 (*)" class="form-control"   readonly="true"/>
 						</div>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="addressLine2" cssClass="error alert alert-danger" />
 							
-							<form:input path="addressLine2" placeholder="Address Line 2" class="form-control" />
+							<form:input path="addressLine2" placeholder="Address Line 2" class="form-control" readonly="true" />
 						</div>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="City" cssClass="error alert alert-danger" />
 							
-							<form:input path="City" placeholder="City (*)" class="form-control"  />
+							<form:input path="City" placeholder="City (*)" class="form-control readonly="true""  />
 						</div>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="pincode" cssClass="error alert alert-danger" />
 							
-							<form:input path="pincode" placeholder="PIN Code (*)" class="form-control" />
+							<form:input path="pincode" placeholder="PIN Code (*)" class="form-control" readonly="true" />
 						</div>
 						<!-- Register Button -->
 						<div style="margin-top: 10px" class="form-group">						

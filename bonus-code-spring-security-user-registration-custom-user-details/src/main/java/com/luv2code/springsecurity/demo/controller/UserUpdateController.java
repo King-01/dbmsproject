@@ -46,7 +46,7 @@ public class UserUpdateController {
 		
 		dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
 	}	
-	@RequestMapping("/update")
+	@RequestMapping("/updatecompanydetails")
 	public String updateUser(Model theModel)
 	{
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

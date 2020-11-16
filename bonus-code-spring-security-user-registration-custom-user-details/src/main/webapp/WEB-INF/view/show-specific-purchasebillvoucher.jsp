@@ -19,6 +19,18 @@
     
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
+startcounter {
+  list-style-type: none;
+  counter-reset: css-counter 0; /* initializes counter to 0; use -1 for zero-based numbering */
+}
+
+startcounter number {
+  counter-increment: css-counter 1; /* Increase the counter by 1. */
+}
+
+startcounter number:before {
+  content: counter(css-counter) ". "; /* Apply counter before children's content. */
+}
     h2 {
       left: 20px;
       top: 5px;

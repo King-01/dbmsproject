@@ -88,22 +88,24 @@ id int not null auto_increment,
 name varchar(50) not null,
 primary key(id),
 username_id varchar(50) not null,
+enabled int not null default 1,
 foreign key(username_id) references user(username) on delete cascade,
 unique(name, username_id)
 );
-insert into schedules value(1,'kisan','aasavbadera');
-insert into schedules value('2', 'Crops', 'aasavbadera');
+insert into schedules value(1,'kisan','aasavbadera', 1);
+insert into schedules value('2', 'Crops', 'aasavbadera', 1);
 drop table if exists group_s;
 create table group_s(
 id int not null auto_increment,
 groupname varchar(50) not null,
 schedulename int not null,
 primary key(id),
+enabled int not null default 1,
 foreign key(schedulename) references schedules(id) on delete cascade
 );
-insert into group_s value('1', 'Badaud', '1');
+insert into group_s value('1', 'Badaud', '1', 1);
 insert into group_s value(
-'2', 'Rabi', '2'
+'2', 'Rabi', '2', 1
 );
 drop table if exists accounts;
 create table accounts(
@@ -120,12 +122,13 @@ addressline2 varchar(100) default null,
 addressline1 varchar(100) not null,
 city varchar(100) default null,
 pincode varchar(50) default null,
+enabled int not null default 1,
 primary key(id),
 foreign key(groupname) references group_s(id) on delete cascade
 );
 insert into accounts value(
-'1', 'Yay', 'Pradeep Kumar', '1', NULL, NULL, '9782565081', NULL, NULL, NULL, 'Room Number - 9, C. V. Raman Hostel,', 'Varanasi, Uttar Pradesh', '221005');
-insert into accounts value('2', 'Dharma', 'Pradeep', '1', '123', NULL, '9782565081', NULL, NULL, NULL, 'Room Number - 9, C. V. Raman Hostel,', 'Varanasi, Uttar Pradesh', '221005');
+'1', 'Yay', 'Pradeep Kumar', '1', NULL, NULL, '9782565081', NULL, NULL, NULL, 'Room Number - 9, C. V. Raman Hostel,', 'Varanasi, Uttar Pradesh', '221005', 1);
+insert into accounts value('2', 'Dharma', 'Pradeep', '1', '123', NULL, '9782565081', NULL, NULL, NULL, 'Room Number - 9, C. V. Raman Hostel,', 'Varanasi, Uttar Pradesh', '221005', 1);
 
 drop table if exists tax;
 create table tax(

@@ -62,6 +62,18 @@
     .button5:hover {
       box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
     }
+startcounter {
+  list-style-type: none;
+  counter-reset: css-counter 0; /* initializes counter to 0; use -1 for zero-based numbering */
+}
+
+startcounter number {
+  counter-increment: css-counter 1; /* Increase the counter by 1. */
+}
+
+startcounter number:before {
+  content: counter(css-counter) ". "; /* Apply counter before children's content. */
+}
   </style>  
 </head>
 

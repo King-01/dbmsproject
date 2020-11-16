@@ -6,6 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import com.luv2code.springsecurity.demo.validation.IsDecimal;
 
 @Entity
 @Table(name="bankvoucher")
@@ -14,17 +17,23 @@ public class BankVoucher {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="bvoucherid")
 	private Long bvoucherId;
-	
+
+	@NotNull(message = "is required")
 	@Column(name="date")
 	private String date;
-	
+
+	@NotNull(message = "is required")
 	@Column(name="credittotal")
+	@IsDecimal
 	private Double creditTotal;
-	
+
+	@NotNull(message = "is required")
+	@IsDecimal
 	@Column(name="debittotal")
 	private Double debitTotal;
-	
+
 	@Column(name="name")
+	@NotNull(message = "is required")
 	private String accountName;
 	@Column(name="username_id")
 	private String userName;

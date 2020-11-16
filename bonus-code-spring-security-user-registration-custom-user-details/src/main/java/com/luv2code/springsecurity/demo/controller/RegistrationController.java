@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.luv2code.springsecurity.demo.entity.User;
 import com.luv2code.springsecurity.demo.service.UserService;
@@ -62,7 +63,8 @@ public class RegistrationController {
 	public String processRegistrationForm(
 				@Valid @ModelAttribute("crmUser") CrmUser theCrmUser, 
 				BindingResult theBindingResult, 
-				Model theModel) {
+				Model theModel,
+				RedirectAttributes ra) {
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(authentication instanceof UserDetails)
 		{
@@ -124,9 +126,9 @@ public class RegistrationController {
 
      // create user account        						
         userService.save(theCrmUser);
-        
+        ra.addFlashAttribute("successMessage", "User Creation Successful!");
         logger.info("Successfully created user: " + userName);
         
-        return "registration-confirmation";		
+        return "redirect:/showMyLoginPage";		
 	}
 }

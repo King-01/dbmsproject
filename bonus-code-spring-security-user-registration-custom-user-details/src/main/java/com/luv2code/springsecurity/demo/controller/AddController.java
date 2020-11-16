@@ -147,6 +147,33 @@ public class AddController {
 		return "redirect:/";
 		
 	}
+	@RequestMapping("/scheduleupdate")
+	public String addScheduleUpdate(Model theModel, RedirectAttributes ra)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			ra.addFlashAttribute("registrationError", "Select the Schedule you want to update!");
+			logger.info("Processing Update schedule step 1 for user : " + ((UserDetails)authentication).getUsername());
+			return "redirect:/view/Schedule";
+		}
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		return "redirect:/";
+	}
+	@RequestMapping("/groupupdate")
+	public String addGroupUpdate(Model theModel, RedirectAttributes ra)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			ra.addFlashAttribute("registrationError", "Select the Group you want to update!");
+			logger.info("Processing Update group step 1 for user : " + ((UserDetails)authentication).getUsername());
+			return "redirect:/view/group";
+		}
+		ra.addFlashAttribute("someerror", "Please Login to continue");
+		return "redirect:/";
+		
+	}
 	@RequestMapping("/account")
 	public String addAccount(Model theModel, RedirectAttributes ra)
 	{
@@ -165,6 +192,20 @@ public class AddController {
 		return "redirect:/";
 		
 	}
+    @RequestMapping("/accountupdate")
+    public String addAccountUpdate(Model theModel, RedirectAttributes ra)
+    {
+            Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if(authentication instanceof UserDetails)
+            {
+                    ra.addFlashAttribute("registrationError", "Select the Account you want to update!");
+                    logger.info("Processing Update account step 1 for user : " + ((UserDetails)authentication).getUsername());
+                    return "redirect:/view/account";
+            }
+            ra.addFlashAttribute("someerror", "Please Login to continue");
+            return "redirect:/";
+            
+    }
 	@RequestMapping("/stockitem")
 	public String addStockItem(Model theModel, RedirectAttributes ra)
 	{

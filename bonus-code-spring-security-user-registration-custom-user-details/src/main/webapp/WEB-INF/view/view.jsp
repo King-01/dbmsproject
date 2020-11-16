@@ -170,6 +170,18 @@
           <a href="${pageContext.request.contextPath}/view/salebillbetweendatesbyschedule">View Sale Voucher By Dates/Schedule</a>
           
       </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/allbillbetweendates">View All Voucher By Dates/Account</a>
+          
+      </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/allbillbetweendatesbygroup">View All Vouchers By Dates/Group</a>
+          
+      </p>
+      <p>
+          <a href="${pageContext.request.contextPath}/view/allbillbetweendatesbyschedule">View All Vouchers By Dates/Schedule</a>
+          
+      </p>
 	
 	<!-- Add a logout button -->
 	<form:form action="${pageContext.request.contextPath}/logout" 

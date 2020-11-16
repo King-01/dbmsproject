@@ -61,12 +61,12 @@
 				<div style="padding-top: 30px" class="panel-body">
 
 					<!-- Registration Form -->
-					<form:form action="${pageContext.request.contextPath}/process/schedule" 
+					<form:form action="${pageContext.request.contextPath}/view/updateschedule.to" 
 						  	   modelAttribute="newschedule"
 						  	   class="form-horizontal">
 
 					 
-						<form:hidden path="id" />
+						<form:hidden path="id"/>
 						<form:hidden path="userName" />
 						<!-- Password -->
 						<div style="margin-bottom: 25px" class="input-group">
@@ -74,6 +74,11 @@
 							<form:errors path="ScheduleName" cssClass="error alert alert-danger" />
 							
 							<form:input path="ScheduleName" placeholder="Schedule Name (*)" class="form-control" readonly="true"/>
+						</div>
+						<div style="margin-top: 10px" class="form-group">						
+							<div class="col-sm-6 controls">
+								<button type="submit" class="btn btn-primary">Update Schedule</button>
+							</div>
 						</div>
 					</form:form>
 					<button type="submit" class="btn btn-primary" onclick="history.go(-1);" > Back </button>

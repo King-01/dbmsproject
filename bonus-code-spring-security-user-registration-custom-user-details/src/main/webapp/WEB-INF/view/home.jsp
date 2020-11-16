@@ -43,37 +43,11 @@
 
 	</c:if>
 
-	<h2>Welcome <security:authentication property="principal.username"/></h2>
-	
-	<!-- display user name and role -->
-	
-	<security:authorize access="hasRole('MANAGER')">
-	
-		<!-- Add a link to point to /leaders ... this is for the managers -->
-		
-		<p>
-			<a href="${pageContext.request.contextPath}/leaders">Leadership Meeting</a>
-			(Only for Manager peeps)
-		</p>
-
-	</security:authorize>	
-	
-	
-	<security:authorize access="hasRole('ADMIN')">  
-
-		<!-- Add a link to point to /systems ... this is for the admins -->
-		
-		<p>
-			<a href="${pageContext.request.contextPath}/systems">IT Systems Meeting</a>
-			(Only for Admin peeps)
-		</p>
-	
-	</security:authorize>
-	
+	<h2>Welcome <%= session.getAttribute("DisplayName") %> </h2>
 	<hr>
 	
 	<p>
-			<a href="${pageContext.request.contextPath}/update">Update Company Details</a>
+			<a href="${pageContext.request.contextPath}/updatecompanydetails">Update Company Details</a>
 			
 	</p>
 	<p>
@@ -87,6 +61,10 @@
 	</p>
 	<p>
 			<a href="${pageContext.request.contextPath}/view">View</a>
+			
+	</p>
+	<p>
+			<a href="${pageContext.request.contextPath}/update">Update</a>
 			
 	</p>
 	<!-- Add a logout button -->

@@ -24,9 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.love2code.springsecurity.demo.form.AccountForm;
 import com.love2code.springsecurity.demo.form.DateForm;
 import com.love2code.springsecurity.demo.form.DateGroupForm;
 import com.love2code.springsecurity.demo.form.DateScheduleForm;
+import com.love2code.springsecurity.demo.form.GroupForm;
+import com.love2code.springsecurity.demo.form.ScheduleForm;
 import com.love2code.springsecurity.demo.form.StockForm;
 import com.luv2code.springsecurity.demo.entity.Account;
 import com.luv2code.springsecurity.demo.entity.BankVoucher;
@@ -130,6 +133,7 @@ public class ViewController {
 				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
 				return "redirect:/";
 			}
+			logger.info(obj.toString());
 			theModel.addAttribute("newschedule", obj);
 			return "show-specific-schedule";
 			
@@ -3403,6 +3407,1721 @@ public class ViewController {
       
         ra.addFlashAttribute("someerror", "Please Login to continue");
         
+        return "redirect:/";
+    }
+    @RequestMapping("/allbillbetweendates")
+    public String showAllBillBetweenDates(
+            @ModelAttribute("theform") DateForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getAccountId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Account to proceed for query!");
+                theform = new DateForm();
+                theModel.addAttribute("theform", theform);
+                List<Account> thel = accountService.getAccountByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-allbillbetweendates";
+            }
+            logger.info(theform.toString());
+            List<SaleBill> theList = new ArrayList<> ();
+            List<PurchaseBillVoucher> theList1 = new ArrayList<> ();
+            List<JournalVoucher> theList2 = new ArrayList<> ();
+            List<BankVoucher> theList3 = new ArrayList<> ();
+            List<CashVoucher> theList4 = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+            	{
+	                List<SaleBill> theList8 = saleBillService.getSaleBillByUserName(userName);
+	                for(int i = 0; i < theList1.size(); i++)
+	                {
+	                    try {
+	                        Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+	                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+	                        if(temp1.after(temp))
+	                        {
+	                            theList.add(theList8.get(i));
+	                        }
+	                    } catch(Exception e)
+	                    {
+	                        ;
+	                    }
+	                }
+            	}
+            	{
+                    List<PurchaseBillVoucher> theList8 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            	{
+                    List<BankVoucher> theList8 = bankVoucherService.getBankVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            	{
+	                List<JournalVoucher> theList8 = journalVoucherService.getJournalVoucherByUserName(userName);
+	                for(int i = 0; i < theList8.size(); i++)
+	                {
+	                    try {
+	                        Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+	                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+	                        if(temp1.after(temp))
+	                        {
+	                            theList2.add(theList8.get(i));
+	                        }
+	                    } catch(Exception e)
+	                    {
+	                        ;
+	                    }
+	                }
+            	}
+            	{
+
+                    List<CashVoucher> theList8 = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+            	{
+	                List<SaleBill> theList8 = saleBillService.getSaleBillByUserName(userName);
+	                for(int i = 0; i < theList8.size(); i++)
+	                {
+	                    try {
+	                        Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+	                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+	                        if(!temp1.after(temp))
+	                        {
+	                            theList.add(theList8.get(i));
+	                        }
+	                    } catch(Exception e)
+	                    {
+	                        ;
+	                    }
+	                }
+            	}
+            	{
+                    List<PurchaseBillVoucher> theList8 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            	{
+                    List<BankVoucher> theList8 = bankVoucherService.getBankVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+				}
+            	{
+                    List<JournalVoucher> theList8 = journalVoucherService.getJournalVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            	{
+                    List<CashVoucher> theList8 = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            }
+            else
+            {
+            	{
+	            	List<SaleBill> theList8 = saleBillService.getSaleBillByUserName(userName);
+	                for(int i = 0; i < theList8.size(); i++)
+	                {
+	                    try {
+	                        Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+	                        Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+	                        if(!temp1.after(temp))
+	                        {
+	                            theList.add(theList8.get(i));
+	                        }
+	                    } catch(Exception e)
+	                    {
+	                        ;
+	                    }
+	                }
+	                theList8.clear();
+	                theList8.addAll(theList);
+	                theList.clear();
+	                for(int i = 0; i < theList8.size(); i++)
+	                {
+	                    try {
+	                        Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+	                        Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+	                        if(!temp1.before(temp))
+	                        {
+	                            theList.add(theList8.get(i));
+	                        }
+	                    } catch(Exception e)
+	                    {
+	                        ;
+	                    }
+	                    
+	                }
+            	}
+            	{
+                    List<PurchaseBillVoucher> theList8 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList1);
+                    theList.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+
+                }
+                
+                {
+                    List<BankVoucher> theList8 = bankVoucherService.getBankVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList3);
+                    theList3.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+                {
+                    List<JournalVoucher> theList8 = journalVoucherService.getJournalVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList2);
+                    theList2.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+                {
+                    List<CashVoucher> theList8 = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList4);
+                    theList4.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+            }
+            if(key == 1)
+            {
+                theList = saleBillService.getSaleBillByUserName(userName);
+                theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                theList3 = bankVoucherService.getBankVoucherByUserName(userName);
+                theList2 = journalVoucherService.getJournalVoucherByUserName(userName);
+                theList4 = cashVoucherService.getCashVoucherByUserName(userName);
+                
+                
+            }
+            if(theform.getAccountId() == null)
+            {
+                ;
+            }
+            else
+            {
+            	{
+                    logger.info("The List size : " + Integer.toString(theList.size()));
+                    List<SaleBill> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getAccountId());
+                        logger.info(theList.get(i).getAccountId());
+                        if(theList.get(i).getAccountId() == theform.getAccountId())
+                        {
+                            theList8.add(theList.get(i));
+                        }
+                    }
+                    theList.clear();
+                    theList.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList.size()));
+            	}
+            	{
+                    logger.info("The List size : " + Integer.toString(theList1.size()));
+                    List<PurchaseBillVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList1.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getAccountId());
+                        logger.info(theList1.get(i).getAccountId());
+                        if(theList1.get(i).getAccountId() == theform.getAccountId())
+                        {
+                            theList8.add(theList1.get(i));
+                        }
+                    }
+                    theList1.clear();
+                    theList1.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList1.size()));
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList3.size()));
+                    List<BankVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList3.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getAccountId());
+                        logger.info(theList3.get(i).getAccountId());
+                        if(theList3.get(i).getAccountId() == theform.getAccountId())
+                        {
+                            theList8.add(theList3.get(i));
+                        }
+                    }
+                    theList3.clear();
+                    theList3.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList3.size()));
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList2.size()));
+                    List<JournalVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList2.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getAccountId());
+                        logger.info(theList2.get(i).getAccountId());
+                        if(theList2.get(i).getAccountId() == theform.getAccountId())
+                        {
+                            theList8.add(theList2.get(i));
+                        }
+                    }
+                    theList2.clear();
+                    theList2.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList2.size()));
+                    
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList4.size()));
+                    List<CashVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList4.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getAccountId());
+                        logger.info(theList4.get(i).getAccountId());
+                        if(theList4.get(i).getAccountId() == theform.getAccountId())
+                        {
+                            theList8.add(theList4.get(i));
+                        }
+                    }
+                    theList4.clear();
+                    theList4.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList4.size()));
+                    
+                }
+                Account theaccount = accountService.getAccount(theform.getAccountId());
+                theModel.addAttribute("id", theaccount);
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price -= theList.get(i).getCost();
+            }
+            for(int i = 0 ; i < theList1.size(); i++)
+            {
+                price -= theList1.get(i).getCost();
+            }
+            for(int i = 0 ; i < theList3.size(); i++)
+            {
+                price += theList3.get(i).getCreditTotal();
+                price -= theList3.get(i).getDebitTotal();
+            }
+            for(int i = 0 ; i < theList2.size(); i++)
+            {
+                price += theList2.get(i).getCreditTotal();
+                price -= theList2.get(i).getDebitTotal();
+            }
+            for(int i = 0 ; i < theList4.size(); i++)
+            {
+                price += theList4.get(i).getCreditTotal();
+                price -= theList4.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("theList1", theList1);
+            theModel.addAttribute("theList2", theList2);
+            theModel.addAttribute("theList3", theList3);
+            theModel.addAttribute("theList4", theList4);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Account> thel = accountService.getAccountByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-allbillbetweendates";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/allbillbetweendatesbygroup")
+    public String showAllBillBetweenDates(
+            @ModelAttribute("theform") DateGroupForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getGroupId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Group to proceed for query!");
+                theform = new DateGroupForm();
+                theModel.addAttribute("theform", theform);
+                List<Group> thel = groupService.getGroupByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-allbillbetweendatesbygroup";
+            }
+            logger.info(theform.toString());
+            List<SaleBill> theList = new ArrayList<> ();
+            List<PurchaseBillVoucher> theList1 = new ArrayList<> ();
+            List<JournalVoucher> theList2 = new ArrayList<> ();
+            List<BankVoucher> theList3 = new ArrayList<> ();
+            List<CashVoucher> theList4 = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                {
+                    List<SaleBill> theList8 = saleBillService.getSaleBillByUserName(userName);
+                    for(int i = 0; i < theList1.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<PurchaseBillVoucher> theList8 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<BankVoucher> theList8 = bankVoucherService.getBankVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<JournalVoucher> theList8 = journalVoucherService.getJournalVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+
+                    List<CashVoucher> theList8 = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                {
+                    List<SaleBill> theList8 = saleBillService.getSaleBillByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<PurchaseBillVoucher> theList8 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<BankVoucher> theList8 = bankVoucherService.getBankVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<JournalVoucher> theList8 = journalVoucherService.getJournalVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<CashVoucher> theList8 = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                {
+                    List<SaleBill> theList8 = saleBillService.getSaleBillByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList);
+                    theList.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+                {
+                    List<PurchaseBillVoucher> theList8 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList1);
+                    theList.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+
+                }
+                
+                {
+                    List<BankVoucher> theList8 = bankVoucherService.getBankVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList3);
+                    theList3.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+                {
+                    List<JournalVoucher> theList8 = journalVoucherService.getJournalVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList2);
+                    theList2.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+                {
+                    List<CashVoucher> theList8 = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList4);
+                    theList4.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+            }
+            if(key == 1)
+            {
+                theList = saleBillService.getSaleBillByUserName(userName);
+                theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                theList3 = bankVoucherService.getBankVoucherByUserName(userName);
+                theList2 = journalVoucherService.getJournalVoucherByUserName(userName);
+                theList4 = cashVoucherService.getCashVoucherByUserName(userName);
+                
+                
+            }
+            if(theform.getGroupId() == null)
+            {
+                ;
+            }
+            else
+            {
+                {
+                    logger.info("The List size : " + Integer.toString(theList.size()));
+                    List<SaleBill> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getGroupId());
+                        logger.info(accountService.getAccount(theList.get(i).getAccountId()).getGroupId());
+                        if(accountService.getAccount(theList.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                        {
+                            theList8.add(theList.get(i));
+                        }
+                    }
+                    theList.clear();
+                    theList.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList.size()));
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList1.size()));
+                    List<PurchaseBillVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList1.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getGroupId());
+                        logger.info(accountService.getAccount(theList1.get(i).getAccountId()).getGroupId());
+                        if(accountService.getAccount(theList1.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                        {
+                            theList8.add(theList1.get(i));
+                        }
+                    }
+                    theList1.clear();
+                    theList1.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList1.size()));
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList3.size()));
+                    List<BankVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList3.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getGroupId());
+                        logger.info(accountService.getAccount(theList3.get(i).getAccountId()).getGroupId());
+                        if(accountService.getAccount(theList3.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                        {
+                            theList8.add(theList3.get(i));
+                        }
+                    }
+                    theList3.clear();
+                    theList3.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList3.size()));
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList2.size()));
+                    List<JournalVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList2.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getGroupId());
+                        logger.info(accountService.getAccount(theList2.get(i).getAccountId()).getGroupId());
+                        if(accountService.getAccount(theList2.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                        {
+                            theList8.add(theList2.get(i));
+                        }
+                    }
+                    theList2.clear();
+                    theList2.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList2.size()));
+                    
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList4.size()));
+                    List<CashVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList4.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getGroupId());
+                        logger.info(accountService.getAccount(theList4.get(i).getAccountId()).getGroupId());
+                        if(accountService.getAccount(theList4.get(i).getAccountId()).getGroupId() == theform.getGroupId())
+                        {
+                            theList8.add(theList4.get(i));
+                        }
+                    }
+                    theList4.clear();
+                    theList4.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList4.size()));
+                    
+                }
+                Group thegroup = groupService.getGroupById(theform.getGroupId());
+                theModel.addAttribute("id", thegroup);
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price -= theList.get(i).getCost();
+            }
+            for(int i = 0 ; i < theList1.size(); i++)
+            {
+                price -= theList1.get(i).getCost();
+            }
+            for(int i = 0 ; i < theList3.size(); i++)
+            {
+                price += theList3.get(i).getCreditTotal();
+                price -= theList3.get(i).getDebitTotal();
+            }
+            for(int i = 0 ; i < theList2.size(); i++)
+            {
+                price += theList2.get(i).getCreditTotal();
+                price -= theList2.get(i).getDebitTotal();
+            }
+            for(int i = 0 ; i < theList4.size(); i++)
+            {
+                price += theList4.get(i).getCreditTotal();
+                price -= theList4.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("theList1", theList1);
+            theModel.addAttribute("theList2", theList2);
+            theModel.addAttribute("theList3", theList3);
+            theModel.addAttribute("theList4", theList4);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Group> thel = groupService.getGroupByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-allbillbetweendatesbygroup";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/allbillbetweendatesbyschedule")
+    public String showAllBillBetweenDates(
+            @ModelAttribute("theform") DateScheduleForm theform,
+            BindingResult theBindingResult,
+            Model theModel, 
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            if(theform == null || (theform.getEndDate() == null && theform.getStartDate() == null && theform.getScheduleId() == null))
+            {
+                theModel.addAttribute("registrationError" ,"Choose atleast one of Start Date or End Date or Schedule to proceed for query!");
+                theform = new DateScheduleForm();
+                theModel.addAttribute("theform", theform);
+                List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+                theModel.addAttribute("items", thel);
+                return "show-allbillbetweendatesbyschedule";
+            }
+            logger.info(theform.toString());
+            List<SaleBill> theList = new ArrayList<> ();
+            List<PurchaseBillVoucher> theList1 = new ArrayList<> ();
+            List<JournalVoucher> theList2 = new ArrayList<> ();
+            List<BankVoucher> theList3 = new ArrayList<> ();
+            List<CashVoucher> theList4 = new ArrayList<> ();
+            int key = 0;
+            if(theform.getStartDate() == null && theform.getEndDate() == null)
+            {
+                key = 1;
+            }
+            else if(theform.getStartDate() == null)
+            {
+                {
+                    List<SaleBill> theList8 = saleBillService.getSaleBillByUserName(userName);
+                    for(int i = 0; i < theList1.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<PurchaseBillVoucher> theList8 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<BankVoucher> theList8 = bankVoucherService.getBankVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<JournalVoucher> theList8 = journalVoucherService.getJournalVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+
+                    List<CashVoucher> theList8 = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(temp1.after(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            }
+            else if(theform.getEndDate() == null)
+            {
+                {
+                    List<SaleBill> theList8 = saleBillService.getSaleBillByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<PurchaseBillVoucher> theList8 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<BankVoucher> theList8 = bankVoucherService.getBankVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<JournalVoucher> theList8 = journalVoucherService.getJournalVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+                {
+                    List<CashVoucher> theList8 = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                {
+                    List<SaleBill> theList8 = saleBillService.getSaleBillByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList);
+                    theList.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+                {
+                    List<PurchaseBillVoucher> theList8 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList1);
+                    theList.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList1.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+
+                }
+                
+                {
+                    List<BankVoucher> theList8 = bankVoucherService.getBankVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList3);
+                    theList3.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList3.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+                {
+                    List<JournalVoucher> theList8 = journalVoucherService.getJournalVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList2);
+                    theList2.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(dt1.format(theList8.get(i).getDate()));
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList2.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+                {
+                    List<CashVoucher> theList8 = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getStartDate()));
+                            if(!temp1.after(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    theList8.clear();
+                    theList8.addAll(theList4);
+                    theList4.clear();
+                    for(int i = 0; i < theList8.size(); i++)
+                    {
+                        try {
+                            Date temp = dt1.parse(theList8.get(i).getDate());
+                            Date temp1 = dt1.parse(dt1.format(theform.getEndDate()));
+                            if(!temp1.before(temp))
+                            {
+                                theList4.add(theList8.get(i));
+                            }
+                        } catch(Exception e)
+                        {
+                            ;
+                        }
+                        
+                    }
+                }
+            }
+            if(key == 1)
+            {
+                theList = saleBillService.getSaleBillByUserName(userName);
+                theList1 = purchaseBillVoucherService.getPurchaseBillVoucherByUserName(userName);
+                theList3 = bankVoucherService.getBankVoucherByUserName(userName);
+                theList2 = journalVoucherService.getJournalVoucherByUserName(userName);
+                theList4 = cashVoucherService.getCashVoucherByUserName(userName);
+                
+                
+            }
+            if(theform.getScheduleId() == null)
+            {
+                ;
+            }
+            else
+            {
+                {
+                    logger.info("The List size : " + Integer.toString(theList.size()));
+                    List<SaleBill> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getScheduleId());
+                        logger.info(groupService.getGroupById(accountService.getAccount(theList.get(i).getAccountId()).getGroupId()).getSchedule());
+                        if(groupService.getGroupById(accountService.getAccount(theList.get(i).getAccountId()).getGroupId()).getSchedule() == theform.getScheduleId())
+                        {
+                            theList8.add(theList.get(i));
+                        }
+                    }
+                    theList.clear();
+                    theList.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList.size()));
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList1.size()));
+                    List<PurchaseBillVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList1.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getScheduleId());
+                        logger.info(groupService.getGroupById(accountService.getAccount(theList1.get(i).getAccountId()).getGroupId()).getSchedule());
+                        if(groupService.getGroupById(accountService.getAccount(theList1.get(i).getAccountId()).getGroupId()).getSchedule() == theform.getScheduleId())
+                        {
+                            theList8.add(theList1.get(i));
+                        }
+                    }
+                    theList1.clear();
+                    theList1.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList1.size()));
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList3.size()));
+                    List<BankVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList3.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getScheduleId());
+                        logger.info(groupService.getGroupById(accountService.getAccount(theList3.get(i).getAccountId()).getGroupId()).getSchedule());
+                        if(groupService.getGroupById(accountService.getAccount(theList3.get(i).getAccountId()).getGroupId()).getSchedule() == theform.getScheduleId())
+                        {
+                            theList8.add(theList3.get(i));
+                        }
+                    }
+                    theList3.clear();
+                    theList3.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList3.size()));
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList2.size()));
+                    List<JournalVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList2.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getScheduleId());
+                        logger.info(groupService.getGroupById(accountService.getAccount(theList2.get(i).getAccountId()).getGroupId()).getSchedule());
+                        if(groupService.getGroupById(accountService.getAccount(theList2.get(i).getAccountId()).getGroupId()).getSchedule() == theform.getScheduleId())
+                        {
+                            theList8.add(theList2.get(i));
+                        }
+                    }
+                    theList2.clear();
+                    theList2.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList2.size()));
+                    
+                }
+                {
+                    logger.info("The List size : " + Integer.toString(theList4.size()));
+                    List<CashVoucher> theList8 = new ArrayList<> ();
+                    for(int i = 0; i < theList4.size(); i++)
+                    {
+                        logger.info("i");
+                        logger.info(theform.getScheduleId());
+                        logger.info(groupService.getGroupById(accountService.getAccount(theList4.get(i).getAccountId()).getGroupId()).getSchedule());
+                        if(groupService.getGroupById(accountService.getAccount(theList4.get(i).getAccountId()).getGroupId()).getSchedule() == theform.getScheduleId())
+                        {
+                            theList8.add(theList4.get(i));
+                        }
+                    }
+                    theList4.clear();
+                    theList4.addAll(theList8);
+                    logger.info("The List size : " + Integer.toString(theList4.size()));
+                    
+                }
+                Schedule theschedule = scheduleService.get(theform.getScheduleId());
+                theModel.addAttribute("id", theschedule);
+                
+            }
+            double price = 0.00;
+            for(int i = 0 ; i < theList.size(); i++)
+            {
+                price -= theList.get(i).getCost();
+            }
+            for(int i = 0 ; i < theList1.size(); i++)
+            {
+                price -= theList1.get(i).getCost();
+            }
+            for(int i = 0 ; i < theList3.size(); i++)
+            {
+                price += theList3.get(i).getCreditTotal();
+                price -= theList3.get(i).getDebitTotal();
+            }
+            for(int i = 0 ; i < theList2.size(); i++)
+            {
+                price += theList2.get(i).getCreditTotal();
+                price -= theList2.get(i).getDebitTotal();
+            }
+            for(int i = 0 ; i < theList4.size(); i++)
+            {
+                price += theList4.get(i).getCreditTotal();
+                price -= theList4.get(i).getDebitTotal();
+            }
+            String status = "Credit";
+            if(price < 0.00)
+            {
+                status = "Debit";
+                price = -price;
+            }
+            price = Double.parseDouble(df.format(price));
+            theModel.addAttribute("theList", theList);
+            theModel.addAttribute("theList1", theList1);
+            theModel.addAttribute("theList2", theList2);
+            theModel.addAttribute("theList3", theList3);
+            theModel.addAttribute("theList4", theList4);
+            theModel.addAttribute("status", status);
+            theModel.addAttribute("theform", theform);
+            theModel.addAttribute("price", price);
+            List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+            theModel.addAttribute("items", thel);
+            return "show-allbillbetweendatesbyschedule";
+        }
+      
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        
+        return "redirect:/";
+    }
+    @RequestMapping("/updateschedule.to")
+    public String updateScheduleTo(
+    		@ModelAttribute("newschedule") Schedule thes,
+    		BindingResult theBindingResult,
+    		Model theModel,
+    		RedirectAttributes ra
+    		)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+        	logger.info(thes);
+        	thes = scheduleService.getSchedule(thes.getScheduleName(), userName);
+        	ScheduleForm thef = new ScheduleForm(scheduleService.get(thes.getId()));
+        	theModel.addAttribute("theform", thef);
+        	return "update-schedule";
+        }
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        return "redirect:/";
+    }
+    @RequestMapping("/updategroup.to")
+    public String updateGroupTo(
+    		@ModelAttribute("newgroup") Group thes,
+    		BindingResult theBindingResult,
+    		Model theModel,
+    		RedirectAttributes ra
+    		)
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+        	logger.info(thes);
+        	thes = groupService.getGroupByName(thes.getGroupName(), userName);
+        	logger.info(thes);
+        	GroupForm thef = new GroupForm(thes);
+        	theModel.addAttribute("theform", thef);
+        	return "update-group";
+        }
+        ra.addFlashAttribute("someerror", "Please Login to continue");
+        return "redirect:/";
+    }
+    @RequestMapping("/updateaccount.to")
+    public String updateAccountTo(
+            @ModelAttribute("newaccount") Account thes,
+            BindingResult theBindingResult,
+            Model theModel,
+            RedirectAttributes ra
+            )
+    {
+        Object authentication = 
+                SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        if(authentication instanceof UserDetails)
+        {
+            String userName = ((UserDetails)authentication)
+                    .getUsername();
+            logger.info(thes);
+            thes = accountService.getAccount(thes.getAccountName());
+            logger.info(thes);
+            AccountForm thef = new AccountForm(thes);
+            theModel.addAttribute("theform", thef);
+            return "update-account";
+        }
+        ra.addFlashAttribute("someerror", "Please Login to continue");
         return "redirect:/";
     }
 }

@@ -61,7 +61,7 @@
 				Schedule Name : ${scheduleName}
 				<br>
 				<br>
-				<form:form action="${pageContext.request.contextPath}/"
+				<form:form action="${pageContext.request.contextPath}/view/updategroup.to"
 						  	   modelAttribute="newgroup"
 						  	   class="form-horizontal">
 						<form:hidden path="id" />
@@ -71,6 +71,11 @@
 							<form:errors path="groupName" cssClass="error alert alert-danger" />
 							
 							<form:input path="groupName" placeholder="Group Name (*)" class="form-control" readonly="true"/>
+						</div>
+						<div style="margin-top: 10px" class="form-group">						
+							<div class="col-sm-6 controls">
+								<button type="submit" class="btn btn-primary">Update Group</button>
+							</div>
 						</div>
 					</form:form>
 					<button type="submit" class="btn btn-primary" onclick="history.go(-1);" > Back </button>

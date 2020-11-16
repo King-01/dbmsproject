@@ -25,7 +25,7 @@ public class ScheduleDaoImpl implements ScheduleDao {
 	public List<Schedule> getScheduleByUserName(String UserName) {
 		// TODO Auto-generated method stub
 		Session crs = sessionFactory.getCurrentSession();
-		Query theQuery = crs.createQuery("from Schedule where username_id=:UserName", Schedule.class);
+		Query<Schedule> theQuery = crs.createQuery("from Schedule where username_id=:UserName", Schedule.class);
 		theQuery.setParameter("UserName", UserName);
 		List<Schedule> toReturn = theQuery.getResultList();
 		return toReturn;

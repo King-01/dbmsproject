@@ -8,6 +8,7 @@ public interface AccountService {
 
 	Account getAccount(String AccountName, Long groupId);
 	Account getAccount(Long accountId);
+	Account getAccount(String accountName);
 	
 	void save(Account theAccount);
 	
