@@ -21,7 +21,7 @@ public class GroupDaoImpl implements GroupDao {
 	public void save(com.luv2code.springsecurity.demo.entity.Group theGroup) {
 		// TODO Auto-generated method stub
 		Session crs = sessionFactory.getCurrentSession();
-		crs.saveOrUpdate((com.luv2code.springsecurity.demo.entity.Group)theGroup);
+		crs.saveOrUpdate("com.luv2code.springsecurity.demo.entity.Group", theGroup);
 	}
 
 	@Override

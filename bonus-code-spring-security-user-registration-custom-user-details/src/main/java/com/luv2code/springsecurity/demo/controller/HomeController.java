@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
+import com.luv2code.springsecurity.demo.entity.User;
 import com.luv2code.springsecurity.demo.service.UserService;
 
 @Controller
@@ -24,7 +26,12 @@ public class HomeController {
 			HttpSession session) {
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		String userName = ((UserDetails)authentication).getUsername();
-		session.setAttribute("DisplayName", userService.findByUserName(userName).getDisplayName());
+		if(session.getAttribute("UserName") == null || session.getAttribute("DisplayName") == null) {
+			User theu = userService.findByUserName(userName);
+			theModel.addAttribute("successMessage", "Welcome " + theu.getDisplayName() + "!");
+			session.setAttribute("UserName", theu.getUserName());
+			session.setAttribute("DisplayName", theu.getDisplayName());
+		}
 		return "home";
 	}
 	

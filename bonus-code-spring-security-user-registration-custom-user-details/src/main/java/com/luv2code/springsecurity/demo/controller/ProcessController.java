@@ -160,7 +160,7 @@ public class ProcessController {
 			}
 			
 			scheduleService.save(newSchedule);
-			ra.addFlashAttribute("successmessage", "Schedule creation successful!");
+			ra.addFlashAttribute("successMessage", "Schedule creation successful!");
 			return "redirect:/view/Schedule";
 		}
 		return "redirect:/";
@@ -204,7 +204,7 @@ public class ProcessController {
 			toSave.setScheduleName(name);
 			toSave.setUserName(userName);
 			scheduleService.save(toSave);
-			ra.addFlashAttribute("successmessage", "Schedule creation successful!");
+			ra.addFlashAttribute("successMessage", "Schedule creation successful!");
 			return "redirect:/view/Schedule";
 		}
 		return "redirect:/";
@@ -218,18 +218,22 @@ public class ProcessController {
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(authentication instanceof UserDetails)
 		{
+			String userName = ((UserDetails)authentication).getUsername();
 			if(theBindingResult.hasErrors())
 			{
+				List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+				theModel.addAttribute("listofschedule", thel);
 				return "add-group";
 			}
 			try {	
-				String userName = ((UserDetails)authentication).getUsername();
 				logger.info("processing add group for user : " + userName + "in ProcessController, /process/schedule");
 				List<Group> theGroupList = groupService.getGroupByUserName(userName);
 				for(int i = 0;i < theGroupList.size(); i++)
 				{
 					if(theGroupList.get(i).getGroupName().equals(theGroup.getGroupName()))
 					{
+						List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
+						theModel.addAttribute("listofschedule", thel);
 						ra.addFlashAttribute("registrationError", "Group with the same name already exists!");
 						return "redirect:/add/group";
 					}
@@ -251,8 +255,8 @@ public class ProcessController {
 	@RequestMapping("/account")
 	public String addNewAccount(
 			@Valid @ModelAttribute("newaccount") Account theAccount , 
-			Model theModel, 
 			BindingResult theBindingResult,
+			Model theModel, 
 			RedirectAttributes ra)
 	{
 		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
