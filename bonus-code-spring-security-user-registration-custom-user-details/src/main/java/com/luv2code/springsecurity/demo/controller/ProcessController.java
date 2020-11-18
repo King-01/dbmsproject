@@ -497,7 +497,7 @@ public class ProcessController {
 	@RequestMapping("/stocktaxhandler")
 	@Transactional
 	public String processStockTaxHandler(
-			@ModelAttribute("addelem") StockTax addItem,
+			@ModelAttribute("addelem")StockTax addItem,
 			BindingResult theBindingResult, 
 			Model theModel, 
 			RedirectAttributes ra)
@@ -508,11 +508,16 @@ public class ProcessController {
 			String userName = ((UserDetails)authentication).getUsername();
 			if(theBindingResult.hasErrors())
 			{
-				logger.info(theBindingResult.toString());
+				ra.addFlashAttribute("registrationError", "Your must select a valid choice!");
+				return "redirect:/view";
+			}
+			if(addItem.getStockId() == null && addItem.getTaxId() == null)
+			{
+				ra.addFlashAttribute("registrationError", "Your must select a valid choice!");
 				return "redirect:/view";
 			}
 			try {	
-				logger.info("processing add stocktax for user : " + userName + "in ProcessController, /process/stocktax" + " name of tax : " + addItem.getTaxId());
+//				logger.info("processing add stocktax for user : " + userName + "in ProcessController, /process/stocktax" + " name of tax : " + addItem.getTaxId());
 				if(addItem.getStockId() != null && addItem.getTaxId() != null)
 				{
 					ra.addFlashAttribute("someerror", "Invalid choice, please try again!");
@@ -520,11 +525,13 @@ public class ProcessController {
 				}
 				if(addItem.getStockId() == null && addItem.getTaxId() == null)
 				{
+					logger.info("2");
 					ra.addFlashAttribute("someerror", "Invalid choice, please try again!");
 					return "redirect:/view";
 				}
 				if(addItem.getStockId() != null)
 				{
+					logger.info("3");
 					Session crs = sessionFactory.getCurrentSession();
 					Long id = addItem.getStockId();
 					List<StockTax> theList = stockTaxService.getStockTaxByStockId(id);
@@ -541,6 +548,7 @@ public class ProcessController {
 				}
 				else
 				{
+					logger.info("4");
 					Session crs = sessionFactory.getCurrentSession();
 					Long id = addItem.getTaxId();
 					logger.info(Long.toString(id));
@@ -675,6 +683,16 @@ public class ProcessController {
                 logger.info(theBindingResult.toString());
                 theModel.addAttribute("addelem", addelem);
                 theModel.addAttribute("theaccountlist", tl);
+                {
+                    Double debt = 0.0;
+                    List<CashVoucher> tle = cashVoucherService.getCashVoucherByUserName(userName);
+                    for(int i = 0; i < tle.size(); i++)
+                    {
+                        debt += tle.get(i).getCreditTotal();
+                        debt -= tle.get(i).getDebitTotal();
+                    }
+                    theModel.addAttribute("cashbalance", Math.round(debt));
+                }
                 return "add-cashvoucher";
             }
             try 
@@ -733,8 +751,15 @@ public class ProcessController {
             if(theBindingResult.hasErrors())
             {
                 logger.info(theBindingResult.toString());
+                 List<Account> thel = accountService.getAccountByUserName(userName);
+                 theModel.addAttribute("listofaccounts", thel);
                 theModel.addAttribute("addelem", addelem);
-                return "add-purchasebill";
+                return "add-purchasevoucher";
+            }
+            if(addelem.getTheform() == null)
+            {
+            	ra.addFlashAttribute("registrationError", "Invalid Request!");
+            	return "redirect:/add";
             }
             try 
             {   
@@ -805,6 +830,11 @@ public class ProcessController {
                 theModel.addAttribute("addelem", addelem);
                 theModel.addAttribute("listofaccounts" ,tl);
                 return "add-salebill";
+            }
+            if(addelem.getTheform() == null)
+            {
+            	ra.addFlashAttribute("registrationError", "Invalid Request!");
+            	return "redirect:/add";
             }
             try 
             {   

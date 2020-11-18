@@ -1,6 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
-
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <!doctype html>
 <html lang="en">
 
@@ -90,91 +91,94 @@
 		</div>
 
 	</c:if>
-
-	<div>
+  <section id="main" class="wrapper">
+    <div class="inner">
+    <br>
+	<h1>Specific Account : </h1>
+		<h2>Group Name :
 		<c:url var="schedulelink" value="/view/groupById">
 			<c:param name="groupId" value="${scheduleId}" />
-		</c:url><br>
-		Group Name : <a href="${schedulelink}"><c:out value="${scheduleName}"/></a>
-		<br>
-		<div id="loginbox" style="margin-top: 50px;"
-			class="mainbox col-md-3 col-md-offset-2 col-sm-6 col-sm-offset-2">
-			
-			<div class="panel panel-primary">
-
-				<div class="panel-heading">
-					<div class="panel-title">View Account</div>
-				</div>
-
-				<div style="padding-top: 30px" class="panel-body">
-
+		</c:url>
+		<a href="${schedulelink}"style="font-size: 25px; text-decoration: none"><c:out value="   ${scheduleName}"/></a>
+					 </h2>
 					<!-- Registration Form -->
 					<form:form action="${pageContext.request.contextPath}/view/updateaccount.to" 
 						  	   modelAttribute="newaccount"
 						  	   class="form-horizontal">
 
 						<!-- Password -->
+						<h3>Account Name-</h3>
 						<div style="margin-bottom: 25px" class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
+							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="accountName" cssClass="error alert alert-danger" />
 							
 							<form:input path="accountName" placeholder="Account Name (*)" class="form-control" readonly="true"/>
 						</div>
 						<form:hidden path="groupId"/>
+						<h3>Guarantor Name-</h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="guarantorName" cssClass="error alert alert-danger" />
 							
 							<form:input path="guarantorName" placeholder="Guarantor Name (*)" class="form-control" readonly="true" />
 						</div>
+						<h3>HSN Number-</h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="HsnNumber" cssClass="error alert alert-danger" />
 							
 							<form:input path="HsnNumber" placeholder="HSN Number " class="form-control"  readonly="true"/>
 						</div>
+						<h3>Email - </h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="email" cssClass="error alert alert-danger" />
 							
 							<form:input path="email" placeholder="Account holder email" class="form-control" readonly="true" />
 						</div>
+						<h3>Mobile Number - </h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="mobileNumber1" cssClass="error alert alert-danger" />
 							
 							<form:input path="mobileNumber1" placeholder="Mobile Number (*)" class="form-control"  readonly="true"/>
 						</div>
+						<h3>Alternative Mobile Number -</h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="mobileNumber2" cssClass="error alert alert-danger" />
 							
 							<form:input path="mobileNumber2" placeholder="Alternate Mobile Number " class="form-control"  readonly="true" />
 						</div>
+						<h3>PAN Number</h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="pan" cssClass="error alert alert-danger" />
 							
 							<form:input path="pan" placeholder="PAN" class="form-control" readonly="true" />
 						</div>
+						<h3>Address Line 1 -</h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="addressLine1" cssClass="error alert alert-danger" />
 							
 							<form:input path="addressLine1" placeholder="Address Line 1 (*)" class="form-control"   readonly="true"/>
 						</div>
+						<h3>Address Line 2-</h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="addressLine2" cssClass="error alert alert-danger" />
 							
 							<form:input path="addressLine2" placeholder="Address Line 2" class="form-control" readonly="true" />
 						</div>
+						<h3>City-</h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="City" cssClass="error alert alert-danger" />
 							
 							<form:input path="City" placeholder="City (*)" class="form-control" readonly="true"  />
 						</div>
+						<h3>PINCODE -</h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="pincode" cssClass="error alert alert-danger" />
@@ -188,25 +192,21 @@
 							</div>
 						</div>
 					</form:form>
-				</div>
-					<br>
-					<br>
-					<button type="submit" style="margin-left:15px" class="btn btn-primary" onclick="history.go(-1);" > Back </button>
-					<br>
-					<br>
-					<form:form action="${pageContext.request.contextPath}/" 
-					  	   >
-						<button type="submit" style="margin-left:15px" class="btn btn-primary">Back to Home</button>
-					</form:form>
-					
-					<form:form action="${pageContext.request.contextPath}/logout" 
-					  	   >
-						<button type="submit" style="margin-left:15px" class="btn btn-primary">logout</button>
-					</form:form>
-			</div>
-
-		</div>
-
-	</div>
+  </div>
+  </section>
+    <!-- Footer -->
+      <footer id="footer">
+        <div class="inner">
+          <h2>Get In Touch</h2>
+          <ul class="actions">
+            <li><span class="icon fa-phone"></span> (+91) 97825-65081</li>
+            <li><span class="icon fa-envelope"></span> <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=aasavbadera.cse18@iitbhu.ac.in">aasavbadera.cse18@iitbhu.ac.in</a></li>
+            <li><span class="icon fa-map-marker"></span> H-2-A, Jawahar Nagar, Kota, Rajasthan</li>
+          </ul>
+        </div>
+        <div class="copyright">
+          &copy; King_01 Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
+        </div>
+      </footer>
 	</body>
 </html>

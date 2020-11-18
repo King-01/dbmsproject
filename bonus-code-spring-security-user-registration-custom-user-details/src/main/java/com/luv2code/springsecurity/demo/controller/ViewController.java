@@ -412,6 +412,10 @@ public class ViewController {
 					status = "Debit";
 					tot = -tot;
 				}
+				if(theVouchers.size() == 0 )
+	            {
+	            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+	            }
 				theModel.addAttribute("tot", df.format(tot));
 				theModel.addAttribute("status", status);
 				Session crs = sessionFactory.getCurrentSession();
@@ -455,6 +459,10 @@ public class ViewController {
 			theModel.addAttribute("tot", df.format(tot));
 			theModel.addAttribute("status", status);
 			theModel.addAttribute("items", theList);
+			if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
 			return "show-alljournalvouchers";
 		}
 		
@@ -536,6 +544,10 @@ public class ViewController {
                     status = "Debit";
                     tot = -tot;
                 }
+                if(theVouchers.size() == 0 )
+                {
+                	theModel.addAttribute("registrationError", "No Result Present for this query!");
+                }
                 theModel.addAttribute("tot", df.format(tot));
                 theModel.addAttribute("status", status);
                 Session crs = sessionFactory.getCurrentSession();
@@ -579,6 +591,10 @@ public class ViewController {
             theModel.addAttribute("tot", df.format(tot));
             theModel.addAttribute("status", status);
             theModel.addAttribute("items", theList);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             return "show-allbankvouchers";
         }
         
@@ -663,6 +679,10 @@ public class ViewController {
                     status = "Debit";
                     tot = -tot;
                 }
+                if(theVouchers.size() == 0 )
+                {
+                	theModel.addAttribute("registrationError", "No Result Present for this query!");
+                }
                 theModel.addAttribute("tot", df.format(tot));
                 theModel.addAttribute("status", status);
                 Session crs = sessionFactory.getCurrentSession();
@@ -706,6 +726,10 @@ public class ViewController {
             theModel.addAttribute("tot", df.format(tot));
             theModel.addAttribute("status", status);
             theModel.addAttribute("items", theList);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             return "show-allcashvouchers";
         }
         
@@ -894,6 +918,10 @@ public class ViewController {
         	theModel.addAttribute("status", status);
     		theModel.addAttribute("theform", theform);
         	theModel.addAttribute("price", price);
+        	if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
         	List<Account> thel = accountService.getAccountByUserName(userName);
         	theModel.addAttribute("items", thel);
         	return "show-cashvoucherbetweendates";
@@ -1061,6 +1089,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Group> thel = groupService.getGroupByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-cashvoucherbetweendatesbygroup";
@@ -1221,6 +1253,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-cashvoucherbetweendatesbyschedule";
@@ -1380,6 +1416,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Account> thel = accountService.getAccountByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-bankvoucherbetweendates";
@@ -1547,6 +1587,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Group> thel = groupService.getGroupByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-bankvoucherbetweendatesbygroup";
@@ -1707,6 +1751,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-bankvoucherbetweendatesbyschedule";
@@ -1866,6 +1914,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Account> thel = accountService.getAccountByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-journalvoucherbetweendates";
@@ -2033,6 +2085,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Group> thel = groupService.getGroupByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-journalvoucherbetweendatesbygroup";
@@ -2193,6 +2249,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-journalvoucherbetweendatesbyschedule";
@@ -2246,6 +2306,10 @@ public class ViewController {
                 theModel.addAttribute("theVouchers", theVouchers);
                 theModel.addAttribute("tot", df.format(tot));
                 theModel.addAttribute("status", status);
+                if(theVouchers.size() == 0 )
+                {
+                	theModel.addAttribute("registrationError", "No Result Present for this query!");
+                }
                 theModel.addAttribute("id", accountService.getAccount(addelem.getAccountId()));
             }
             return "show-purchasebillvouchersbyaccount";
@@ -2284,6 +2348,10 @@ public class ViewController {
             theModel.addAttribute("tot", df.format(tot));
             theModel.addAttribute("status", status);
             theModel.addAttribute("items", theList);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             return "show-allpurchasebillvouchers";
         }
         
@@ -2472,6 +2540,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Account> thel = accountService.getAccountByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-purchasebillvoucherbetweendates";
@@ -2638,6 +2710,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Group> thel = groupService.getGroupByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-purchasebillvoucherbetweendatesbygroup";
@@ -2797,6 +2873,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-purchasebillvoucherbetweendatesbyschedule";
@@ -2849,6 +2929,10 @@ public class ViewController {
                 theModel.addAttribute("theVouchers", theVouchers);
                 theModel.addAttribute("tot", df.format(tot));
                 theModel.addAttribute("status", status);
+                if(theVouchers.size() == 0 )
+                {
+                	theModel.addAttribute("registrationError", "No Result Present for this query!");
+                }
                 theModel.addAttribute("id", accountService.getAccount(addelem.getAccountId()));
             }
             return "show-salebillsbyaccount";
@@ -2887,6 +2971,10 @@ public class ViewController {
             theModel.addAttribute("tot", df.format(tot));
             theModel.addAttribute("status", status);
             theModel.addAttribute("items", theList);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             return "show-allsalebills";
         }
         
@@ -2918,6 +3006,7 @@ public class ViewController {
             theModel.addAttribute("addelem", item);
             List<SaleBillTransactions> items = saleBillTransactionsService.getSaleBillTransactions(item.getId());
             theModel.addAttribute("items", items);
+            
             return "show-specific-salebill";
         }
         
@@ -3075,6 +3164,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Account> thel = accountService.getAccountByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-salebillbetweendates";
@@ -3241,6 +3334,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Group> thel = groupService.getGroupByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-salebillbetweendatesbygroup";
@@ -3400,6 +3497,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 )
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-salebillbetweendatesbyschedule";
@@ -3947,6 +4048,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 && theList1.size() == 0 && theList2.size() == 0 && theList3.size() == 0 && theList4.size() == 0)
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Account> thel = accountService.getAccountByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-allbillbetweendates";
@@ -4494,6 +4599,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 && theList1.size() == 0 && theList2.size() == 0 && theList3.size() == 0 && theList4.size() == 0)
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Group> thel = groupService.getGroupByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-allbillbetweendatesbygroup";
@@ -5041,6 +5150,10 @@ public class ViewController {
             theModel.addAttribute("status", status);
             theModel.addAttribute("theform", theform);
             theModel.addAttribute("price", price);
+            if(theList.size() == 0 && theList1.size() == 0 && theList2.size() == 0 && theList3.size() == 0 && theList4.size() == 0)
+            {
+            	theModel.addAttribute("registrationError", "No Result Present for this query!");
+            }
             List<Schedule> thel = scheduleService.getScheduleByUserName(userName);
             theModel.addAttribute("items", thel);
             return "show-allbillbetweendatesbyschedule";

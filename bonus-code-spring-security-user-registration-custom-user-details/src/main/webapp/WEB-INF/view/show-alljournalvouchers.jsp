@@ -1,8 +1,7 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="security"
-	uri="http://www.springframework.org/security/tags"%>
-
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <html>
 
 <head>
@@ -100,30 +99,60 @@ startcounter number:before {
 
 	</c:if>
 
-	<h4>Overall for all the journal vouchers, current status - ${ status } and its value is ${ tot }- </h4>
-	<br>
-	<startcounter>
+	<section id="main" class="wrapper">
+		<div class="inner">
+	<c:if test = "${ (items.size() != 0) && (items != null) }" >
+	<h2>Overall for all the journal vouchers, current status - ${ status } and its value is ${ tot }- </h2>
+	
+  <startcounter>
+	<div class="table-wrapper">
+	<table class = "alt">
+	<thead>
+	<tr>
+	<th>No. </th>
+	<th>Date</th>
+	<th>Group Name</th>
+	<th>Debit</th>
+	<th>Credit</th>
+	<th>Link</th>
+	</tr></thead>
+	<tbody>
 	<c:forEach var="schedule" items="${items}">
 		<c:url var="schedulelink" value="/view/specificjournalvoucher">
 			<c:param name="jvoucherId" value="${schedule.getJvoucherId()}" />
-		</c:url><br>
-		<number><a href="${schedulelink}"><c:out value="Date - ${schedule.getDate()} | Account Name - ${ schedule.getAccountName() } | Debit - ${ schedule.getDebitTotal() } | Credit - ${ schedule.getCreditTotal() }"/></a></number>
-		<br>
-	</c:forEach>
+		</c:url>
+		<tr>
+		<td><number></number></td>
+		<td>${schedule.getDate()} </td>
+		<td>${ schedule.getAccountName() }</td>
+		<td>${ schedule.getDebitTotal() } </td>
+		<td>${ schedule.getCreditTotal() }</td>
+		<td><a href="${schedulelink}"><c:out value="Click Here"/></a></td>
+		</tr></c:forEach>
+  </tbody>
+  </table>
+  </div>
 	</startcounter>
-	<button type="submit" class="btn btn-primary" onclick="history.go(-1);" > Back </button>
-					<br>
-					<br>
-					<form:form action="${pageContext.request.contextPath}/" 
-					  	   >
-						<button type="submit" class="btn btn-primary">Back to Home</button>
-					</form:form>
-					<br>
-					<form:form action="${pageContext.request.contextPath}/logout" 
-					  	   >
-						<button type="submit" class="btn btn-primary">logout</button>
-					</form:form>
-	
+	</c:if>
+	<c:if test = "${ (items.size() == 0) || (items == null) }" >
+ <h2> Nothing to show </h2>
+  </c:if>
+  </div>
+  </section>
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<h2>Get In Touch</h2>
+					<ul class="actions">
+						<li><span class="icon fa-phone"></span> (+91) 97825-65081</li>
+						<li><span class="icon fa-envelope"></span> <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=aasavbadera.cse18@iitbhu.ac.in">aasavbadera.cse18@iitbhu.ac.in</a></li>
+						<li><span class="icon fa-map-marker"></span> H-2-A, Jawahar Nagar, Kota, Rajasthan</li>
+					</ul>
+				</div>
+				<div class="copyright">
+					&copy; King_01 Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
+				</div>
+			</footer>	
 </body>
 
 </html>

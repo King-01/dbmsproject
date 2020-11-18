@@ -1,6 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
-
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <!doctype html>
 <html lang="en">
 
@@ -68,7 +69,6 @@
 			<script src="${pageContext.request.contextPath}/resources/assets/js/main.js"></script>
 
 
-	<h3>Add Bank Voucher</h3>
 	<c:if test="${registrationError != null}">
 
 		<div class="alert alert-danger col-xs-offset-1 col-xs-10">
@@ -93,6 +93,9 @@
 		</div>
 
 	</c:if>
+	<section id="main" class="wrapper">
+		<div class="inner">
+	<h1>Add Bank Voucher</h1>
 	<form:form action="${pageContext.request.contextPath}/process/bankvoucher" 
 		  	   modelAttribute="addelem"
 		  	   class="form-horizontal">
@@ -100,35 +103,44 @@
 		<form:hidden path="userName"/>
 		<form:hidden path="accountName"/>
 		<!-- Password -->
+		<h3>Date : </h3>
 		<div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">			
 			<form:errors path="creditTotal" cssClass="error alert alert-danger" />
 			
-			Date : <form:input type="date" path="date" placeholder="Date (*)" class="form-control" />
+			<form:input type="date" path="date" placeholder="Date (*)" class="form-control" />
 		</div>
+		<br>
+		<h3>Select Account: </h3>
 		<div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">
-			<form:errors path="accountId" cssClass="error alert alert-danger" />
-			Select Account: <form:select path="accountId">
-				<form:option value="${ null }" label = "Select a Account from this List (*)"></form:option>
+			<form:errors path="accountName" cssClass="error alert alert-danger" />
+			<form:select path="accountId">
+				<form:option value="${ null }" label = "Select an Account from this List (*)"></form:option>
 				<c:forEach var="oneschedule" items="${theaccountlist}">
 					<form:option value="${oneschedule.getId()}" label = "${ oneschedule.getAccountName() }"></form:option>
 				</c:forEach>
 			</form:select>  
 					
 		</div>
+		<br>
+		<h3>Credit : </h3>
 		<div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">			
 			<form:errors path="creditTotal" cssClass="error alert alert-danger" />
 			
-			Credit : <form:input path="creditTotal" placeholder="Credit (*)" class="form-control" />
+			<form:input path="creditTotal" placeholder="Credit (*)" class="form-control" />
 		</div>
+		<br>
+		<h3>Debit : </h3>
 		<div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">			
 			<form:errors path="debitTotal" cssClass="error alert alert-danger" />
 			
-			Debit : <form:input path="debitTotal" placeholder="Debit (*)" class="form-control" />
+			<form:input path="debitTotal" placeholder="Debit (*)" class="form-control" />
 		</div>
+		<br>
+		<h3>Description : </h3>
 		<div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">			
 			<form:errors path="description" cssClass="error alert alert-danger" />
 			
-			Description : <form:input path="description" placeholder="Description" class="form-control" />
+			<form:input path="description" placeholder="Description" class="form-control" />
 		</div>
 		<!-- Register Button -->
 		<div style="margin-top: 10px; margin-left:4px" class="form-group">						
@@ -137,7 +149,8 @@
 			</div>
 		</div>
 	</form:form>
-
+	</div>
+	</section>
 		<!-- Footer -->
 			<footer id="footer">
 				<div class="inner">

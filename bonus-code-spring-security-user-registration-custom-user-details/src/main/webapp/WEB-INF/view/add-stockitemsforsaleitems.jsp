@@ -1,6 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
-
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <!doctype html>
 <html lang="en">
 
@@ -20,51 +21,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/main.css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta charset="utf-8" /><style>
-    h2 {
-      left: 20px;
-      top: 5px;
-    }
-    .input {
-          width: 60%;
-          padding: 12px 20px;
-          margin: 8px 0;
-          box-sizing: border-box;
-        }
-        .left {
-            float: left;
-            width: 30%;
-        }
-        .right {
-            float: right;
-            width: 10%;
-        }
-        .upar:after {
-          content: "";
-          display: table;
-          clear: both;
-        }
-        .button {
-          background-color: #4CAF50; /* Green */
-          border: none;
-          color: white;
-          padding: 15px 32px;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
-          font-size: 16px;
-          margin: 4px 2px;
-          cursor: pointer;
-        }
-        .button5 {
-            background-color: #2C9CC8;
-            padding: 10px 24px;
-            border-radius: 12px;
-        }
-        .button5:hover {
-          box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-        }
-    </style>    
+		<meta charset="utf-8" />
 </head>
 
 <body><!-- Header -->
@@ -136,7 +93,9 @@
 
     </c:if>
 
-    <h3>Select Stock Items for Sale Bill</h3>
+	<section id="main" class="wrapper">
+		<div class="inner">
+    <h1>Select Stock Items for Sale Bill</h1>
         <!-- Registration Form -->
     <form:form action="${pageContext.request.contextPath}/add/salebillstep" 
                modelAttribute="theform"
@@ -163,6 +122,8 @@
             </div>
         </div>
     </form:form>
+    </div>
+    </section>
 		<!-- Footer -->
 			<footer id="footer">
 				<div class="inner">

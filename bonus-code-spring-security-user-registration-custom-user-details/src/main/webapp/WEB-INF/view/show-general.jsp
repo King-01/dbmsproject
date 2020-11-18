@@ -1,6 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
-
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <!doctype html>
 <html lang="en">
 
@@ -90,89 +91,58 @@
 		</div>
 
 	</c:if>
-
-	<div>
-		
-		<div id="loginbox" style="margin-top: 50px;"
-			class="mainbox col-md-3 col-md-offset-2 col-sm-6 col-sm-offset-2">
+	
+	<section id="main" class="wrapper">
+		<div class="inner">
+  <h1>View All Tax by Stock</h1>
+	<!-- Registration Form -->
+	<form:form action="${pageContext.request.contextPath}/process/stocktaxhandler" 
+		  	   modelAttribute="addelem"
+		  	   class="form-horizontal">
+		<form:hidden path = "id" />
 			
-			<div class="panel panel-primary">
-
-				<div class="panel-heading">
-					<div class="panel-title">View Tax Stock</div>
-				</div>
-
-				<div style="padding-top: 30px" class="panel-body">
-
-					<!-- Registration Form -->
-					<form:form action="${pageContext.request.contextPath}/process/stocktaxhandler" 
-						  	   modelAttribute="addelem"
-						  	   class="form-horizontal">
-						<form:hidden path = "id" />
-							
-					<c:if test="${items != null}" >
-						<div style="margin-bottom: 25px" class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
-							<form:errors path="stockId" cssClass="error alert alert-danger" />
-							Select Stock Item : <form:select path="stockId">
-								<form:option value="${ stockitemid.getId() }" label = "${ stockitemId.getStockItemName() }"></form:option>
-								<c:forEach var="oneschedule" items="${items}">
-									<c:if test = "${ stockitemid.getId() != oneschedule.getId() }" >
-										<form:option value="${oneschedule.getId()}" label = "${ oneschedule.getStockItemName() }"></form:option>
-									</c:if>
-								</c:forEach>
-							</form:select>  
-						
-					</div>
-					</c:if>
-					<c:if test = "${ items == null }" >
-					<form:hidden path = "stockId" />
-					</c:if>
-						<c:if test="${taxes != null}" >
-					<div style="margin-bottom: 25px" class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
-							<form:errors path="taxId" cssClass="error alert alert-danger" />
-							Select Tax: <form:select path="taxId">
-								<form:option value="${ taxid.getId() }" label = "${ taxid.getTaxName() }"></form:option>
-								<c:forEach var="oneschedule" items="${taxes}">
-									<c:if test = "${ taxid.getId() != oneschedule.getId() }" >
-										<form:option value="${oneschedule.getId()}" label = "${ oneschedule.getTaxName() } | ${ oneschedule.getTaxPercent() }%"></form:option>
-									</c:if>
-								</c:forEach>
-							</form:select>  
-						
-						</div>
-					</c:if>
-					<c:if test = "${ taxes == null }" >
-					<form:hidden path = "taxId" />
-					</c:if>
-						<!-- Register Button -->
-						<div style="margin-top: 10px" class="form-group">						
-							<div class="col-sm-6 controls">
-								<button type="submit" class="btn btn-primary">Submit</button>
-							</div>
-						</div>
-					</form:form>
-				</div>
-					<br>
-					<br>
-					<button type="submit" style="margin-left:15px" class="btn btn-primary" onclick="history.go(-1);" > Back </button>
-					<br>
-					<br>
-					<form:form action="${pageContext.request.contextPath}/" 
-					  	   >
-						<button type="submit" style="margin-left:15px" class="btn btn-primary">Back to Home</button>
-					</form:form>
-					
-					<form:form action="${pageContext.request.contextPath}/logout" 
-					  	   >
-						<button type="submit" style="margin-left:15px" class="btn btn-primary">logout</button>
-					</form:form>
-			</div>
-
-		</div>
-
+	<c:if test="${items != null}" >
+	<h3>Select Stock Item : </h3>
+		<div style="margin-bottom: 25px" class="input-group">
+			<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
+			<form:errors path="stockId" cssClass="error alert alert-danger" />
+			<form:select path="stockId">
+				<form:option value="null" label = "Select one Stock Item from the list"></form:option>
+				<c:forEach var="oneschedule" items="${items}">
+						<form:option value="${oneschedule.getId()}" label = "${ oneschedule.getStockItemName() }"></form:option>
+					</c:forEach>
+			</form:select>  
+		
 	</div>
-
+	</c:if>
+	<c:if test = "${ items == null }" >
+	<form:hidden path = "stockId" />
+	</c:if>
+		<c:if test="${taxes != null}" >
+		<h3>Select Tax: </h3>
+	<div style="margin-bottom: 25px" class="input-group">
+			<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
+			<form:errors path="taxId" cssClass="error alert alert-danger" />
+			<form:select path="taxId">
+				<form:option value="null" label = "Select one Tax Item from the list"></form:option>
+				<c:forEach var="oneschedule" items="${taxes}">
+						<form:option value="${oneschedule.getId()}" label = "${ oneschedule.getTaxName() } | ${ oneschedule.getTaxPercent() }%"></form:option>
+				</c:forEach>
+			</form:select>  
+		
+		</div>
+	</c:if>
+	<c:if test = "${ taxes == null }" >
+	<form:hidden path = "taxId" />
+	</c:if>
+		<!-- Register Button -->
+		<div style="margin-top: 10px" class="form-group">						
+			<div class="col-sm-6 controls">
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</div>
+		</div>
+	</form:form>
+	</div>
+	</section>
 </body>
 </html>

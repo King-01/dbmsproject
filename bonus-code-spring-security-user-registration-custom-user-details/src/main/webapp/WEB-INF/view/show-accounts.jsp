@@ -1,8 +1,7 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="security"
-	uri="http://www.springframework.org/security/tags"%>
-
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <html>
 
 <head>
@@ -99,16 +98,28 @@ startcounter number:before {
 
 	</c:if>
 
-	<h4>Accounts - </h4>
+	<section id="main" class="wrapper">
+		<div class="inner">
+	<h1>Accounts - </h1>
 	<startcounter>
+	<div class="table-wrapper">
+	<table class = "alt">
+	<thead>
+	<tr>
+	<th>No. </th>
+	<th>Account Name</th>
+	</tr></thead>
+	<tbody>
 	<c:forEach var="schedule" items="${listofaccounts}">
 		<c:url var="schedulelink" value="/view/accountById">
 			<c:param name="accountId" value="${schedule.getId()}" />
-		</c:url><br>
-		<number><a href="${schedulelink}"><c:out value="${schedule.getAccountName()}"/></a></number>
-		
-	</c:forEach>
-	</startcounter>
+		</c:url>
+		<tr>
+		<td><number></number></td>
+		<td><a href="${schedulelink}"><c:out value="${schedule.getAccountName()}"/></a></td>
+		</tr></c:forEach></tbody>
+	</startcounter></table>
+	</div>
 	<form:form action="${pageContext.request.contextPath}/add/account" 
 					  	   >
 	<div style="margin-top: 10px" class="form-group">						
@@ -117,20 +128,8 @@ startcounter number:before {
 			</div>
 		</div>
 	</form:form>
-	<br>
-	<br>
-	<button type="submit" style="margin-left:15px" class="btn btn-primary" onclick="history.go(-1);" > Back </button>
-	<br>
-	<br>
-	<form:form action="${pageContext.request.contextPath}/" 
-	  	   >
-		<button type="submit" style="margin-left:15px" class="btn btn-primary">Back to Home</button>
-	</form:form>
-	
-	<form:form action="${pageContext.request.contextPath}/logout" 
-	  	   >
-		<button type="submit" style="margin-left:15px" class="btn btn-primary">logout</button>
-	</form:form>
+	</div>
+	</section>
 </body>
 
 </html>

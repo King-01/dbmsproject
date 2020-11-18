@@ -1,6 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
-
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <!doctype html>
 <html lang="en">
 
@@ -20,63 +21,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/main.css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta charset="utf-8" /> <style>
-startcounter {
-  list-style-type: none;
-  counter-reset: css-counter 0; /* initializes counter to 0; use -1 for zero-based numbering */
-}
-
-startcounter number {
-  counter-increment: css-counter 1; /* Increase the counter by 1. */
-}
-
-startcounter number:before {
-  content: counter(css-counter) ". "; /* Apply counter before children's content. */
-}
-  h2 {
-    left: 20px;
-    top: 5px;
-  }
-  .input {
-      width: 60%;
-      padding: 12px 20px;
-      margin: 8px 0;
-      box-sizing: border-box;
-    }
-    .left {
-      float: left;
-      width: 30%;
-    }
-    .right {
-      float: right;
-      width: 10%;
-    }
-    .upar:after {
-      content: "";
-      display: table;
-      clear: both;
-    }
-    .button {
-      background-color: #4CAF50; /* Green */
-      border: none;
-      color: white;
-      padding: 15px 32px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
-      cursor: pointer;
-    }
-    .button5 {
-      background-color: #2C9CC8;
-      padding: 10px 24px;
-      border-radius: 12px;
-    }
-    .button5:hover {
-      box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-    }
-  </style>  
+		<meta charset="utf-8" /> 
 </head>
 
 <body><!-- Header -->
@@ -122,8 +67,6 @@ startcounter number:before {
 			<script src="${pageContext.request.contextPath}/resources/assets/js/util.js"></script>
 			<script src="${pageContext.request.contextPath}/resources/assets/js/main.js"></script>
 
-
-  <h3>View Bank Voucher by Group</h3>
   <c:if test="${registrationError != null}">
 
     <div class="alert alert-danger col-xs-offset-1 col-xs-10">
@@ -148,21 +91,30 @@ startcounter number:before {
     </div>
 
   </c:if>
+
+	<section id="main" class="wrapper">
+		<div class="inner">
+  <h3>View Bank Voucher by Group</h3>
   <form:form action="${pageContext.request.contextPath}/view/bankvoucherbetweendatesbygroup" 
            modelAttribute="theform"
            class="form-horizontal">
     <!-- Password -->
+    <h3>Start Date : </h3>
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
       <form:errors path="startDate" cssClass="error alert alert-danger" />
-      Start Date : <form:input type="date"  path="startDate" placeholder="Date (*)" class="form-control" />
+      <form:input type="date"  path="startDate" placeholder="Date (*)" class="form-control" />
     </div>
+    <br>
+    <h3>End Date : </h3>
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">      
       <form:errors path="endDate" cssClass="error alert alert-danger" />
-      End Date : <form:input type="date"  path="endDate" placeholder="Date (*)" class="form-control" />
+      <form:input type="date"  path="endDate" placeholder="Date (*)" class="form-control" />
     </div>
+    <br>
+    <h3>Select Group: </h3>
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">
       <form:errors path="groupId" cssClass="error alert alert-danger" />
-      Select Group: <form:select path="groupId">
+      <form:select path="groupId">
         <form:option value="${ null }" label = "Select a Group from this List (*)"></form:option>
         <c:forEach var="oneschedule" items="${items}">
           <form:option value="${oneschedule.getId()}" label = "${ oneschedule.getGroupName() }"></form:option>
@@ -177,34 +129,63 @@ startcounter number:before {
       </div>
     </div>
   </form:form>
+  <c:if test = "${ (theList.size() != 0) && (theList != null) }" >
   
   <h4><c:if test="${ id != null }" >
     For the Group (${ id.getGroupName() })</c:if></h4>
    <c:if test = "${ status != null }" ><h4>
     Overall Status - ${ status } and it sums to a value of ${ price }</h4>
     <h4>List of Bank Vouchers are - </h4></c:if>
-  <c:if test = "${ theList != null }">
-  <br>
-  <startcounter>
+   <br><startcounter>
+	<div class="table-wrapper">
+	<table class = "alt">
+	<thead>
+	<tr>
+	<th>No. </th>
+	<th>Date</th>
+	<th>Account Name</th>
+	<th>Debit</th>
+	<th>Credit</th>
+	<th>Link</th>
+	</tr></thead>
+	<tbody>
+  
   <c:forEach var="schedule" items="${theList}">
     <c:url var="schedulelink" value="/view/specificbankvoucher">
       <c:param name="bvoucherId" value="${schedule.getBvoucherId()}" />
-    </c:url><br>
-    <number><a href="${schedulelink}"><c:out value="Date - ${schedule.getDate()} | Account Name - ${ schedule.getAccountName() } | Debit - ${ schedule.getDebitTotal() } | Credit - ${ schedule.getCreditTotal() }"/></a></number>
-    <br>
+    </c:url>
+		<tr>
+		<td><number></number></td>
+    	<td>${schedule.getDate()}</td>
+    	<td>${ schedule.getAccountName() } </td>
+    	<td>${ schedule.getDebitTotal() } </td>
+    	<td>${ schedule.getCreditTotal() }</td>
+    	<td><a href="${schedulelink}"><c:out value="Click Here"/></a></td>
+    </tr>
   </c:forEach>
-  </startcounter>
+  </tbody>
+  </table>
+  </div>
+	</startcounter>
+	</c:if>
+	<c:if test = "${ (theList.size() == 0) || (theList == null)}" >
+ <h2> Nothing to show </h2>
   </c:if>
-  <button type="submit" style="margin-top : 8px; margin-left:15px" class="btn btn-primary" onclick="history.go(-1);" > Back </button>
-  
-  <form:form action="${pageContext.request.contextPath}/" 
-         >
-    <button type="submit" style="margin-top : 8px; margin-left:15px" class="btn btn-primary">Back to Home</button>
-  </form:form>
-  
-  <form:form action="${pageContext.request.contextPath}/logout" 
-         >
-    <button type="submit" style="margin-top : 8px; margin-left:15px" class="btn btn-primary">logout</button>
-  </form:form>
+  </div>
+  </section>
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<h2>Get In Touch</h2>
+					<ul class="actions">
+						<li><span class="icon fa-phone"></span> (+91) 97825-65081</li>
+						<li><span class="icon fa-envelope"></span> <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=aasavbadera.cse18@iitbhu.ac.in">aasavbadera.cse18@iitbhu.ac.in</a></li>
+						<li><span class="icon fa-map-marker"></span> H-2-A, Jawahar Nagar, Kota, Rajasthan</li>
+					</ul>
+				</div>
+				<div class="copyright">
+					&copy; King_01 Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
+				</div>
+			</footer>	
 </body>
 </html>

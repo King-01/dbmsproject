@@ -1,8 +1,7 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="security"
-	uri="http://www.springframework.org/security/tags"%>
-
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <html>
 
 <head>
@@ -15,20 +14,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/main.css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta charset="utf-8" /><style>
-startcounter {
-  list-style-type: none;
-  counter-reset: css-counter 0; /* initializes counter to 0; use -1 for zero-based numbering */
-}
-
-startcounter number {
-  counter-increment: css-counter 1; /* Increase the counter by 1. */
-}
-
-startcounter number:before {
-  content: counter(css-counter) ". "; /* Apply counter before children's content. */
-}
-</style>
+		<meta charset="utf-8" />
 </head>
 
 <body><!-- Header -->
@@ -99,16 +85,30 @@ startcounter number:before {
 
 	</c:if>
 
-	<h4>Groups - </h4>
+	<section id="main" class="wrapper">
+		<div class="inner">
+	<h1>Groups - </h1>
 	<startcounter>
+	<div class="table-wrappper" >
+	<table class = "alt">
+	<thead>
+	<tr>
+	<td>No.</td>
+	<td>Group Name</td>
+	</tr>
+	</thead>
+	<tbody>
 	<c:forEach var="schedule" items="${listofgroups}">
 		<c:url var="schedulelink" value="/view/groupById">
 			<c:param name="groupId" value="${schedule.getId()}" />
-		</c:url><br>
-		<number><a href="${schedulelink}"><c:out value="${schedule.getGroupName()}"/></a></number>
-		<br><br><br>
-	</c:forEach>
+		</c:url><tr>
+		<td><number></number></td>
+		<td><a href="${schedulelink}"><c:out value="${schedule.getGroupName()}"/></a></td>
+		</tr>
+	</c:forEach></tbody>
 	</startcounter>
+	</table>
+	</div>
 	<form:form action="${pageContext.request.contextPath}/add/group" 
 					  	   >
 	<div style="margin-top: 10px" class="form-group">						
@@ -117,20 +117,8 @@ startcounter number:before {
 			</div>
 		</div>
 	</form:form>
-	<br>
-	<br>
-	<button type="submit" style="margin-left:15px" class="btn btn-primary" onclick="history.go(-1);" > Back </button>
-	<br>
-	<br>
-	<form:form action="${pageContext.request.contextPath}/" 
-	  	   >
-		<button type="submit" style="margin-left:15px" class="btn btn-primary">Back to Home</button>
-	</form:form>
-	
-	<form:form action="${pageContext.request.contextPath}/logout" 
-	  	   >
-		<button type="submit" style="margin-left:15px" class="btn btn-primary">logout</button>
-	</form:form>
+	</div>
+	</section>
 </body>
 
 </html>

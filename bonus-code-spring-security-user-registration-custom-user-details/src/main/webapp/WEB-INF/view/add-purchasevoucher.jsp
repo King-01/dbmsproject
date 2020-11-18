@@ -1,6 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
-
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <!doctype html>
 <html lang="en">
 
@@ -20,54 +21,7 @@
 	<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/main.css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta charset="utf-8" /><style>
-    h2 {
-      left: 20px;
-      top: 5px;
-    }
-    .input {
-          width: 60%;
-          padding: 12px 20px;
-          margin: 8px 0;
-          box-sizing: border-box;
-        }
-        .left {
-            float: left;
-            width: 30%;
-        }
-        .right {
-            float: right;
-            width: 10%;
-        }
-        .upar:after {
-          content: "";
-          display: table;
-          clear: both;
-        }
-        .button {
-          background-color: #4CAF50; /* Green */
-          border: none;
-          color: white;
-          padding: 15px 32px;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
-          font-size: 16px;
-          margin: 4px 2px;
-          cursor: pointer;
-        }
-        .button5 {
-            background-color: #2C9CC8;
-            padding: 10px 24px;
-            border-radius: 12px;
-        }
-        .button5:hover {
-          box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
-        }
-        table, th, td {
-  border: 1px solid black;
-}
-    </style>    
+		<meta charset="utf-8" />
 </head>
 
 <body>
@@ -136,42 +90,53 @@
 		</div>
 
 	</c:if>
-	
-	<h3>Adding Account and checkout for Purchase Bill</h3>
+	<div style="margin-left: 50px" >
+	<section id="main" class="wrapper">
+	<h1>Adding Account and checkout for Purchase Bill</h1>
 	 <form:form action="${pageContext.request.contextPath}/process/purchasebill" 
                modelAttribute="addelem"
                class="form-horizontal">
         <form:hidden path="userName"/>
         <form:hidden path="accountName"/>
         <!-- Password -->
-        <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
+        <h3>Date : </h3>
+        <div style="margin-bottom: 25pxl;margin-left: 4px" class="input">          
             <form:errors path="date" cssClass="error alert alert-danger" />
-            <br>
-            Date : <form:input type="date" path="date" placeholder="Date (*)" class="form-control" />
+							<div class="6u 12u$(small)">
+            <form:input type="date" style="margin-left:4px" path="date" placeholder="Date (*)" class="form-control" />
         </div>
-        <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">
+        </div>
+        <br>
+        <h3> Select Account: </h3>
+        <div style="margin-bottom: 25pxl;margin-left: 4px" class="input">
             <form:errors path="accountId" cssClass="error alert alert-danger" />
-            <br>
-            Select Account: <form:select path="accountId">
+							<div class="6u 12u$(small)">
+           <form:select path="accountId" style="margin-left:4px">
                 <form:option value="${ null }" label = "Select a Account from this List (*)"></form:option>
                 <c:forEach var="oneschedule" items="${listofaccounts}">
                     <form:option value="${oneschedule.getId()}" label = "${ oneschedule.getAccountName() }"></form:option>
                 </c:forEach>
             </form:select>  
-                    
+                    </div>
         </div>
-        <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
+        <br>
+        <h3>Description : </h3>
+        <div style="margin-bottom: 25pxl;margin-left: 4px" class="input">          
             <form:errors path="description" cssClass="error alert alert-danger" />
-            <br>
-            Description : <form:input path="description" placeholder="Description" class="form-control" />
-        </div>
-        <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
+							<div class="6u 12u$(small)">
+            <form:input path="description" style="margin-left:4px" placeholder="Description" class="form-control" />
+        </div></div>
+        <br>
+        <h3>Truck Details : </h3>
+        <div style="margin-bottom: 25pxl;margin-left: 4px" class="input">          
             <form:errors path="trucknumber" cssClass="error alert alert-danger" />
-            <br>
-            Truck Details : <form:input path="trucknumber" placeholder="Truck Details" class="form-control" />
-        </div>
+							<div class="6u 12u$(small)">
+            <form:input path="trucknumber" style="margin-left:4px" placeholder="Truck Details" class="form-control" />
+        </div></div>
+        <br>
         <h3>Stock items for the current voucher</h3>
-        <table>
+									<div class="table-wrapper">
+										<table class="alt">
 		<tr>
 			<th>No.</th>
 			<th>Stock Name</th>
@@ -202,20 +167,24 @@
 						
 		</c:forEach>
 		
-	</table>	
-        <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">          
+	</table>
+	</div>
+	<br>
+	<h3>Total Amount of bill : </h3>	
+        <div style="margin-bottom: 25pxl;margin-left: 4px" class="input">          
             <form:errors path="cost" cssClass="error alert alert-danger" />
-            <br>
-            Total Amount of bill : <form:input path="cost" placeholder="Cost (*)" class="form-control" readonly="true"/>
-        </div>
+							<div class="6u 12u$(small)">
+            <form:input path="cost" placeholder="Cost (*)" style="margin-left:4px" class="form-control" readonly="true"/>
+        </div></div>
         <!-- Register Button -->
-        <div style="margin-top: 10px; margin-left:4px" class="form-group">                      
+        <div style="margin-top: 10px; " class="form-group">                      
             <div class="col-sm-6 controls">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </form:form>
-
+</section>
+</div>
 		<!-- Footer -->
 			<footer id="footer">
 				<div class="inner">

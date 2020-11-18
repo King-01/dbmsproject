@@ -1,6 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
-
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <!doctype html>
 <html lang="en">
 
@@ -67,7 +68,6 @@
 			<script src="${pageContext.request.contextPath}/resources/assets/js/main.js"></script>
 
 
-    <h3>Add details about the Stock Items selected in previous Step for Sale bill</h3>
     <c:if test="${registrationError != null}">
 
         <div class="alert alert-danger col-xs-offset-1 col-xs-10">
@@ -93,7 +93,10 @@
 
     </c:if>
 
+	<section id="main" class="wrapper">
+		<div class="inner">
     <!-- Registration Form -->
+    <h3>Add details about the Stock Items selected in previous Step for Sale bill</h3>
     <form:form action="${pageContext.request.contextPath}/add/salebill" 
                modelAttribute="addelem"
                class="form-horizontal"
@@ -126,6 +129,8 @@
             </div>
         </div>
     </form:form>
+    </div>
+    </section>
 		<!-- Footer -->
 			<footer id="footer">
 				<div class="inner">
