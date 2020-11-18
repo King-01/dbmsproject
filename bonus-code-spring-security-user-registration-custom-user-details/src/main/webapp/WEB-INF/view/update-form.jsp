@@ -91,109 +91,120 @@
 		</div>
 
 	</c:if>
-
-	<div>
-		
-		<div id="loginbox" style="margin-top: 30px;"
-			class="mainbox col-md-3 col-md-offset-2 col-sm-6 col-sm-offset-2">
-			
-			<div class="panel panel-primary">
-
-				<div class="panel-heading">
-					<div class="panel-title">Update Company Details</div>
-				</div>
-
-				<div style="padding-top: 30px" class="panel-body">
-
-					<!-- Registration Form -->
+  <section id="main" class="wrapper">
+    <div class="inner">
+	<h1>Update Company Details - </h1>
 					<form:form action="${pageContext.request.contextPath}/updateCompanyForm"
 						  	   modelAttribute="crmUser"
 						  	   class="form-horizontal">
 
 					    
 						<!-- User name -->
+						<h3>Username - </h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="userName" cssClass="error alert alert-danger" />
 							
 							<form:input path="userName" placeholder="username" class="form-control" readonly="true" />
 						</div>
-						
+						<br>
 						<!-- Display Name-->
+						<h3>Current Password -</h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="password" cssClass="error alert alert-danger" />
 							<form:password path="password" placeholder="Reenter current Password (*)" class="form-control" />
 						</div>
+						<br>
+						<h3>Confirm Current Password - </h3>
 						<!-- Display Name-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="matchingPassword" cssClass="error alert alert-danger" />
 							<form:password path="matchingPassword" placeholder="Confirm Current Password (*)" class="form-control" />
 						</div>
+						<br>
+						<h3>Display Name</h3>
 						<!-- Display Name-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="displayName" cssClass="error alert alert-danger" />
 							<form:input path="displayName" placeholder="Display Name (*)" class="form-control" />
 						</div>
-						
+						<br>
+						<h3>Mobile Number - </h3>
 						<!-- Mobile Number 1-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="mobilenumber1" cssClass="error alert alert-danger" />
 							<form:input path="mobilenumber1" placeholder="Mobile Number 1(*)" class="form-control" />
 						</div>
-						
+						<br>
+						<h3>Alternate Mobile Number - </h3>
 						<!-- Mobile Number 2-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="mobilenumber2" cssClass="error alert alert-danger" />
 							<form:input path="mobilenumber2" placeholder="Mobile Number 2" class="form-control" />
 						</div>
+						<br>
+						<h3>Email - </h3>
 						<!-- Email-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="email" cssClass="error alert alert-danger" />
 							<form:input path="email" placeholder="Email (*)" class="form-control" />
 						</div>
+						<br>
+						<h3>Pan - </h3>
 						<!-- PAN -->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="pan" cssClass="error alert alert-danger" />
 							<form:input path="pan" placeholder="PAN (*)" class="form-control" />
 						</div>
+						<br>
+						<h3>GSTIN - </h3>
 						<!-- GSTIN-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="gstin" cssClass="error alert alert-danger" />
 							<form:input path="gstin" placeholder="GSTIN (*)" class="form-control" />
 						</div>
-						
+						<br>
+						<h3>TDS Account Number - </h3>
 						<!-- TDSAccountNumber-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="tdsAccountNumber" cssClass="error alert alert-danger" />
 							<form:input path="tdsAccountNumber" placeholder="TDS Account Number" class="form-control" />
 						</div>
+						<br>
+						<h3>Address Line 1 - </h3>
 						<!-- Address Line 1-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="addressLine1" cssClass="error alert alert-danger" />
 							<form:input path="addressLine1" placeholder="Address Line 1 (*)" class="form-control" />
 						</div>
+						<br>
+						<h3>Address Line 2 - </h3>
 						<!-- Address Line 2-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="addressLine2" cssClass="error alert alert-danger" />
 							<form:input path="addressLine2" placeholder="Address Line 2" class="form-control" />
 						</div>
+						<br>
+						<h3>City - </h3>
 						<!-- City-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="city" cssClass="error alert alert-danger" />
 							<form:input path="city" placeholder="City (*)" class="form-control" />
 						</div>
+						<br>
+						<h3>Pincode - </h3>
 						<!-- PINCODE-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
@@ -209,21 +220,20 @@
 						</div>
 						
 					</form:form>
-				</div>
-					<form:form action="${pageContext.request.contextPath}/" 
-						  	   >
-					<div style="margin-top: 10px" class="form-group">						
-							<div class="col-sm-6 controls">
-								<button type="submit" class="btn btn-primary">Back to Home</button>
-							</div>
-						</div>
-					</form:form>
-
-			</div>
-
-		</div>
-
-	</div>
-	
+  </section>
+    <!-- Footer -->
+      <footer id="footer">
+        <div class="inner">
+          <h2>Get In Touch</h2>
+          <ul class="actions">
+            <li><span class="icon fa-phone"></span> (+91) 97825-65081</li>
+            <li><span class="icon fa-envelope"></span> <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=aasavbadera.cse18@iitbhu.ac.in">aasavbadera.cse18@iitbhu.ac.in</a></li>
+            <li><span class="icon fa-map-marker"></span> H-2-A, Jawahar Nagar, Kota, Rajasthan</li>
+          </ul>
+        </div>
+        <div class="copyright">
+          &copy; King_01 Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
+        </div>
+      </footer>
 </body>
 </html>

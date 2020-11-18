@@ -93,7 +93,6 @@
 	</c:if>
   <section id="main" class="wrapper">
     <div class="inner">
-    <br>
 	<h1>Specific Account : </h1>
 		<h2>Group Name :
 		<c:url var="schedulelink" value="/view/groupById">
@@ -150,7 +149,7 @@
 							
 							<form:input path="mobileNumber2" placeholder="Alternate Mobile Number " class="form-control"  readonly="true" />
 						</div>
-						<h3>PAN Number</h3>
+						<h3>PAN Number - </h3>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="pan" cssClass="error alert alert-danger" />

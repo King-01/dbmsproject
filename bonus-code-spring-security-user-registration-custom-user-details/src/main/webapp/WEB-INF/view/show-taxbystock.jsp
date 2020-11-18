@@ -14,20 +14,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/main.css" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta charset="utf-8" /><style>
-startcounter {
-  list-style-type: none;
-  counter-reset: css-counter 0; /* initializes counter to 0; use -1 for zero-based numbering */
-}
-
-startcounter number {
-  counter-increment: css-counter 1; /* Increase the counter by 1. */
-}
-
-startcounter number:before {
-  content: counter(css-counter) ". "; /* Apply counter before children's content. */
-}
-</style>
+		<meta charset="utf-8" />
 </head>
 
 <body><!-- Header -->
@@ -97,29 +84,49 @@ startcounter number:before {
 		</div>
 
 	</c:if>
+  <section id="main" class="wrapper">
+    <div class="inner">
 
-	<h4>Taxes which are applied to current Stock are (Name = ${ stock.getStockItemName() }) - </h4>
+	<h2>Taxes which are applied to current Stock are (Name = ${ stock.getStockItemName() }) - </h2>
 	<startcounter>
+  <div class="table-wrapper">
+  <table class = "alt">
+  <thead>
+  <tr>
+  <th>No. </th>
+  <th>Tax Name</th>
+  <th>Link</th>
+  </tr></thead>
+  <tbody>
 	<c:forEach var="schedule" items="${taxes}">
 		<c:url var="schedulelink" value="/view/taxbyid">
 			<c:param name="taxId" value="${schedule.getId()}" />
-		</c:url><br>
-		<number><a href="${schedulelink}"><c:out value="${schedule.getTaxName()}"/></a></number>
-		<br>
+		</c:url><tr>
+		<td><number></number></td>
+		<td>${schedule.getTaxName()}</td>
+		<td><a href="${schedulelink}"><c:out value="Click Here"/></a></td>
+		</tr>
 	</c:forEach>
+  </tbody>
+  </table>
+  </div>
 	</startcounter>
-	<button type="submit" class="btn btn-primary" onclick="history.go(-1);" > Back </button>
-					<br>
-					<br>
-					<form:form action="${pageContext.request.contextPath}/" 
-					  	   >
-						<button type="submit" class="btn btn-primary">Back to Home</button>
-					</form:form>
-					<br>
-					<form:form action="${pageContext.request.contextPath}/logout" 
-					  	   >
-						<button type="submit" class="btn btn-primary">logout</button>
-					</form:form>
+  </div>
+  </section>
+    <!-- Footer -->
+      <footer id="footer">
+        <div class="inner">
+          <h2>Get In Touch</h2>
+          <ul class="actions">
+            <li><span class="icon fa-phone"></span> (+91) 97825-65081</li>
+            <li><span class="icon fa-envelope"></span> <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=aasavbadera.cse18@iitbhu.ac.in">aasavbadera.cse18@iitbhu.ac.in</a></li>
+            <li><span class="icon fa-map-marker"></span> H-2-A, Jawahar Nagar, Kota, Rajasthan</li>
+          </ul>
+        </div>
+        <div class="copyright">
+          &copy; King_01 Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
+        </div>
+      </footer>
 	
 </body>
 

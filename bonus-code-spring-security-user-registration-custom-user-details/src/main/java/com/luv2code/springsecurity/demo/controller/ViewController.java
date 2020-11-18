@@ -323,7 +323,7 @@ public class ViewController {
 		
 		return "redirect:/";
 	}
-	@RequestMapping("/taxbystock")
+	@RequestMapping("/stockbytax")
 	public String showTaxbyStock(Model theModel, RedirectAttributes ra)
 	{
 		Object authentication = 
@@ -345,7 +345,7 @@ public class ViewController {
 		
 		return "redirect:/";
 	}
-	@RequestMapping("/stockbytax")
+	@RequestMapping("/taxbystock")
 	public String showStockbyTax(Model theModel, RedirectAttributes ra)
 	{
 		Object authentication = 
