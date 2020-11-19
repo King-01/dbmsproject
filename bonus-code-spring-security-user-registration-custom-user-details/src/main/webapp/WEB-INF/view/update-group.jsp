@@ -102,7 +102,6 @@
 
                      
                         <form:hidden path="groupId"/>
-                        <form:hidden path="prev"/>
                         <!-- Password -->
                         <h3>Enter new Group Name - </h3>
                         <div style="margin-bottom: 25px" class="input-group">

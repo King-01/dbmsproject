@@ -86,161 +86,191 @@
 
 	</c:if>
 
-	<p>
+  <section id="main" class="wrapper">
+    <div class="inner">
+    
+    <h1>View Page - </h1>
+	<ol>
+	<dl>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/view/Schedule">View Schedules</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/view/group">View Groups</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/view/account">View Accounts</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/view/stockitem">View Stock Items</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/view/tax">View Tax</a>
 			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/view/taxbystock">View Tax by Stock</a>
+	</dt></li>
+	<li><dt>Tax Stock - </dt></li>
+	<ul><dd>
+			<li><a href="${pageContext.request.contextPath}/view/taxbystock">View Tax by Stock</a></li>
 			
-	</p>
-	<p>
+	</dd>
+	<dd><li>
 			<a href="${pageContext.request.contextPath}/view/stockbytax">View Stock by Taxes</a>
-			
-	</p>
-	<p>
+			</li>
+	</dd></ul><br>
+	<li><dt>Journal Vouchers - </dt></li>
+	<ul>
+	<dd><li>
 			<a href="${pageContext.request.contextPath}/view/alljournalvouchers">View All Journal Vouchers</a>
-			
-	</p>
-	<p>
+			</li>
+	</dd>
+	<dd><li>
 			<a href="${pageContext.request.contextPath}/view/journalvoucherbyaccount">View Journal Voucher By Account</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/view/allbankvouchers">View All Bank Vouchers</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/view/bankvoucherbyaccount">View Bank Voucher By Account</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/view/allcashvouchers">View All Cash Vouchers</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/view/cashvoucherbyaccount">View Cash Voucher By Account</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/view/cashvoucherbetweendates">View Cash Voucher By Dates/Account</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/view/cashvoucherbetweendatesbygroup">View Cash Voucher By Dates/Group</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/view/cashvoucherbetweendatesbyschedule">View Cash Voucher By Dates/Schedule</a>
-			
-	</p>
-	  <p>
-	      <a href="${pageContext.request.contextPath}/view/bankvoucherbetweendates">View Bank Voucher By Dates/Account</a>
-	      
-	  </p>
-	  <p>
-	      <a href="${pageContext.request.contextPath}/view/bankvoucherbetweendatesbygroup">View Bank Voucher By Dates/Group</a>
-	      
-	  </p>
-	  <p>
-	      <a href="${pageContext.request.contextPath}/view/bankvoucherbetweendatesbyschedule">View Bank Voucher By Dates/Schedule</a>
-	      
-	  </p>
-      <p>
+			</li>
+	</dd>
+      <dd><li>
           <a href="${pageContext.request.contextPath}/view/journalvoucherbetweendates">View Journal Voucher By Dates/Account</a>
-          
-      </p>
-      <p>
+          </li>
+      </dd>
+      <dd><li>
           <a href="${pageContext.request.contextPath}/view/journalvoucherbetweendatesbygroup">View Journal Voucher By Dates/Group</a>
-          
-      </p>
-      <p>
+          </li>
+      </dd>
+      <dd><li>
           <a href="${pageContext.request.contextPath}/view/journalvoucherbetweendatesbyschedule">View Journal Voucher By Dates/Schedule</a>
-          
-      </p>
-	<p>
+          </li>
+      </dd>
+	</ul>
+	<br>
+	<li><dt>Bank Vouchers - </dt></li>
+	<ul>
+	<dd><li>
+			<a href="${pageContext.request.contextPath}/view/allbankvouchers">View All Bank Vouchers</a>
+			</li>
+	</dd>
+	<dd><li>
+			<a href="${pageContext.request.contextPath}/view/bankvoucherbyaccount">View Bank Voucher By Account</a>
+			</li>
+	</dd>
+	  <dd><li>
+	      <a href="${pageContext.request.contextPath}/view/bankvoucherbetweendates">View Bank Voucher By Dates/Account</a>
+	      </li>
+	  </dd>
+	  <dd><li>
+	      <a href="${pageContext.request.contextPath}/view/bankvoucherbetweendatesbygroup">View Bank Voucher By Dates/Group</a>
+	      </li>
+	  </dd>
+	  <dd><li>
+	      <a href="${pageContext.request.contextPath}/view/bankvoucherbetweendatesbyschedule">View Bank Voucher By Dates/Schedule</a>
+	      </li>
+	  </dd>
+	  </ul>
+	  <br>
+	<li><dt>Cash Vouchers - </dt></li>
+	<ul>
+	  <dd><li>
+			<a href="${pageContext.request.contextPath}/view/allcashvouchers">View All Cash Vouchers</a>
+			</li>
+	  </dd>
+	  <dd><li>
+			<a href="${pageContext.request.contextPath}/view/cashvoucherbyaccount">View Cash Voucher By Account</a>
+			</li>
+	  </dd>
+	  <dd><li>
+			<a href="${pageContext.request.contextPath}/view/cashvoucherbetweendates">View Cash Voucher By Dates/Account</a>
+			</li>
+	  </dd>
+	  <dd><li>
+			<a href="${pageContext.request.contextPath}/view/cashvoucherbetweendatesbygroup">View Cash Voucher By Dates/Group</a>
+			</li>
+	  </dd>
+	  <dd><li>
+			<a href="${pageContext.request.contextPath}/view/cashvoucherbetweendatesbyschedule">View Cash Voucher By Dates/Schedule</a>
+			</li>
+	  </dd>
+	  </ul>
+	  <br>
+	<li><dt>Purchase Vouchers - </dt></li>
+	<ul>
+	  <dd><li>
 			<a href="${pageContext.request.contextPath}/view/allpurchasebillvouchers">View All Purchase Vouchers</a>
-			
-	</p>
-	<p>
+			</li>
+	  </dd>
+	  <dd><li>
 			<a href="${pageContext.request.contextPath}/view/purchasebillvoucherbyaccount">View Purchase Voucher By Account</a>
-			
-	</p>
-      <p>
+			</li>
+	  </dd>
+	  <dd><li>
           <a href="${pageContext.request.contextPath}/view/purchasebillvoucherbetweendates">View Purchase Voucher By Dates/Account</a>
-          
-      </p>
-      <p>
+          </li>
+	  </dd>
+	  <dd><li>
           <a href="${pageContext.request.contextPath}/view/purchasebillvoucherbetweendatesbygroup">View Purchase Voucher By Dates/Group</a>
-          
-      </p>
-      <p>
+          </li>
+	  </dd>
+	  <dd><li>
           <a href="${pageContext.request.contextPath}/view/purchasebillvoucherbetweendatesbyschedule">View Purchase Voucher By Dates/Schedule</a>
-          
-      </p>
-  <p>
+          </li>
+	  </dd>
+	  </ul>
+	  <br>
+	<li><dt>Sale Vouchers - </dt></li>
+	<ul>
+	  <dd><li>
       <a href="${pageContext.request.contextPath}/view/allsalebills">View All Sale Vouchers</a>
-      
-  </p>
-  <p>
+      </li>
+	  </dd>
+	  <dd><li>
       <a href="${pageContext.request.contextPath}/view/salebillbyaccount">View Sale Voucher By Account</a>
-      
-  </p>
-      <p>
+      </li>
+	  </dd>
+	  <dd><li>
           <a href="${pageContext.request.contextPath}/view/salebillbetweendates">View Sale Voucher By Dates/Account</a>
-          
-      </p>
-      <p>
+          </li>
+	  </dd>
+	  <dd><li>
           <a href="${pageContext.request.contextPath}/view/salebillbetweendatesbygroup">View Sale Voucher By Dates/Group</a>
-          
-      </p>
-      <p>
+          </li>
+	  </dd>
+	  <dd><li>
           <a href="${pageContext.request.contextPath}/view/salebillbetweendatesbyschedule">View Sale Voucher By Dates/Schedule</a>
-          
-      </p>
-      <p>
+          </li>
+	  </dd>
+	  </ul>
+      <li><dt>
           <a href="${pageContext.request.contextPath}/view/allbillbetweendates">View All Voucher By Dates/Account</a>
           
-      </p>
-      <p>
+      </dt></li>
+      <li><dt>
           <a href="${pageContext.request.contextPath}/view/allbillbetweendatesbygroup">View All Vouchers By Dates/Group</a>
           
-      </p>
-      <p>
+      </dt></li>
+      <li><dt>
           <a href="${pageContext.request.contextPath}/view/allbillbetweendatesbyschedule">View All Vouchers By Dates/Schedule</a>
           
-      </p>
-	
-	<!-- Add a logout button -->
-	<form:form action="${pageContext.request.contextPath}/logout" 
-			   method="POST">
-	
-		<input type="submit" value="Logout" />
-	
-	</form:form>
-	<!-- Add a logout button -->
-	<form:form action="${pageContext.request.contextPath}/" 
-			   method="POST">
-	
-		<input type="submit" value="Back to Home" />
-	
-	</form:form>
+      </dt></li>
+      </dl></ol>
+					</div>
+					</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<h2>Get In Touch</h2>
+					<ul class="actions">
+						<li><span class="icon fa-phone"></span> (+91) 97825-65081</li>
+						<li><span class="icon fa-envelope"></span> <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=aasavbadera.cse18@iitbhu.ac.in">aasavbadera.cse18@iitbhu.ac.in</a></li>
+						<li><span class="icon fa-map-marker"></span> H-2-A, Jawahar Nagar, Kota, Rajasthan</li>
+					</ul>
+				</div>
+				<div class="copyright">
+					&copy; King_01 Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
+				</div>
+			</footer>	
+
 	
 </body>
 </html>

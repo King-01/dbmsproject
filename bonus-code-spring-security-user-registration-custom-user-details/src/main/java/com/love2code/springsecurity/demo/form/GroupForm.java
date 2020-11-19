@@ -11,12 +11,8 @@ public class GroupForm {
 	@Size(min = 1, message = "is required")
 	private String groupName;
 	private Long groupId;
-	private String prev;
-	public String getPrev() {
-		return prev;
-	}
-	public void setPrev(String prev) {
-		this.prev = prev;
+	public void setGroupId(Long groupId) {
+		this.groupId = groupId;
 	}
 	@NotNull(message="is required")
 	@IsValidPassword
@@ -35,7 +31,6 @@ public class GroupForm {
 	{
 		this.groupId = thes.getId();
 		this.groupName = thes.getGroupName();
-		this.prev = this.groupName;
 	}
 	public String getGroupName() {
 		return groupName;
@@ -48,7 +43,7 @@ public class GroupForm {
 	}
 	@Override
 	public String toString() {
-		return "GroupForm [groupName=" + groupName + ", groupId=" + groupId + ", prev=" + prev + ", confirmPassword="
-				+ confirmPassword + "]";
+		return "GroupForm [groupName=" + groupName + ", groupId=" + groupId + ", confirmPassword=" + confirmPassword
+				+ "]";
 	}
 }

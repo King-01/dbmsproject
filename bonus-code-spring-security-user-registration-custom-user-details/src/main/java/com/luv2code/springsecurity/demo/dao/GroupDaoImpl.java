@@ -85,28 +85,13 @@ public class GroupDaoImpl implements GroupDao {
 	public Group getGroupByName(String groupName, String userName) {
 		// TODO Auto-generated method stub
 		Session crs = sessionFactory.getCurrentSession();
-		Query<Schedule> theQuery = crs.createQuery("from Schedule where userName=:UserName", Schedule.class
-				);
+		Query<Group> theQuery = crs.createQuery("from Group where groupName =:GroupName and userName =: UserName", Group.class);
+		theQuery.setParameter("GroupName", groupName);
 		theQuery.setParameter("UserName", userName);
-		List<Schedule> theList = theQuery.getResultList();
-		List<Group> theGroupList = new ArrayList<Group>();
-		for(int i = 0; i < theList.size(); i++)
-		{
-			Long scheduleId = theList.get(i).getId();
-			Session crs1 = sessionFactory.getCurrentSession();
-			Query<Group> nextQuery = crs1.createQuery("from Group where schedule=:scheduleId", Group.class);
-			nextQuery.setParameter("scheduleId", scheduleId);
-			List<Group> itmList = nextQuery.getResultList();
-			theGroupList.addAll(itmList);
-		}
-		for(int i = 0; i < theGroupList.size(); i++)
-		{
-			if(theGroupList.get(i).getGroupName().equals(groupName))
-			{
-				return theGroupList.get(i);
-			}
-		}
-		return null;
+		List<Group> toret = theQuery.getResultList();
+		if(toret.size() == 0)
+			return null;
+		return toret.get(0);
 	}
 
 }

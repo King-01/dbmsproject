@@ -89,52 +89,57 @@
 		</div>
 
 	</c:if>
-	<br><br><br>
-	<p>
+	<section id="main" class="wrapper">
+		<div class="inner">
+		
+		<h1>Create Page - </h1>
+	<ol><dl>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/Schedule">Create Schedule</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/group">Create Group</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/account">Create Account</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/stockitem">Create Stock Item</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/tax">Create Tax</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/stocktax">Create Tax to Stock</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/journalvoucher">Create Journal Voucher</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/bankvoucher">Create Bank Voucher</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/cashvoucher">Create Cash Voucher</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/stockitemsforpurchaseitems">Create Purchase Voucher</a>
 			
-	</p>
-	<p>
+	</dt></li>
+	<li><dt>
 			<a href="${pageContext.request.contextPath}/add/stockitemsforsaleitems">Create Sale Bill</a>
 			
-	</p>
-	
+	</dt></li></dl></ol>
+	</div>
+	</section>
 
 		<!-- Footer -->
 			<footer id="footer">

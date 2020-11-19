@@ -86,32 +86,35 @@
 
 	</c:if>
 
-	<p>
-			<a href="${pageContext.request.contextPath}/add/scheduleupdate">Update Schedule</a>
-			
-	</p>
-	<p>
+  <section id="main" class="wrapper">
+    <div class="inner">
+    <h1>Update - </h1>
+    <ol>
+    <h2>
+			<li><a href="${pageContext.request.contextPath}/add/scheduleupdate">Update Schedule</a>
+		</li><li>
 			<a href="${pageContext.request.contextPath}/add/groupupdate">Update Group</a>
-			
-	</p>
-	<p>
+		</li><li>
 			<a href="${pageContext.request.contextPath}/add/accountupdate">Update Account</a>
-			
-	</p>
-	<!-- Add a logout button -->
-	<form:form action="${pageContext.request.contextPath}/logout" 
-			   method="POST">
-	
-		<input type="submit" value="Logout" />
-	
-	</form:form>
-	<!-- Add a logout button -->
-	<form:form action="${pageContext.request.contextPath}/" 
-			   method="POST">
-	
-		<input type="submit" value="Back to Home" />
-	
-	</form:form>
+		</li>	
+		</h2></ol>
+  </div>
+  </section>
+    <!-- Footer -->
+      <footer id="footer">
+        <div class="inner">
+          <h2>Get In Touch</h2>
+          <ul class="actions">
+            <li><span class="icon fa-phone"></span> (+91) 97825-65081</li>
+            <li><span class="icon fa-envelope"></span> <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=aasavbadera.cse18@iitbhu.ac.in">aasavbadera.cse18@iitbhu.ac.in</a></li>
+            <li><span class="icon fa-map-marker"></span> H-2-A, Jawahar Nagar, Kota, Rajasthan</li>
+          </ul>
+        </div>
+        <div class="copyright">
+          &copy; King_01 Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
+        </div>
+      </footer>
+	</body>
 	
 </body>
 </html>

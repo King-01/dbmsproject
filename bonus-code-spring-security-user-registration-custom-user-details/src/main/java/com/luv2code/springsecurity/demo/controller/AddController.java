@@ -444,6 +444,19 @@ public class AddController {
                                 + "AddController, /add/purchasebill");
                 theModel.addAttribute("listofaccounts" ,tl);
                 double fp = 0.0;
+                String ts = new String();
+                for(int i = 0; i < theform.getTheStockPurchaseFormList().size(); i++)
+                {
+                	if(theform.getTheStockPurchaseFormList().get(i).getQuantity() < 0)
+                	{
+                		ts = ts + theform.getTheStockPurchaseFormList().get(i).getStockitemName() + " ";
+                	}
+                }
+                if(ts.length() > 0)
+                {
+                	ra.addFlashAttribute("registrationError", "The following stock items had invalid quantity : " + ts);
+                	return "redirect:/add";
+                }
                 for(int i = 0; i < theform.getTheStockPurchaseFormList().size(); i++)
                 {
                 	StockPurchaseForm itm = theform.getTheStockPurchaseFormList().get(i);
@@ -486,6 +499,7 @@ public class AddController {
                 		fp += price;
                 	}
                 }
+                
                 if(fp - 0.0 <= 0.0)
                 {
                     ra.addFlashAttribute("registrationError", "Billing amount must be greater than zero.");
@@ -607,6 +621,20 @@ public class AddController {
                 theModel.addAttribute("listofaccounts" ,tl);
                 double fp = 0.0;
                 String ts = new String();
+                for(int i = 0; i < theform.getTheStockSaleFormList().size(); i++)
+                {
+                	if(theform.getTheStockSaleFormList().get(i).getQuantity() < 0)
+                	{
+                		ts = ts + theform.getTheStockSaleFormList().get(i).getStockitemName() + " ";
+                	}
+                }
+                if(ts.length() > 0)
+                {
+                	ra.addFlashAttribute("registrationError", "The following stock items had invalid quantity : " + ts);
+                	return "redirect:/add";
+                }
+                ts = new String();
+                
                 for(int i = 0; i < theform.getTheStockSaleFormList().size(); i++)
                 {
                     StockSaleForm itm = theform.getTheStockSaleFormList().get(i);

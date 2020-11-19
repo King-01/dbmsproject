@@ -33,7 +33,6 @@ public class BankVoucher {
 	private Double debitTotal;
 
 	@Column(name="name")
-	@NotNull(message = "is required")
 	private String accountName;
 	@Column(name="username_id")
 	private String userName;

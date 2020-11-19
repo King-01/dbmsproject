@@ -124,7 +124,7 @@
 							<form:password path="matchingPassword" placeholder="Confirm Current Password (*)" class="form-control" />
 						</div>
 						<br>
-						<h3>Display Name</h3>
+						<h3>Firm Name</h3>
 						<!-- Display Name-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 

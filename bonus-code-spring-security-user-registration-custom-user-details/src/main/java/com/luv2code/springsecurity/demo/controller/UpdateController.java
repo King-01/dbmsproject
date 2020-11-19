@@ -162,9 +162,10 @@ public class UpdateController {
 			}
 			logger.info(theform);
 			List<Group> thes = groupService.getGroupByUserName(userName);
+			String prev = groupService.getGroupById(theform.getGroupId()).getGroupName();
 			for(int i = 0; i < thes.size(); i++)
 			{
-				if(!thes.get(i).getGroupName().equals(theform.getPrev()))
+				if(!thes.get(i).getGroupName().equals(prev))
 				{
 					if(thes.get(i).getGroupName().equals(theform.getGroupName()))
 					{
@@ -174,9 +175,8 @@ public class UpdateController {
 					}
 				}
 			}
-			Group tou = groupService.getGroupByName(theform.getGroupName(), userName);
+			Group tou = groupService.getGroupById(theform.getGroupId());
 			tou.setGroupName(theform.getGroupName());
-			logger.info(tou);
 			groupService.save(tou);
 			ra.addFlashAttribute("successMessage", "Group Updated Successfully!");
 			return "redirect:/update";
