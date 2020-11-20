@@ -29,6 +29,7 @@ import com.love2code.springsecurity.demo.form.PurchaseBillVoucherForm;
 import com.love2code.springsecurity.demo.form.SaleBillForm;
 import com.love2code.springsecurity.demo.form.StockForm;
 import com.love2code.springsecurity.demo.form.StockItemForm;
+import com.love2code.springsecurity.demo.form.StockItemForm1;
 import com.love2code.springsecurity.demo.form.StockPurchaseForm;
 import com.love2code.springsecurity.demo.form.StockSaleForm;
 import com.love2code.springsecurity.demo.form.TaxForm;
@@ -561,11 +562,11 @@ public class ProcessController {
 					Long id = addItem.getTaxId();
 					logger.info(Long.toString(id));
 					List<StockTax> theList = stockTaxService.getStockTaxByTaxId(id);
-					List<StockItemForm> t = new ArrayList<>();
+					List<StockItemForm1> t = new ArrayList<>();
 					for(int i = 0; i < theList.size(); i++)
 					{
 						Session crs1 = sessionFactory.getCurrentSession();
-						StockItemForm st1 = new StockItemForm();
+						StockItemForm1 st1 = new StockItemForm1();
 						st1 = st1.createStockItem(crs1.get(StockItem.class, theList.get(i).getStockId()));
 						st1.setStockTaxId(theList.get(i).getId());
 						t.add((st1));
