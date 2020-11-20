@@ -12,4 +12,6 @@ public interface StockTaxService {
 	List<StockTax> getStockTaxByUserName(String userName);
 	List<StockTax> getTaxByStockId(Long theId);
 	List<StockTax> getStockItemByTaxId(Long theId);
+	StockTax getById(Long id);
+	int delete(StockTax itm);
 }

@@ -110,7 +110,31 @@ public class StockTaxDaoImpl implements StockTaxDao {
 		
 	}
 
-	
+	@Override
+	@Transactional
+	public StockTax getById(long id) {
+		Session crs = sessionFactory.getCurrentSession();
+		try {
+			return crs.get(StockTax.class, id);
+		} catch(Exception e)
+		{
+			return null;
+		}
+	}
+	@Override
+	@Transactional
+	public int delete(StockTax itm) {
+		// TODO Auto-generated method stub
+		Session crs = sessionFactory.getCurrentSession();
+		try {
+			crs.delete(itm);
+			return 1;
+		} catch(Exception e)
+		{
+			return 0;
+		}
+		
+	}
 
 	
 	

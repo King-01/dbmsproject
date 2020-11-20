@@ -28,8 +28,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.love2code.springsecurity.demo.form.PurchaseBillVoucherForm;
 import com.love2code.springsecurity.demo.form.SaleBillForm;
 import com.love2code.springsecurity.demo.form.StockForm;
+import com.love2code.springsecurity.demo.form.StockItemForm;
 import com.love2code.springsecurity.demo.form.StockPurchaseForm;
 import com.love2code.springsecurity.demo.form.StockSaleForm;
+import com.love2code.springsecurity.demo.form.TaxForm;
 import com.luv2code.springsecurity.demo.entity.Account;
 import com.luv2code.springsecurity.demo.entity.BankVoucher;
 import com.luv2code.springsecurity.demo.entity.CashVoucher;
@@ -535,13 +537,19 @@ public class ProcessController {
 					Session crs = sessionFactory.getCurrentSession();
 					Long id = addItem.getStockId();
 					List<StockTax> theList = stockTaxService.getStockTaxByStockId(id);
-					List<Tax> t = new ArrayList<Tax>();
+					List<TaxForm> t = new ArrayList<>();
 					for(int i = 0; i < theList.size(); i++)
 					{
 						Session crs1 = sessionFactory.getCurrentSession();
-						t.add(crs1.get(Tax.class, theList.get(i).getTaxId()));
+						TaxForm st1 = new TaxForm(crs1.get(Tax.class, theList.get(i).getTaxId()));
+						st1.setStockTaxId(theList.get(i).getId());
+						t.add(st1);
 					}
 					logger.info("The size of Tax is : " + Integer.toString(t.size()) + " for stock item id : " + Long.toString(id));
+					if(t.size() == 0)
+					{
+						t = null;
+					}
 					theModel.addAttribute("taxes", t);
 					theModel.addAttribute("stock", crs.get(StockItem.class, id));
 					return "show-taxbystock";
@@ -553,13 +561,20 @@ public class ProcessController {
 					Long id = addItem.getTaxId();
 					logger.info(Long.toString(id));
 					List<StockTax> theList = stockTaxService.getStockTaxByTaxId(id);
-					List<StockItem> t = new ArrayList<StockItem>();
+					List<StockItemForm> t = new ArrayList<>();
 					for(int i = 0; i < theList.size(); i++)
 					{
 						Session crs1 = sessionFactory.getCurrentSession();
-						t.add(crs1.get(StockItem.class, theList.get(i).getStockId()));
+						StockItemForm st1 = new StockItemForm();
+						st1 = st1.createStockItem(crs1.get(StockItem.class, theList.get(i).getStockId()));
+						st1.setStockTaxId(theList.get(i).getId());
+						t.add((st1));
 					}
 					logger.info("The size of Stock item is : " + Integer.toString(t.size()) + " for tax item id : " + Long.toString(id));
+					if(t.size() == 0)
+					{
+						t = null;
+					}
 					theModel.addAttribute("stocks", t);
 					theModel.addAttribute("tax", crs.get(Tax.class, id));
 					return "show-stockbytax";

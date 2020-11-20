@@ -54,6 +54,18 @@ public class StockTaxServiceImpl implements StockTaxService {
 		return stockTaxDao.getStockItemByTaxId(theId);
 	}
 
+	@Override
+	public StockTax getById(Long id) {
+		// TODO Auto-generated method stub
+		return stockTaxDao.getById(id);
+	}
+
+	@Override
+	public int delete(StockTax itm) {
+		// TODO Auto-generated method stub
+		return stockTaxDao.delete(itm);
+	}
+
 
 
 }

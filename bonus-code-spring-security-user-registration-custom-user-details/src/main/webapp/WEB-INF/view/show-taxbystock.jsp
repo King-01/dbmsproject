@@ -86,8 +86,9 @@
 	</c:if>
   <section id="main" class="wrapper">
     <div class="inner">
-
 	<h2>Taxes which are applied to current Stock are (Name = ${ stock.getStockItemName() }) - </h2>
+
+	<c:if test = "${ taxes != null }" >
 	<startcounter>
   <div class="table-wrapper">
   <table class = "alt">
@@ -95,22 +96,35 @@
   <tr>
   <th>No. </th>
   <th>Tax Name</th>
+  <th>Percentage</th>
   <th>Link</th>
+  <th>Delete</th>
   </tr></thead>
   <tbody>
 	<c:forEach var="schedule" items="${taxes}">
 		<c:url var="schedulelink" value="/view/taxbyid">
 			<c:param name="taxId" value="${schedule.getId()}" />
-		</c:url><tr>
+		</c:url>
+		<c:url var="schedulelink1" value="/delete/stocktax">
+			<c:param name="id" value="${schedule.getStockTaxId()}" />
+		</c:url>
+		<tr>
 		<td><number></number></td>
 		<td>${schedule.getTaxName()}</td>
-		<td><a href="${schedulelink}"><c:out value="Click Here"/></a></td>
+		<td>${ schedule.getTaxPercent() }</td>
+		<td><a href="${schedulelink}"><c:out value="Click Here"/></a>
+		<td><a href="${schedulelink1}" onsubmit="return confirm('Are you sure that you want to continue with this operation?') ? true : false;"><c:out value="Delete"/></a></td>
+		</td>
 		</tr>
 	</c:forEach>
   </tbody>
   </table>
   </div>
 	</startcounter>
+  </c:if>
+  <c:if test = "${ taxes == null }" >
+  <h3>Nothing to Show!</h3>
+  </c:if>
   </div>
   </section>
     <!-- Footer -->

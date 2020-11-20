@@ -14,4 +14,6 @@ public interface StockTaxDao {
 	List<StockTax> getStockTaxByUserName(String userName);
 	List<StockTax> getTaxByStockId(Long theId);
 	List<StockTax> getStockItemByTaxId(Long theId);
+	StockTax getById(long id);
+	int delete(StockTax itm);
 }
