@@ -93,8 +93,8 @@
 	</c:if>
   <section id="main" class="wrapper">
     <div class="inner">
-	<h1>Update Company Details - </h1>
-					<form:form action="${pageContext.request.contextPath}/updateCompanyForm"
+	<h1>View Company Details - </h1>
+					<form:form action="${pageContext.request.contextPath}/updateCompanyFormUpd"
 						  	   modelAttribute="crmUser"
 						  	   class="form-horizontal">
 
@@ -107,29 +107,12 @@
 							
 							<form:input path="userName" placeholder="username" class="form-control" readonly="true" />
 						</div>
-						<br>
-						<!-- Display Name-->
-						<h3>Current Password -</h3>
-						<div style="margin-bottom: 25px" class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
-							<form:errors path="password" cssClass="error alert alert-danger" />
-							<form:password path="password" placeholder="Reenter current Password (*)" class="form-control" />
-						</div>
-						<br>
-						<h3>Confirm Current Password - </h3>
-						<!-- Display Name-->
-						<div style="margin-bottom: 25px" class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
-							<form:errors path="matchingPassword" cssClass="error alert alert-danger" />
-							<form:password path="matchingPassword" placeholder="Confirm Current Password (*)" class="form-control" />
-						</div>
-						<br>
 						<h3>Firm Name</h3>
 						<!-- Display Name-->
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="displayName" cssClass="error alert alert-danger" />
-							<form:input path="displayName" placeholder="Display Name (*)" class="form-control" />
+							<form:input path="displayName" placeholder="Display Name (*)" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>Mobile Number - </h3>
@@ -137,7 +120,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="mobilenumber1" cssClass="error alert alert-danger" />
-							<form:input path="mobilenumber1" placeholder="Mobile Number 1(*)" class="form-control" />
+							<form:input path="mobilenumber1" placeholder="Mobile Number 1(*)" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>Alternate Mobile Number - </h3>
@@ -145,7 +128,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="mobilenumber2" cssClass="error alert alert-danger" />
-							<form:input path="mobilenumber2" placeholder="Mobile Number 2" class="form-control" />
+							<form:input path="mobilenumber2" placeholder="Mobile Number 2" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>Email - </h3>
@@ -153,7 +136,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="email" cssClass="error alert alert-danger" />
-							<form:input path="email" placeholder="Email (*)" class="form-control" />
+							<form:input path="email" placeholder="Email (*)" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>Pan - </h3>
@@ -161,7 +144,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="pan" cssClass="error alert alert-danger" />
-							<form:input path="pan" placeholder="PAN (*)" class="form-control" />
+							<form:input path="pan" placeholder="PAN (*)" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>GSTIN - </h3>
@@ -169,7 +152,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="gstin" cssClass="error alert alert-danger" />
-							<form:input path="gstin" placeholder="GSTIN (*)" class="form-control" />
+							<form:input path="gstin" placeholder="GSTIN (*)" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>TDS Account Number - </h3>
@@ -177,7 +160,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="tdsAccountNumber" cssClass="error alert alert-danger" />
-							<form:input path="tdsAccountNumber" placeholder="TDS Account Number" class="form-control" />
+							<form:input path="tdsAccountNumber" placeholder="TDS Account Number" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>Address Line 1 - </h3>
@@ -185,7 +168,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="addressLine1" cssClass="error alert alert-danger" />
-							<form:input path="addressLine1" placeholder="Address Line 1 (*)" class="form-control" />
+							<form:input path="addressLine1" placeholder="Address Line 1 (*)" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>Address Line 2 - </h3>
@@ -193,7 +176,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="addressLine2" cssClass="error alert alert-danger" />
-							<form:input path="addressLine2" placeholder="Address Line 2" class="form-control" />
+							<form:input path="addressLine2" placeholder="Address Line 2" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>City - </h3>
@@ -201,7 +184,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="city" cssClass="error alert alert-danger" />
-							<form:input path="city" placeholder="City (*)" class="form-control" />
+							<form:input path="city" placeholder="City (*)" class="form-control" readonly="true"  />
 						</div>
 						<br>
 						<h3>Pincode - </h3>
@@ -209,13 +192,13 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:errors path="pincode" cssClass="error alert alert-danger" />
-							<form:input path="pincode" placeholder="PIN CODE (*)" class="form-control" />
+							<form:input path="pincode" placeholder="PIN CODE (*)" class="form-control"  readonly="true" />
 						</div>
 						
 						<!-- Register Button -->
 						<div style="margin-top: 10px" class="form-group">						
 							<div class="col-sm-6 controls">
-								<button type="submit" class="btn btn-primary">Update Details</button>
+								<button type="submit" class="btn btn-primary">Go to Update Details</button>
 							</div>
 						</div>
 						

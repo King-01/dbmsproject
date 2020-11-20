@@ -7,7 +7,7 @@
 
 <head>
   
-  <title>View Purchase Voucher</title>
+  <title>View Purchase Bill</title>
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -93,7 +93,7 @@
   </c:if>
   <section id="main" class="wrapper">
     <div class="inner">
-  <h1>View Purchase Voucher by Group</h1>
+  <h1>View Purchase Bill by Group</h1>
   <form:form action="${pageContext.request.contextPath}/view/purchasebillvoucherbetweendatesbygroup" 
            modelAttribute="theform"
            class="form-horizontal">
@@ -111,7 +111,7 @@
     <h3>Select Group: </h3>
     <div style="margin-bottom: 25pxl;margin-left: 4pxl" class="input">
       <form:errors path="groupId" cssClass="error alert alert-danger" />
-		<form:select path="groupId">
+    <form:select path="groupId">
         <form:option value="${ null }" label = "Select a Group from this List (*)"></form:option>
         <c:forEach var="oneschedule" items="${items}">
           <form:option value="${oneschedule.getId()}" label = "${ oneschedule.getGroupName() }"></form:option>
@@ -132,7 +132,7 @@
     For the Group (${ id.getGroupName() })</c:if></h3>
    <c:if test = "${ status != null }" ><h3>
     Overall Status - ${ status } and it sums to a value of ${ price }</h3>
-    <h3>List of Purchase Vouchers are - </h3></c:if>
+    <h3>List of Purchase Bills are - </h3></c:if>
  
   <br><startcounter>
   <div class="table-wrapper">

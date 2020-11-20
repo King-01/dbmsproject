@@ -447,7 +447,7 @@ public class AddController {
                 String ts = new String();
                 for(int i = 0; i < theform.getTheStockPurchaseFormList().size(); i++)
                 {
-                	if(theform.getTheStockPurchaseFormList().get(i).getQuantity() < 0)
+                	if(theform.getTheStockPurchaseFormList().get(i).getQuantity() <= 0)
                 	{
                 		ts = ts + theform.getTheStockPurchaseFormList().get(i).getStockitemName() + " ";
                 	}
@@ -623,7 +623,7 @@ public class AddController {
                 String ts = new String();
                 for(int i = 0; i < theform.getTheStockSaleFormList().size(); i++)
                 {
-                	if(theform.getTheStockSaleFormList().get(i).getQuantity() < 0)
+                	if(theform.getTheStockSaleFormList().get(i).getQuantity() <= 0)
                 	{
                 		ts = ts + theform.getTheStockSaleFormList().get(i).getStockitemName() + " ";
                 	}

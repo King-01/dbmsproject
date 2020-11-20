@@ -2,85 +2,6 @@
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
-
-<html>
-
-<head>
-	<title>Home Page</title>
-		<!-- Reference Bootstrap files -->
-	<link rel="stylesheet"
-		 href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-	
-	<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/main.css" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta charset="utf-8" />
-</head>
-
-<body>
-		<c:if test="${registrationError != null}">
-
-		<div class="alert alert-danger col-xs-offset-1 col-xs-10">
-			${registrationError}
-		</div>
-	</c:if>
-	<!-- Check for registration error -->
-	<c:if test="${successMessage != null}">
-
-		<div class="alert alert-success">
-			${successMessage}
-		</div>
-
-	</c:if>
-
-
-	<!-- Check for registration error -->
-	<c:if test="${someerror != null}">
-
-		<div class="alert alert-danger col-xs-offset-1 col-xs-10r">
-			${someerror}
-		</div>
-
-	</c:if>
-	<p>
-			<a href="${pageContext.request.contextPath}/updatecompanydetails">Update Company Details</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/showFormForUpdatePassword">Change Password</a>
-			
-	</p>
-	
-	<p>
-			<a href="${pageContext.request.contextPath}/add">Create</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/view">View</a>
-			
-	</p>
-	<p>
-			<a href="${pageContext.request.contextPath}/update">Update</a>
-			
-	</p>
-	<!-- Add a logout button -->
-	<form:form action="${pageContext.request.contextPath}/logout" 
-			   method="POST">
-	
-		<input type="submit" value="Logout" />
-	
-	</form:form>
-	
-</body>
-
-</html>
-
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
 <html>
 	<head>
 		<title>Home Page</title>
@@ -130,8 +51,9 @@
 		<!-- Banner -->
 			<section id="banner">
 				<div class="content">
-					<h1>Ipsum sed lorem</h1>
-					<p>Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod<br />sed arcu cras consecuat lorem ipsum dolor sit amet.</p>
+					<h1>Hello ${ DisplayName }</h1>
+					<p>Welcome to Merchant Manager, you can do amazing stuff here.
+					<br />Just a click away to get to know about them.</p>
 					<ul class="actions">
 						<li><a href="#one" class="button scrolly">Get Started</a></li>
 					</ul>
@@ -143,12 +65,15 @@
 				<div class="inner flex flex-3">
 					<div class="flex-item left">
 						<div>
-							<h3>Magna ultricies</h3>
-							<p>Morbi in sem quis dui plalorem ipsum<br /> euismod in, pharetra sed ultricies.</p>
+							<h3>Create</h3>
+							<p>You have 11 different types of add operations available. Excited ?
+						<a href="${pageContext.request.contextPath}/add" class="button scrolly">Start Adding</a>
+					</p>
 						</div>
 						<div>
-							<h3>Ipsum adipiscing lorem</h3>
-							<p>Tristique yonve cursus jam nulla quam<br /> loreipsu gravida adipiscing lorem</p>
+							<h3>Manage</h3>
+							<p>Managing your data, just got organized. Query by dates, groups, accounts etc.
+							<a href="${pageContext.request.contextPath}/view" class="button scrolly">Click Here!</a> </p>
 						</div>
 					</div>
 					<div class="flex-item image fit round">
@@ -156,12 +81,16 @@
 					</div>
 					<div class="flex-item right">
 						<div>
-							<h3>Tempus nullam</h3>
-							<p>Sed adipiscing ornare risus. Morbi estes<br /> blandit sit et amet, sagittis magna.</p>
+							<h3>Update</h3>
+							<p>Made a mistake? Don't worry, we got you covered. You can update multiple details in your Group, Account, Schedule.<br />
+						<a href="${pageContext.request.contextPath}/update" class="button scrolly">Start from here</a>
+					</p>
 						</div>
 						<div>
-							<h3>Suscipit nibh dolore</h3>
-							<p>Pellentesque egestas sem. Suspendisse<br /> modo ullamcorper feugiat lorem.</p>
+							<h3>Delete</h3>
+							<p>Managing Taxes in your stocks have delete support!<br /> Just find your stock to query on!
+						<a href="${pageContext.request.contextPath}/view/taxbystock" class="button scrolly">Select the stock!</a>
+					</p>
 						</div>
 					</div>
 				</div>
@@ -170,49 +99,16 @@
 		<!-- Two -->
 			<section id="two" class="wrapper style1 special">
 				<div class="inner">
-					<h2>Feugiat lorem</h2>
+					<h2>My Vision</h2>
 					<figure>
 					    <blockquote>
-					        "Morbi in sem quis dui placerat ornare. Pellentesque odio nisi, euismod in, pharetra<br /> magna etiam lorem ultricies in diam. Sed arcu cras consequat."
+					        "This project is created as a Course Project for Database Management System Course<br />, which i took in 5th Semester of My Bachelor's in IIT BHU Varanasi.<br /> Most work on this Website was done till November 2020, I hope you will like it!"
 					    </blockquote>
 					    <footer>
-					        <cite class="author">Jane Anderson</cite>
-					        <cite class="company">CEO, Untitled</cite>
+					        <cite class="author">Aasav Badera</cite>
+					        <cite class="company">Creator, Merchant Manager</cite>
 					    </footer>
 					</figure>
-				</div>
-			</section>
-
-		<!-- Three -->
-			<section id="three" class="wrapper">
-				<div class="inner flex flex-3">
-					<div class="flex-item box">
-						<div class="image fit">
-							<img src="${pageContext.request.contextPath}/resources/images/pic02.jpg" alt="" />
-						</div>
-						<div class="content">
-							<h3>Consequat</h3>
-							<p>Placerat ornare. Pellentesque od sed euismod in, pharetra ltricies edarcu cas consequat.</p>
-						</div>
-					</div>
-					<div class="flex-item box">
-						<div class="image fit">
-							<img src="${pageContext.request.contextPath}/resources/images/pic03.jpg" alt="" />
-						</div>
-						<div class="content">
-							<h3>Adipiscing</h3>
-							<p>Morbi in sem quis dui placerat Pellentesque odio nisi, euismod pharetra lorem ipsum.</p>
-						</div>
-					</div>
-					<div class="flex-item box">
-						<div class="image fit">
-							<img src="${pageContext.request.contextPath}/resources/images/pic04.jpg" alt="" />
-						</div>
-						<div class="content">
-							<h3>Malesuada</h3>
-							<p>Nam dui mi, tincidunt quis, accu an porttitor, facilisis luctus que metus vulputate sem magna.</p>
-						</div>
-					</div>
 				</div>
 			</section>
 

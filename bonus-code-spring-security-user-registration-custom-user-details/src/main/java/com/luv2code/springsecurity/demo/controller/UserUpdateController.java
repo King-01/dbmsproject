@@ -3,6 +3,7 @@ package com.luv2code.springsecurity.demo.controller;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.hibernate.Session;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.luv2code.springsecurity.demo.entity.User;
 import com.luv2code.springsecurity.demo.service.UserService;
@@ -60,6 +62,28 @@ public class UserUpdateController {
 			CrmUser toInsertUser = new CrmUser();
 			toInsertUser = toInsertUser.getCrmUser(currentUser);
 			theModel.addAttribute("crmUser", toInsertUser);
+			return "show-update-form";
+		}
+		else
+		{
+			logger.info("Unauthorized access to Company Update form, redirecting to Login Page");
+			return "redirect:/";
+		}
+	}
+	@RequestMapping("/updateCompanyFormUpd")
+	public String updateUserUpd(Model theModel)
+	{
+		Object authentication = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(authentication instanceof UserDetails)
+		{
+			Authentication authentications = SecurityContextHolder.getContext().getAuthentication();
+			org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User)authentications.getPrincipal();
+			String userName = user.getUsername();
+			com.luv2code.springsecurity.demo.entity.User currentUser = userService.findByUserName(userName);
+			logger.info("Processing updating form for user : " + currentUser.getUserName());
+			CrmUser toInsertUser = new CrmUser();
+			toInsertUser = toInsertUser.getCrmUser(currentUser);
+			theModel.addAttribute("crmUser", toInsertUser);
 			return "update-form";
 		}
 		else
@@ -73,7 +97,9 @@ public class UserUpdateController {
 	public String updateCompanyForm(
 			@Valid @ModelAttribute("crmUser") CrmUser theCrmUser, 
 			BindingResult theBindingResult, 
-			Model theModel)
+			Model theModel,
+			RedirectAttributes ra,
+			HttpSession session)
 	{
 		try {
 			Authentication authentications = SecurityContextHolder.getContext().getAuthentication();
@@ -140,9 +166,13 @@ public class UserUpdateController {
 		    }
         }
         userService.saveExceptPassword(theCrmUser);
-        theModel.addAttribute("successMessage", "Company details have been successfully updated!");
+        ra.addFlashAttribute("successMessage", "Company details have been successfully updated!");
+		User theu = userService.findByUserName(userName);
+		theModel.addAttribute("successMessage", "Welcome " + theu.getDisplayName() + "!");
+		session.setAttribute("UserName", theu.getUserName());
+		session.setAttribute("DisplayName", theu.getDisplayName());
         logger.info("Company Details for the User " + userName + " Updated Successfully!");
-		return "update-form";
+		return "redirect:/updatecompanydetails";
 		} catch (Exception e){
 			theModel.addAttribute("registrationError", e.toString());
 			return "update-form";

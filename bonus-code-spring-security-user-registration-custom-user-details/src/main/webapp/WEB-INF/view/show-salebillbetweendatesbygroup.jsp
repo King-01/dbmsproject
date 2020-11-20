@@ -7,7 +7,7 @@
 
 <head>
   
-  <title>View Sale Voucher</title>
+  <title>View Sale Bill</title>
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -91,9 +91,9 @@
     </div>
 
   </c:if>
-	<section id="main" class="wrapper">
-		<div class="inner">
-  <h1>View Sale Voucher by Group</h1>
+  <section id="main" class="wrapper">
+    <div class="inner">
+  <h1>View Sale Bill by Group</h1>
   <form:form action="${pageContext.request.contextPath}/view/salebillbetweendatesbygroup" 
            modelAttribute="theform"
            class="form-horizontal">
@@ -132,53 +132,53 @@
     For the Group (${ id.getGroupName() })</c:if></h3>
    <c:if test = "${ status != null }" ><h3>
     Overall Status - ${ status } and it sums to a value of ${ price }</h3>
-    <h3>List of Sale Vouchers are - </h3></c:if>
+    <h3>List of Sale Bills are - </h3></c:if>
   <startcounter>
-	<div class="table-wrapper">
-	<table class = "alt">
-	<thead>
-	<tr>
-	<th>No. </th>
-	<th>Date</th>
-	<th>Account Name</th>
-	<th>Cost/Credit</th>
-	<th>Link</th>
-	</tr></thead>
-	<tbody>
+  <div class="table-wrapper">
+  <table class = "alt">
+  <thead>
+  <tr>
+  <th>No. </th>
+  <th>Date</th>
+  <th>Account Name</th>
+  <th>Cost/Credit</th>
+  <th>Link</th>
+  </tr></thead>
+  <tbody>
   <c:forEach var="schedule" items="${theList}">
     <c:url var="schedulelink" value="/view/specificsalebill">
       <c:param name="id" value="${schedule.getId()}" />
     </c:url>
-		<tr>
-		<td><number></number></td>
-		<td>${schedule.getDate()}</td>
-		<td>${ schedule.getAccountName() }</td>
-		<td>${ schedule.getCost() }</td>
+    <tr>
+    <td><number></number></td>
+    <td>${schedule.getDate()}</td>
+    <td>${ schedule.getAccountName() }</td>
+    <td>${ schedule.getCost() }</td>
     <td><a href="${schedulelink}"><c:out value="Click Here"/></a></td>
     </tr></c:forEach>
   </tbody>
   </table>
   </div>
-	</startcounter>
-	</c:if>
-	<c:if test = "${ (theList.size() == 0) || (theList == null)}" >
+  </startcounter>
+  </c:if>
+  <c:if test = "${ (theList.size() == 0) || (theList == null)}" >
   <h2> Nothing to show </h2>
   </c:if>
   </div>
   </section>
-		<!-- Footer -->
-			<footer id="footer">
-				<div class="inner">
-					<h2>Get In Touch</h2>
-					<ul class="actions">
-						<li><span class="icon fa-phone"></span> (+91) 97825-65081</li>
-						<li><span class="icon fa-envelope"></span> <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=aasavbadera.cse18@iitbhu.ac.in">aasavbadera.cse18@iitbhu.ac.in</a></li>
-						<li><span class="icon fa-map-marker"></span> H-2-A, Jawahar Nagar, Kota, Rajasthan</li>
-					</ul>
-				</div>
-				<div class="copyright">
-					&copy; King_01 Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
-				</div>
-			</footer>
+    <!-- Footer -->
+      <footer id="footer">
+        <div class="inner">
+          <h2>Get In Touch</h2>
+          <ul class="actions">
+            <li><span class="icon fa-phone"></span> (+91) 97825-65081</li>
+            <li><span class="icon fa-envelope"></span> <a href="https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=aasavbadera.cse18@iitbhu.ac.in">aasavbadera.cse18@iitbhu.ac.in</a></li>
+            <li><span class="icon fa-map-marker"></span> H-2-A, Jawahar Nagar, Kota, Rajasthan</li>
+          </ul>
+        </div>
+        <div class="copyright">
+          &copy; King_01 Design <a href="https://templated.co">TEMPLATED</a>. Images <a href="https://unsplash.com">Unsplash</a>.
+        </div>
+      </footer>
 </body>
 </html>

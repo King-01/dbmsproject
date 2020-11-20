@@ -94,8 +94,12 @@
   <section id="main" class="wrapper">
     <div class="inner">
 		<h1>View Group -</h1>
-
-		<h2>Schedule Name - ${scheduleName}</h2>
+		<h2>Schedule Name :
+		<c:url var="schedulelink" value="/view/scheduleById">
+			<c:param name="scheduleId" value="${scheduleId}" />
+		</c:url>
+		<a href="${schedulelink}"style="font-size: 25px; text-decoration: none"><c:out value="   ${scheduleName}"/></a>
+					 </h2>
 		<form:form action="${pageContext.request.contextPath}/view/updategroup.to"
 				  	   modelAttribute="newgroup"
 				  	   class="form-horizontal">

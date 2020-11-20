@@ -94,7 +94,6 @@
 	
 	<section id="main" class="wrapper">
 		<div class="inner">
-  <h1>View All Tax by Stock</h1>
 	<!-- Registration Form -->
 	<form:form action="${pageContext.request.contextPath}/process/stocktaxhandler" 
 		  	   modelAttribute="addelem"
@@ -102,6 +101,7 @@
 		<form:hidden path = "id" />
 			
 	<c:if test="${items != null}" >
+  <h1>View All Tax by Stock</h1>
 	<h3>Select Stock Item : </h3>
 		<div style="margin-bottom: 25px" class="input-group">
 			<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
@@ -119,6 +119,7 @@
 	<form:hidden path = "stockId" />
 	</c:if>
 		<c:if test="${taxes != null}" >
+  <h1>View All Stock by Tax</h1>
 		<h3>Select Tax: </h3>
 	<div style="margin-bottom: 25px" class="input-group">
 			<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 

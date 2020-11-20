@@ -173,7 +173,10 @@ public class ViewController {
 				ra.addFlashAttribute("registrationError", "You're either not allowed to view the resource or resource does not exist!");
 				return "redirect:/";
 			}
+			String scheduleName = scheduleService.get(obj.getSchedule()).getScheduleName();
 			theModel.addAttribute("newgroup", obj);
+			theModel.addAttribute("scheduleName", scheduleName);
+			theModel.addAttribute("scheduleId", obj.getSchedule());
 			return "show-specific-group";
 			
 		}

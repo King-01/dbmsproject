@@ -7,7 +7,7 @@
 
 <head>
   
-  <title>View Purchase Voucher by account</title>
+  <title>View Purchase Bill by account</title>
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -93,7 +93,7 @@
   </c:if>
   <section id="main" class="wrapper">
     <div class="inner">
-  <h1>View Purchase Voucher by Account</h1>
+  <h1>View Purchase Bill by Account</h1>
   <form:form action="${pageContext.request.contextPath}/view/purchasebillvoucherbyaccount" 
            modelAttribute="addelem"
            class="form-horizontal">
@@ -132,7 +132,7 @@
   
   <c:if test = "${ (theVouchers.size() != 0) && (theVouchers != null) }" >
     <h3>For the Account (${ id.getAccountName() }), Overall Status - ${ status } and it sums to a value of ${ tot }</h3>
-    <h3>List of Purchase Vouchers are - </h3>
+    <h3>List of Purchase Bills are - </h3>
   
  <br><startcounter>
   <div class="table-wrapper">

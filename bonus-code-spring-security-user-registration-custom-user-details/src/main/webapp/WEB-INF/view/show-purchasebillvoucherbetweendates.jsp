@@ -7,7 +7,7 @@
 
 <head>
   
-  <title>View Purchase Voucher</title>
+  <title>View Purchase Bill</title>
   
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -94,7 +94,7 @@
   
   <section id="main" class="wrapper">
     <div class="inner">
-  <h1>View Purchase Voucher by Account</h1>
+  <h1>View Purchase Bill by Account</h1>
   <form:form action="${pageContext.request.contextPath}/view/purchasebillvoucherbetweendates" 
            modelAttribute="theform"
            class="form-horizontal">
@@ -132,7 +132,7 @@
   <h3><c:if test="${ id != null }" >
     For the Account (${ id.getAccountName() })</c:if></h3>
     <h3>Overall Status - ${ status } and it sums to a value of ${ price }</h3>
-    <h3>List of Purchase Vouchers are - </h3>
+    <h3>List of Purchase Bills are - </h3>
   <br><startcounter>
   <div class="table-wrapper">
   <table class = "alt">
