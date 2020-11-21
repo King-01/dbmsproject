@@ -284,8 +284,8 @@ public class ProcessController {
 					}
 				}
 				accountService.save(theAccount);
-				logger.info("Group creation by the name : " + theAccount.getAccountName() + " successful!");
-				ra.addFlashAttribute("successMessage", "Group creation by the name : " + theAccount.getAccountName() + " successful!");
+				logger.info("Account creation by the name : " + theAccount.getAccountName() + " successful!");
+				ra.addFlashAttribute("successMessage", "Account creation by the name : " + theAccount.getAccountName() + " successful!");
 				return "redirect:/add";
 			}
 			catch(Exception e) {
