@@ -115,7 +115,7 @@
       
   </dt></li>
   <li><dt>
-      <a href="${pageContext.request.contextPath}/add/stocktax">Create Tax to Stock</a>
+      <a href="${pageContext.request.contextPath}/add/stocktax">Add Tax to Stock</a>
       
   </dt></li>
   <li><dt>

@@ -269,7 +269,7 @@ public class ProcessController {
 			List<Group> listOfGroups = groupService.getGroupByUserName(userName);
 			if(theBindingResult.hasErrors())
 			{
-				theModel.addAttribute("listofgroups", listOfGroups);
+				theModel.addAttribute("listofgroup", listOfGroups);
 				return "add-account";
 			}
 			try {	

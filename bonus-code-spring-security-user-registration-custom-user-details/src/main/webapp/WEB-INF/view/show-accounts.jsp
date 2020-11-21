@@ -5,7 +5,7 @@
 <html>
 
 <head>
-<title>View Groups</title>
+<title>View Accounts</title>
 <meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=15, shrink-to-fit=no">
 	

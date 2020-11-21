@@ -150,7 +150,7 @@
 							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span> 
 							<form:errors path="packing" cssClass="error alert alert-danger" />
 							
-							<form:input path="packing" placeholder="packing (*)(in percent)" class="form-control" />
+							<form:input path="packing" placeholder="packing (*)(in Rs.)" class="form-control" />
 						</div>
 						<h4>Commision Percentage(%) : </h4>
 						<div style="margin-bottom: 25px" class="input-group">

@@ -112,7 +112,7 @@
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
 							<form:select path="groupId">
-								<form:option value="${ null }" label = "Select a Schedule from this List (*)"></form:option>
+								<form:option value="${ null }" label = "Select a Group from this List (*)"></form:option>
 								<c:forEach var="onegroup" items="${listofgroup}">
 									<form:option value="${onegroup.getId()}" label = "${ onegroup.getGroupName() }"></form:option>
 								</c:forEach>
@@ -121,7 +121,7 @@
 						<h4>Guarantor Name :</h4>
 						<div style="margin-bottom: 25px" class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span> 
-							<form:errors path="guarantorName" cssClass="error alert alert-user" />
+							<form:errors path="guarantorName" cssClass="error alert alert-danger" />
 							
 							<form:input path="guarantorName" placeholder="Guarantor Name (*)" class="form-control" />
 						</div>

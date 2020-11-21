@@ -12,8 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.springsecurity.demo.entity.Group;
 import com.luv2code.springsecurity.demo.entity.Schedule;
+import com.luv2code.springsecurity.demo.service.ScheduleService;
 @Repository
 public class GroupDaoImpl implements GroupDao {
+	@Autowired
+	private ScheduleService scheduleService;
 	@Autowired
 	private SessionFactory sessionFactory;
 	@Override
@@ -85,13 +88,17 @@ public class GroupDaoImpl implements GroupDao {
 	public Group getGroupByName(String groupName, String userName) {
 		// TODO Auto-generated method stub
 		Session crs = sessionFactory.getCurrentSession();
-		Query<Group> theQuery = crs.createQuery("from Group where groupName =:GroupName and userName =: UserName", Group.class);
+		Query<Group> theQuery = crs.createQuery("from Group where groupName =:GroupName", Group.class);
 		theQuery.setParameter("GroupName", groupName);
-		theQuery.setParameter("UserName", userName);
 		List<Group> toret = theQuery.getResultList();
-		if(toret.size() == 0)
-			return null;
-		return toret.get(0);
+		for(int i = 0 ; i < toret.size(); i++)
+		{
+			if(scheduleService.get(toret.get(i).getSchedule()).getUserName().equals(userName))
+			{
+				return toret.get(i);
+			}
+		}
+		return null;
 	}
 
 }
