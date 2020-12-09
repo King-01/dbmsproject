@@ -14,4 +14,4 @@ To run it on your personal machine  -
 
 3. Download the code and import the project in Eclipse IDE and enjoy!
 
-[Click here!](merchant-manager.herokuapp.com)
+[Click here!](https://merchant-manager.herokuapp.com)
