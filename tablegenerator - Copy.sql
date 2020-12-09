@@ -1,4 +1,4 @@
--- Script written so as to be able to generate the schema tables
+
 drop database if exists `merchant-manager`;
 create database if not exists `merchant-manager`;
 use `merchant-manager`;
